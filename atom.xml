@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Strong[Typed]]]></title>
+  <link href="http://www.strongtyped.io/atom.xml" rel="self"/>
+  <link href="http://www.strongtyped.io/"/>
+  <updated>2014-05-10T01:41:34+02:00</updated>
+  <id>http://www.strongtyped.io/</id>
+  <author>
+    <name><![CDATA[StrongTyped.io]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Functional Programming in Scala]]></title>
+    <link href="http://www.strongtyped.io/blog/2014/04/28/functional-programming-in-scala/"/>
+    <updated>2014-04-28T23:25:34+02:00</updated>
+    <id>http://www.strongtyped.io/blog/2014/04/28/functional-programming-in-scala</id>
+    <content type="html"><![CDATA[<p>This the first post of a series of posts about Functional Programming in Scala.</p>
+
+<p>The post is also a teaser for the following posts on Reactive Programming in Scala.</p>
+
+<p>Warning: the content of the posts on Functional Programmng is not trivial, but,
+hopefully, you will be rewarded for your effort to read the posts.</p>
+
+<h2>Functional Programming</h2>
+
+<p>Here is one of my favorite quotes about Functional Programming:</p>
+
+<p>Functional Programming strictly separates
+the declarative description of computations
+from the imperative execution of computations.</p>
+
+<h2>Binding</h2>
+
+<p>Most of you are used to think of functions in terms of applying them to values.
+But you can, of course, also think of values in terms of binding them to functions.</p>
+
+<p>The method <code>bind</code> of the implicit class below formalizes binding</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">implicit</span> <span class="k">class</span> <span class="nc">AnyOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">bind</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Y</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">z2y</span> <span class="n">apply</span> <span class="n">z</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Strictly speaking it is not necessary at all to introduce binding in Scala.
+In my opinion, <code>bind</code> is sometimes more convenient to use as <code>apply</code>
+as illustrated below</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="mi">1</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span>
+</span><span class='line'><span class="n">res0</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">console</span><span class="k">&gt;:</span><span class="mi">11</span><span class="k">:</span> <span class="kt">error:</span> <span class="kt">missing</span> <span class="kt">parameter</span> <span class="k">type</span>
+</span><span class='line'>              <span class="o">{</span> <span class="kt">x</span> <span class="o">=&gt;</span> <span class="kt">x</span> <span class="kt">+</span> <span class="err">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span>
+</span><span class='line'>                <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">({</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span><span class="o">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">console</span><span class="k">&gt;:</span><span class="mi">11</span><span class="k">:</span> <span class="kt">error:</span> <span class="kt">missing</span> <span class="kt">parameter</span> <span class="k">type</span>
+</span><span class='line'>              <span class="o">{</span> <span class="kt">x</span> <span class="o">=&gt;</span> <span class="kt">x</span> <span class="kt">+</span> <span class="err">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">({</span> <span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span><span class="o">)</span>
+</span><span class='line'>                <span class="o">^</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">({</span> <span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span><span class="o">)</span>
+</span><span class='line'><span class="n">res3</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Pure Computations resulting in exactly one value</h2>
+
+<p>Let&rsquo;s get started with pure computations resulting in exactly one value
+as defined by the following case class</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">case</span> <span class="k">class</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">execute</span><span class="o">()</span> <span class="k">=</span> <span class="n">z</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this section computations resulting in exactly one value are
+sometimes also simply referred to as computations for short.</p>
+
+<p>The following <code>lazy val oneFoo</code>,
+is a computation that is described in a declarative way as <code>One("foo")</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFoo</span> <span class="k">=</span> <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span>
+</span><span class='line'><span class="n">oneFoo</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since there is nothing special about pure computations resulting in exactly one value,
+executing <code>oneFoo</code> is as straightforward as evaluating <code>oneFoo.execute()</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">oneFoo</span><span class="o">.</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res0</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foo</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Composing Pure Computations resulting in exactly one value</h2>
+
+<p>The implicit class below defines two methods <code>bnd</code> and <code>and</code> that can be used to compose computations.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">implicit</span> <span class="k">class</span> <span class="nc">OneOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">mz</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2my</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">mz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2my</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">m_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">One</span><span class="o">(</span><span class="n">mz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">m_z2y</span><span class="o">.</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that, although strictly speaking not necessary, <code>bnd</code> and <code>and</code> are defined in terms of <code>bind</code>.</p>
+
+<p><code>One</code>, <code>bnd</code> and <code>and</code> define a DSL using which it is possible to describe computations in a declarative way.</p>
+
+<p>All computations below make use of the following curried <code>add</code> function</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">String</span><span class="o">)(</span><span class="n">y</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s start with a computation using <code>bnd</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">fooBar01</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="nc">One</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="nc">One</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">fooBar01</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">fooBar01</span><span class="o">.</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res0</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The meaning of <code>fooBar01</code> can be explained as follows</p>
+
+<ul>
+<li>evaluate the expression <code>"foo"</code> and <code>bind</code> the resulting value to the variable <code>z</code>, and then</li>
+<li>evaluate the expression <code>"bar"</code> and <code>bind</code> the resulting value to the variable <code>y</code>, and then</li>
+<li>return the value obtained by adding <code>z</code> and <code>y</code></li>
+</ul>
+
+
+<p>Let&rsquo;s continue with a computation using <code>and</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">fooBar02</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">One</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+</span><span class='line'>      <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">One</span><span class="o">(</span><span class="n">z</span> <span class="k">=&gt;</span> <span class="n">y</span> <span class="k">=&gt;</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">fooBar02</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">fooBar02</span><span class="o">.</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res1</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The meaning of <code>fooBar02</code> can be explained as follows</p>
+
+<ul>
+<li>evaluate the expression <code>"bar"</code>, and</li>
+<li>evaluate the expression <code>"foo"</code>, and then</li>
+<li><code>bind</code> the resulting values to the variables <code>y</code> and <code>z</code>, and then</li>
+<li>return the value obtained by adding <code>z</code> and <code>y</code></li>
+</ul>
+
+
+<p>Let&rsquo;s finish with a simplified version of the computation using <code>and</code> above
+(note: there are no variables used any more)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">fooBar03</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">One</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+</span><span class='line'>      <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+</span><span class='line'>        <span class="nc">One</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">fooBar03</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">fooBar03</span><span class="o">.</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res2</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The meaning of <code>fooBar02</code> can be explained as follows</p>
+
+<ul>
+<li>evaluate the expression <code>"bar"</code>, and</li>
+<li>evaluate the expression <code>"foo"</code>, and then</li>
+<li>return the value obtained by adding the resulting values</li>
+</ul>
+
+
+<p>You may ask yourself: this looks like much ado about nothing.
+We might as well have written the following code</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">&quot;foo&quot;</span>
+</span><span class='line'><span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">&quot;bar&quot;</span>
+</span><span class='line'><span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Well, in a way, for pure computations resulting in exactly one value,
+it is really much ado about nothing (for more interesting kind of
+computations, the situation will be different). Nevertheless it
+is already possible to formulate some remarks.</p>
+
+<p>Here is a, somewhat philosophical (and highly subjective), remark about syntax:</p>
+
+<p>In my opinion, somehow, the DSL based code reads more natural from left to right
+than the language based code. Indeed, note that, in <code>val z = "foo"</code>,
+first the expression <code>"foo"</code> on the right hand side of <code>=</code> is evaluated and
+second the variable <code>z</code> on the left hand side of <code>=</code> is initialized with the resulting value.
+Not very left to right indeed (in fact right to left instead).
+Agreed, somehow the library based code reads less natural because of all those
+curly braces <code>{</code> and <code>}</code>, but, typically, it is not a good programming practice
+to write large code excerpts anyway, so their nesting is usually limited.</p>
+
+<p>Here is a remark about semantics.</p>
+
+<p>The semantics of the language based code is defined by the language specification
+(implemented by the compiler).
+The semantics of <code>fooBar01</code>, <code>fooBar02</code> and <code>fooBar03</code> is defined
+in terms of the semantics of <code>bnd</code> and <code>and</code>. This provides you with more flexibility.
+Agreed, again, in the case of pure computations resulting in exactly one value there
+is not really a lot of choice for you to define <code>bnd</code> and <code>and</code> in a way that makes sense
+(for more interesting kind of computations, the situation will be different).</p>
+
+<p>The method <code>bnd</code> is more specific (concrete) and more powerful than <code>and</code>.
+In other words: the method <code>and</code> is more general (abstract) and less powerful than <code>bnd</code>.</p>
+
+<p>When using <code>bnd</code> the variable <code>z</code> is immediately in scope and can be used in the rest of the code,
+for example, to decide how to proceed, as illustrated by the example below</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">mkFooBarUsing</span><span class="o">(</span><span class="n">string</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">One</span><span class="o">(</span><span class="n">string</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">z</span> <span class="k">match</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="s">&quot;foo&quot;</span> <span class="k">=&gt;</span> <span class="nc">One</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="nc">One</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">case</span> <span class="s">&quot;bar&quot;</span> <span class="k">=&gt;</span> <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="nc">One</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">y</span><span class="o">)(</span><span class="n">z</span><span class="o">))</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">One</span><span class="o">(</span><span class="s">&quot;foobar&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="nc">One</span><span class="o">(</span><span class="n">y</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">mkFooBarUsing</span><span class="k">:</span> <span class="o">(</span><span class="kt">string:</span> <span class="kt">String</span><span class="o">)</span><span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">mkFooBarUsing</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">).</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res0</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">mkFooBarUsing</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">).</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res1</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">mkFooBarUsing</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">).</span><span class="n">execute</span><span class="o">()</span>
+</span><span class='line'><span class="n">res2</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">foobar</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that the method <code>and</code> could have been defined in terms of the more powerful method <code>bnd</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">m_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">mz</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="n">m_z2y</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z2y</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="nc">One</span><span class="o">(</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2y</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The two definitions are equivalent.
+The situation will be different when dealing with reactive programming
+where failure and latency (two important computational features) come into play,</p>
+]]></content>
+  </entry>
+  
+</feed>
