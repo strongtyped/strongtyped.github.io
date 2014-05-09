@@ -1,0 +1,222 @@
+// This File is imported last, and will override other styles in the cascade
+// Add styles here to make changes without digging in too much
+
+
+body, p {
+  font-family: $sans;
+  font-size: 1.2em;
+}
+
+body, .home-page, .home-field,  .article-list{
+  background-color: $base-bg;
+  font-size: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: $primary-color;
+}
+
+ul {
+  list-style: disc;
+  padding-left: 60px;
+}
+
+ol {
+  list-style: decimal;
+  padding-left: 70px;
+}
+
+.navigation {
+  float: right;
+  margin-right: 50px;
+}
+
+.container-primary {
+  background-color: $bg-primary;
+  color: #FFFFFF;
+}
+
+.container-light {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid $primary-color;
+  border-top: 1px solid $primary-color;
+}
+
+.container-dark {
+  background-color: $secondary-color;
+  color: #FFFFFF;
+  > h1, h2, h3, h4, h5, h6 {
+    color: #FFFFFF;
+  }
+}
+
+.centered {
+  text-align: center;
+}
+
+.banner {
+  font-family: $heading-font-family;
+
+  > h1 {
+    font-style:italic;
+    font-size : 3em;
+  }
+  > h2 {
+    font-size : 2em;
+    color: $secondary-color;
+  }
+
+  background-color: $base-bg;
+}
+
+.intro {
+   margin-top:40px;
+   margin-bottom:5px;
+   line-height: 1.5;
+
+   > p {
+    margin-bottom:35px;
+   }
+}
+
+.img-circle {
+  border-radius: 50%;
+}
+
+.bio {
+  text-align: left;
+  font-size: 1em;
+}
+
+.short-profile {
+  padding-bottom: 80px;
+}
+
+.social {
+  font-size: 35px;
+  text-align: center;
+  letter-spacing: 15px;
+  padding-bottom: 80px;
+}
+
+.home-page {
+  margin-top: 0px;
+}
+
+a {
+  color: $link;
+}
+
+a:hover {
+  color: $link-hover;
+}
+
+.footer-row {
+  background-color: $footer-bg;
+}
+
+.navbar {
+  padding: 55px 80px;
+}
+
+.navbar-fixed-top {
+  height: 60px;
+  text-align: left;
+  background-color:$header-bg;
+
+  border-bottom: 1px solid $primary-color;
+  z-index:1000;
+
+  > h1 {
+    font-size: 35px;
+    font-family: $heading-font-family;
+    font-style:italic;
+    font-weight: 800;
+    color: $heading-font-color;
+    margin-top: -30px;
+    margin-bottom: 0px;
+
+    > a {
+      color: $heading-font-color;
+    }
+    > a:hover {
+      color: $heading-font-color;
+      text-decoration:none
+    }
+  }
+}
+
+
+
+.strong {
+  font-weight:bold;
+  color: $primary-color;
+}
+
+.typed {
+  font-weight: 500;
+  color: $secondary-color;
+}
+
+.strongtyped {
+  font-style:italic;
+  font-family: $heading-font-family;
+  > a:hover {
+    text-decoration:none
+  }
+}
+
+.navbar {
+    margin-left: 100px;
+}
+
+.list-title h4 {
+  float: right;
+  text-transform: none;
+}
+
+
+
+
+// articles
+article {
+
+  .meta {
+    color: $primary-color;
+  }
+
+  h1 {
+    font-family: $heading-font-family;
+    font-style:italic;
+  }
+
+
+  h2 {
+    padding-top: 20px;
+  }
+}
+
+.article-list {
+  background-color: $base-bg;
+  padding-top: 10px;
+}
+
+.article-list article {
+  h2 {
+    font-family: $heading-font-family;
+    font-style:italic;
+
+    > a {
+      color : $secondary-color;
+      font-weight: 300;
+    }
+
+    > a:hover {
+        text-decoration:none
+    }
+  }
+}
+
+.divider {
+  width: 70%;
+}

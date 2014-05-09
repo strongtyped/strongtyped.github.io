@@ -1,0 +1,26 @@
+---
+layout: default
+---
+<!-- file: index.html -->
+{% include custom/hero.html %}
+  <div class="home-field">
+    
+    <div class="article-list">
+      <div class="container">
+        {% for post in paginator.posts %}
+          {% assign content = post.content %}
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              {% include article_listing.html %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    
+    <div class="archive-link">
+      <h3><a href="/posts/">All Posts</a></h3>
+    </div>
+  </div>
+</div>
