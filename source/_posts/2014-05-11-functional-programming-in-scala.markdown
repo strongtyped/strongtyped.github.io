@@ -2,13 +2,16 @@
 layout: post
 title: "Functional Programming in Scala"
 date: 2014-05-11 06:21:00 +0200
+author: Luc Duponcheel
 comments: true
 ---
+
+[home](/)
 
 This blog post is the first one of a series of blog posts about _Functional Programming in Scala_.
 It is also a teaser for series of blog posts of about _Reactive Programming in Scala_.
 
-Warning:
+__Warning:__
 Functional Programming and Reactive Programming are profound topics.
 Hopefully, you will be rewarded for your effort to read the blog posts.
 
@@ -74,21 +77,36 @@ as defined by the following `case class`
 ```
 
 Computations resulting in exactly one value are also referred to as computations of type `One`.
-When there is no danger of confusion, they are simply referred to as computations.
+
+
+When there is no danger of confusion, any kind of computation is simply referred to as a computation.
+
+Constructing computations using `mkOne`
+---------------------------------------
+
+Computations of type `One` can be _constructed_ using `mkOne`
+
+``` scala
+  def mkOne[Z](z: Z) = One(z)
+```
+
+Agreed, introducing `mkOne` is somewhat of an overkill,
+but it is consistent with the way other kinds of computations are constructed
+in this series of posts.
 
 How are computations of type `One` _described_?
 
 Describing Computations of type `One`
 -------------------------------------
 
-Here is a computation of type `One` that is described using `One`
+Here is a computation of type `One` that is described using `mkOne`
 
 ``` scala
-scala> lazy val oneFoo = One("foo")
+scala> lazy val oneFoo = mkOne("foo")
 oneFoo: Fp.One[String] = <lazy>
 ```
 
-A `lazy val` is used to separate the description of a computation from its execution.
+A `lazy val` is used to separate the description of the computation from its execution.
 
 How are computations of type `One` _executed_ once they are described?
 
@@ -113,9 +131,9 @@ foo
 ```
 
 The computation `oneFoo` is defined as a `lazy val`.
-`One("foo")` is evaluated _the first time_ that `oneFoo` is executed.
+`mkOne("foo")` is evaluated _the first time_ that `oneFoo` is executed.
 When `oneFoo` would have been defined as a `def`, then
-`One("foo")` would be evaluated _every time_ that `oneFoo` is executed.
+`mkOne("foo")` would be evaluated _every time_ that `oneFoo` is executed.
 For `oneFoo` the difference does not matter
 (apart from the fact that a `lazy val` is more time efficient and less space efficient than a `def`).
 Sometimes the difference between a `lazy val` computation and a `def` computation _does_ matter.
@@ -136,7 +154,7 @@ describe _more complex_ computations by, somehow, _composing_ them from _simpler
     def bnd[Y](z2oy: Z => One[Y]): One[Y] =
       oz.z bind z2oy
     def and[Y](o_z2y: One[Z => Y]): One[Y] =
-      One(oz.z bind o_z2y.z)
+      mkOne(oz.z bind o_z2y.z)
   }
 ```
 
@@ -145,7 +163,7 @@ Although, strictly speaking, not necessary, `bnd` and `and` are defined in terms
 DSL for computations of type `One`
 ----------------------------------
 
-By now we have defined `One`, `bnd` and `and`
+By now we have defined `mkOne`, `bnd` and `and`
 
 * They constitute a _declarative DSL for describing computations_ of type `One`
 
@@ -170,9 +188,9 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
   lazy val oneFooBar01: One[String] =
-    One("foo") bnd { z =>
-      One("bar") bnd { y =>
-        One(add(z)(y))
+    mkOne("foo") bnd { z =>
+      mkOne("bar") bnd { y =>
+        mkOne(add(z)(y))
       }
     }
 
@@ -197,9 +215,9 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
   lazy val oneFooBar02: One[String] =
-    One("bar") and {
-      One("foo") and {
-        One(z => y => add(z)(y))
+    mkOne("bar") and {
+      mkOne("foo") and {
+        mkOne(z => y => add(z)(y))
       }
     }
 
@@ -225,9 +243,9 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
   lazy val oneFooBar03: One[String] =
-    One("bar") and {
-      One("foo") and {
-        One(add)
+    mkOne("bar") and {
+      mkOne("foo") and {
+        mkOne(add)
       }
     }
 
@@ -242,7 +260,7 @@ foobar
 The declaration of `oneFooBar03` can, informally, be explained as follows
 
 * evaluate the expression `"bar"`, and evaluate the expression `"foo"`, and then
-* result in the value obtained by adding the resulting values
+* result in the value obtained by adding their resulting values
 
 You may ask yourself: _this looks like much ado about nothing_.
 We might as well have written the following code
@@ -254,7 +272,7 @@ We might as well have written the following code
 ```
 
 Well, in a way you are right: for pure computations resulting in exactly one value,
-introducing `One`, `bnd` and `and` _is_ much ado about nothing.
+introducing `mkOne`, `bnd` and `and` _is_ much ado about nothing.
 For more interesting kinds of computations, the situation is completely different.
 
 Nevertheless it is already possible to formulate some interesting remarks.
@@ -297,7 +315,7 @@ The method `and` is more abstract than `bnd` simply because the method `and` can
     def and[Y](o_z2y: One[Z => Y]): One[Y] =
       oz bnd { z =>
         o_z2y bnd { z2y =>
-          One(z bind z2y)
+          mkOne(z bind z2y)
         }
       }
 ```
@@ -313,38 +331,38 @@ The method `bnd` is _more powerful_ than `and`
 (the method `and` is _less powerful_ than `bnd`).
 
 Below is an example that illustrates that the method `bnd` is more powerful than `and`:
-when using `bnd` the variable `z` is _immediately in scope_ and can be used in the rest of the code,
-for example, to decide how to proceed
+when using `bnd` the variable `z` is _immediately in scope_, and can be used in the rest of the code,
+for example, to decide, based on `z`, how to proceed
 
 ``` scala
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-  def mkOneFooBarUsing(s: String): One[String] =
-    One(s) bnd { s =>
+  def decideBasedOn(s: String): One[String] =
+    mkOne(s) bnd { s =>
       s match {
-        case "foo" => One("bar") bnd { t =>
-          One(add(s)(t))
+        case "foo" => mkOne("bar") bnd { t =>
+          mkOne(add(s)(t))
         }
-        case "bar" => One("foo") bnd { t =>
-          One(add(t)(s))
+        case "bar" => mkOne("foo") bnd { t =>
+          mkOne(add(s)(t))
         }
-        case _ => One("foobar")
+        case _ => mkOne("bogus")
       }
     }
 
 // Exiting paste mode, now interpreting.
 
-mkOneFooBarUsing: (string: String)Fp.One[String]
+decideBasedOn: (string: String)Fp.One[String]
 
-scala> execute(mkOneFooBarUsing("foo"))
+scala> execute(decideBasedOn("foo"))
 foobar
 
-scala> execute(mkOneFooBarUsing("bar"))
-foobar
+scala> execute(decideBasedOn("bar"))
+barfoo
 
-scala> execute(mkOneFooBarUsing(""))
-foobar
+scala> execute(decideBasedOn(""))
+bogus
 ```
 
 The bottom line of all this is that, for most computations, the choice is yours
@@ -353,7 +371,8 @@ The bottom line of all this is that, for most computations, the choice is yours
 * you can go for more abstract, less powerful composition (and more implementation flexibility)
 
 It is all about choosing the _right level of abstraction_.
-As a programmer, you should _value abstraction_: it can be used to _decrease complexity_.
+As a programmer, you should _value abstraction_:
+it is a tool to _manage complexity_.
 
 Consider the difference between using `bnd` and `and`
 

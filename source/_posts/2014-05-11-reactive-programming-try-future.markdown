@@ -2,19 +2,22 @@
 layout: post
 title: "Reactive Programming: Try versus Future"
 date: 2014-05-11 06:21:00 +0200
+author: Luc Duponcheel
 comments: true
 ---
 
+[home](/)
+
 This is a first of two blog posts of about _Reactive Programming in Scala_.
-The blog post about [_Functional Programming in Scala_](/2014/05/02/functional-programming-in-scala.html)
+The blog post about [_Functional Programming in Scala_](/blog/2014/05/11/functional-programming-in-scala)
 introduced _pure computations resulting in exactly one value_.
 Reactive programming deals, in a functional way,
 with two fundamental _impure_ aspects of computations: _failure_ and _latency_.
 The first blog post covers reactive programs resulting in _one_ value.
 The second blog post covers Reactive Programs resulting in _many_ (_zero or more_) values.
 
-Warning: 
-The types that are used in this blog post exist in the standard Scala libray.
+__Warning:__ 
+The types that are used in this blog post exist in the standard Scala library.
 For didactical reasons this blog post sometimes defines extra types and extra methods for existing types.
 
 Failure
@@ -35,7 +38,7 @@ Why?
 Well, because, when trying to satisfy the contract that comes with checked exceptions, 
 programmers are basically _left on their own_. As a consequence `try/catch` code propagates
 all the way through their code, cluttering up the _essential part_ of their code. 
-In a way, using checked exceptions, _they end up in_ `try/catch` _hell_.
+In a way, when using checked exceptions, _they end up in_ `try/catch` _hell_.
 Therefore many Java programmers `catch` checked exceptions and `throw` unchecked ones.
 
 That makes the situation even worse since, by throwing unchecked exceptions,
@@ -87,20 +90,9 @@ How are computations of type `Try` _described_?
 Describing Computations of type `Try`
 -------------------------------------
 
-Here are two computations of type `Try` that are described using `mkTry`
-
-``` scala
-scala> lazy val okTryFoo = mkTry { block("foo", true, 'F', 100) }
-okTryFoo: scala.util.Try[String] = <lazy>
-
-scala> lazy val koTryFoo = mkTry { block("foo", false, 'F', 100) }
-okTryFoo: scala.util.Try[String] = <lazy>
-```
-
-A `lazy val` is used to separate the description of a computation from its execution.
-
 To make things interesting from a failure and latency
-point of view, many computations (like the ones above) make use of
+point of view, many example computations make use of
+the functions `work` and `block` below
 
 ``` scala
   def work(c: Char, l: Long) {
@@ -117,6 +109,18 @@ point of view, many computations (like the ones above) make use of
   }
 ```
 
+Here are two computations of type `Try` that are described using `mkTry`
+
+``` scala
+scala> lazy val okTryFoo = mkTry { block("foo", true, 'F', 100) }
+okTryFoo: scala.util.Try[String] = <lazy>
+
+scala> lazy val koTryFoo = mkTry { block("foo", false, 'F', 100) }
+okTryFoo: scala.util.Try[String] = <lazy>
+```
+
+A `lazy val` is used to separate the description of the computation from its execution.
+
 How are computations of type `Try` _executed_ once they are described?
 
 Executing Computations of type `Try`
@@ -124,7 +128,7 @@ Executing Computations of type `Try`
 
 For the purpose of this series of blog posts,
 executing a computation of type `Try` can be as simple as either printing the value
-pulled out of a succesful result or printing the message pulled out of an unsuccessful result
+pulled out of a successful result or printing the message pulled out of an unsuccessful result
 
 ``` scala
   def execute[Z](tz: Try[Z]): Unit =
@@ -151,8 +155,8 @@ fooKoM142.M142.M142.M142.M142.M142.M142.M142.M142.M142.
 
 So, what does materialized failure bring you?
 
-`bnd` is your guide ...
------------------------
+`bnd` is your guide
+-------------------
 
 Just as it is possible for computations of type `One` it is possible for computations of type `Try`
 to define a method `bnd` that can be used to _compose computations_
@@ -197,29 +201,29 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
 lazy val tryFooBar01: Try[String] =
-  (mkTry { block("foo", true, 'F', 100) }) bnd { s =>
-    (mkTry { block("bar", true, 'B', 100) }) bnd { t =>
+  mkTry { block("foo", true, 'F', 100) } bnd { s =>
+    mkTry { block("bar", true, 'B', 100) } bnd { t =>
       mkTry(add(s)(t))
     }
   }
 
 lazy val tryFooBar02: Try[String] =
-  (mkTry { block("foo", true, 'F', 100) }) bnd { s =>
-    (mkTry { block("bar", false, 'B', 100) }) bnd { t =>
+  mkTry { block("foo", true, 'F', 100) } bnd { s =>
+    mkTry { block("bar", false, 'B', 100) } bnd { t =>
       mkTry(add(s)(t))
     }
   }
 
 lazy val tryFooBar03: Try[String] =
-  (mkTry { block("foo", false, 'F', 100) }) bnd { s =>
-    (mkTry { block("bar", true, 'B', 100) }) bnd { t =>
+  mkTry { block("foo", false, 'F', 100) } bnd { s =>
+    mkTry { block("bar", true, 'B', 100) } bnd { t =>
       mkTry(add(s)(t))
     }
   }
 
 lazy val tryFooBar04: Try[String] =
-  (mkTry { block("foo", false, 'F', 100) }) bnd { s =>
-    (mkTry { block("bar", false, 'B', 100) }) bnd { t =>
+  mkTry { block("foo", false, 'F', 100) } bnd { s =>
+    mkTry { block("bar", false, 'B', 100) } bnd { t =>
       mkTry(add(s)(t))
     }
   }
@@ -310,29 +314,29 @@ This section contains some examples on how to make use of those DSL's.
 
 ``` scala
 lazy val tryFooBar05: Try[String] =
-  (mkTry { block("bar", true, 'B', 100) }) and {
-    (mkTry { block("foo", true, 'F', 100) }) and {
+  mkTry { block("bar", true, 'B', 100) } and {
+    mkTry { block("foo", true, 'F', 100) } and {
       mkTry(add)
     }
   }
 
 lazy val tryFooBar06: Try[String] =
-  (mkTry { block("bar", true, 'B', 100) }) and {
-    (mkTry { block("foo", false, 'F', 100) }) and {
+  mkTry { block("bar", true, 'B', 100) } and {
+    mkTry { block("foo", false, 'F', 100) } and {
       mkTry(add)
     }
   }
 
 lazy val tryFooBar07: Try[String] =
-  (mkTry { block("bar", false, 'B', 100) }) and {
-    (mkTry { block("foo", true, 'F', 100) }) and {
+  mkTry { block("bar", false, 'B', 100) } and {
+    mkTry { block("foo", true, 'F', 100) } and {
       mkTry(add)
     }
   }
 
 lazy val tryFooBar08: Try[String] =
-  (mkTry { block("bar", false, 'B', 100) }) and {
-    (mkTry { block("foo", false, 'F', 100) }) and {
+  mkTry { block("bar", false, 'B', 100) } and {
+    mkTry { block("foo", false, 'F', 100) } and {
       mkTry(add)
     }
   }
@@ -380,7 +384,7 @@ Why?
 
 Well, because, when trying to deal with latency using callbacks, 
 programmers are basically _left on their own_. 
-In a way, using callbacks, _they end up in callback hell_.
+In a way, when using callbacks, _they end up in callback hell_.
 
 There must be a better way to deal with latency.
 
@@ -426,13 +430,15 @@ once and for all, code that _materializes (failure and) latency at compile time_
 
 The code above uses `Promise[Z]` in its implementation. 
 
+You do not need to fully understand the _definition_ of `mkFuture`.
+Think of it as the _dual_ of _fulfilling a promise_ in a separate thead, 
+and returning that promise as a future.
+
 This definition of computations in terms of `mkFuture` is, in a way,
 more complex than needed. For the moment, we are dealing
 with reactive computations with _one_ value.
-Reactive computations with _many_ values computations will be defined
-in a similar way. We want to emphasize this analogy.
-
-You do not need to fully understand the _definition_ of `mkFuture`.
+Reactive computations with _many_ values will be defined
+in the next blog post a similar way. We want to emphasize this analogy.
 
 When considering `mkFuture` as the _only_ way to
 make a future, in a way, `Future[Z]` becomes the same as `Callback[Z] => Unit`.
@@ -464,6 +470,13 @@ Here is an example
       cz(mkTry{ block })
     }
 ```
+
+The `mkTry` function for computations of type `Try` could naturally be reused.
+
+The `mkFutureTry` code makes use of a _call by name_ parameter `block`
+which you can think of as code that 
+on the one hand, _can succeed_ or _can fail_ and,
+on the other hand, _can take some time to be evaluated_.
 
 How are computations of type `Future` described?
 
@@ -497,7 +510,7 @@ pushed to it
    }
 ```
 
-The `execute` function for computations of type `Try` could be reused.
+The `execute` function for computations of type `Try` could be naturally reused.
 
 Below, the two computations of type `Future` are executed using `execute`
 
@@ -516,8 +529,8 @@ scala>
 ```
 So, what does materialized (failure and) latency bring you?
 
-`bnd` is your guide ...
------------------------
+`bnd` is your guide
+-------------------
 
 Just as it is possible for computations of type `Try` it is possible for computations of type `Future` to define a method `bnd` that can be used to _compose computations_
 
@@ -563,29 +576,29 @@ scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
 lazy val tryFutureFooBar01: Future[String] =
-  (mkFutureTry { block("foo", true, 'F', 100) }) bnd { s =>
-    (mkFutureTry { block("bar", true, 'B', 100) }) bnd { t =>
+  mkFutureTry { block("foo", true, 'F', 100) } bnd { s =>
+    mkFutureTry { block("bar", true, 'B', 100) } bnd { t =>
       mkFutureTry(add(s)(t))
     }
   }
 
 lazy val tryFutureFooBar02: Future[String] =
-  (mkFutureTry { block("foo", true, 'F', 100) }) bnd { s =>
-    (mkFutureTry { block("bar", false, 'B', 100) }) bnd { t =>
+  mkFutureTry { block("foo", true, 'F', 100) } bnd { s =>
+    mkFutureTry { block("bar", false, 'B', 100) } bnd { t =>
       mkFutureTry(add(s)(t))
     }
   }
 
 lazy val tryFutureFooBar03: Future[String] =
-  (mkFutureTry { block("foo", false, 'F', 100) }) bnd { s =>
-    (mkFutureTry { block("bar", true, 'B', 100) }) bnd { t =>
+  mkFutureTry { block("foo", false, 'F', 100) } bnd { s =>
+    mkFutureTry { block("bar", true, 'B', 100) } bnd { t =>
       mkFutureTry(add(s)(t))
     }
   }
 
 lazy val tryFutureFooBar04: Future[String] =
-  (mkFutureTry { block("foo", false, 'F', 100) }) bnd { s =>
-    (mkFutureTry { block("bar", false, 'B', 100) }) bnd { t =>
+  mkFutureTry { block("foo", false, 'F', 100) } bnd { s =>
+    mkFutureTry { block("bar", false, 'B', 100) } bnd { t =>
       mkFutureTry(add(s)(t))
     }
   }
@@ -637,6 +650,8 @@ to define a method `and` that can be used to _compose computations_
     }
 ```
 
+The `and` method for computations of type `Try` could naturally be reused.
+
 Instead of relying on the default implementation of `and`
 (that would use sequential composition), you can take advantage of
 the possibility to define `and` in another way to let it use parallel composition
@@ -664,29 +679,29 @@ This section contains some examples on how to make use of those DSL's.
 // Entering paste mode (ctrl-D to finish)
 
 lazy val tryFutureFooBar05: Future[String] =
-  (mkFutureTry { block("bar", true, 'B', 50) }) and {
-    (mkFutureTry { block("foo", true, 'F', 100) }) and {
+  mkFutureTry { block("bar", true, 'B', 50) } and {
+    mkFutureTry { block("foo", true, 'F', 100) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar06: Future[String] =
-  (mkFutureTry { block("bar", true, 'B', 50) }) and {
-    (mkFutureTry { block("foo", false, 'F', 100) }) and {
+  mkFutureTry { block("bar", true, 'B', 50) } and {
+    mkFutureTry { block("foo", false, 'F', 100) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar07: Future[String] =
-  (mkFutureTry { block("bar", false, 'B', 50) }) and {
-    (mkFutureTry { block("foo", true, 'F', 100) }) and {
+  mkFutureTry { block("bar", false, 'B', 50) } and {
+    mkFutureTry { block("foo", true, 'F', 100) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar08: Future[String] =
-  (mkFutureTry { block("bar", false, 'B', 50) }) and {
-    (mkFutureTry { block("foo", false, 'F', 100) }) and {
+  mkFutureTry { block("bar", false, 'B', 50) } and {
+    mkFutureTry { block("foo", false, 'F', 100) } and {
       mkFutureTry(add)
     }
   }
@@ -725,29 +740,29 @@ So what about the opposite?
 // Entering paste mode (ctrl-D to finish)
 
 lazy val tryFutureFooBar09: Future[String] =
-  (mkFutureTry { block("bar", true, 'B', 100) }) and {
-    (mkFutureTry { block("foo", true, 'F', 50) }) and {
+  mkFutureTry { block("bar", true, 'B', 100) } and {
+    mkFutureTry { block("foo", true, 'F', 50) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar10: Future[String] =
-  (mkFutureTry { block("bar", true, 'B', 100) }) and {
-    (mkFutureTry { block("foo", false, 'F', 50) }) and {
+  mkFutureTry { block("bar", true, 'B', 100) } and {
+    mkFutureTry { block("foo", false, 'F', 50) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar11: Future[String] =
-  (mkFutureTry { block("bar", false, 'B', 100) }) and {
-    (mkFutureTry { block("foo", true, 'F', 50) }) and {
+  mkFutureTry { block("bar", false, 'B', 100) } and {
+    mkFutureTry { block("foo", true, 'F', 50) } and {
       mkFutureTry(add)
     }
   }
 
 lazy val tryFutureFooBar12: Future[String] =
-  (mkFutureTry { block("bar", false, 'B', 100) }) and {
-    (mkFutureTry { block("foo", false, 'F', 50) }) and {
+  mkFutureTry { block("bar", false, 'B', 100) } and {
+    mkFutureTry { block("foo", false, 'F', 50) } and {
       mkFutureTry(add)
     }
   }
