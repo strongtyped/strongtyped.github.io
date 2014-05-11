@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Reactive Programming: Try versus Future"
-date: 2014-05-03 09:25:34 +0200
+date: 2014-05-11 06:21:00 +0200
 comments: true
 ---
 
