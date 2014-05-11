@@ -9,7 +9,8 @@
   <meta name="author" content="StrongTyped.io">
 
   
-  <meta name="description" content=" Strong[Typed] All Posts ">
+  <meta name="description" content="Strong[Typed] blog Reactive Programming: Try Versus Future This is a first of two blog posts of about Reactive Programming in Scala.
+The blog post &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -28,6 +29,11 @@
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
   
 
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Exo:400,500,600,500italic,600italic" rel="stylesheet" type="text/css">
+
 </head>
 
 <!-- _layouts/default.html -->
@@ -36,12 +42,16 @@
     <!-- file: index.html -->
 <div class="navbar">
   <div class="navbar-fixed-top">
-      <div class="row">
-        <div class="col-md-7 col-md-offset-1">
-          <h1 class="strongtyped"><a href="/"><span class="strong">Strong<span><span class="typed">[Typed]</span></a></h1>
-        </div>
-      
-      </div>
+      <div class="container">
+      <ul class="nav navbar-left">
+        <li>
+          <h2 class="strongtyped"><a href="/"><span class="strong">Strong<span><span class="typed">[Typed]</span></a></h2>
+        </li>
+      </ul>
+      <ul class="nav secondary-nav navbar-nav navbar-right">
+  <li><a id="blog-nav" href="/blog">blog</a></li>
+</ul>      
+    </div>
   </div>
 </div>
 
@@ -49,6 +59,129 @@
     
     <div class="article-list">
       <div class="container">
+        
+          
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <!-- file: _includes/article_listing.html -->
+<article>
+  <h2><a href="/blog/2014/05/11/reactive-programming-try-future/">Reactive Programming: Try Versus Future</a></h2>
+  
+  <p>
+    <p>This is a first of two blog posts of about <em>Reactive Programming in Scala</em>.
+The blog post about <a href="/blog/2014/05/11/functional-programming-in-scala"><em>Functional Programming in Scala</em></a>
+introduced <em>pure computations resulting in exactly one value</em>.
+Reactive programming deals, in a functional way,
+with two fundamental <em>impure</em> aspects of computations: <em>failure</em> and <em>latency</em>.
+The first blog post covers reactive programs resulting in <em>one</em> value.
+The second blog post covers Reactive Programs resulting in <em>many</em> (<em>zero or more</em>) values.</p>
+
+
+
+
+<p><strong>Warning:</strong>
+The types that are used in this blog post exist in the standard Scala library.
+For didactical reasons this blog post sometimes defines extra types and extra methods for existing types.</p>
+
+
+
+
+  </p>
+
+  <!-- post/metadata.html --> 
+<span class="meta">
+  written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-05-11T06:21:00+02:00" pubdate data-updated="true">May 11, 2014</time>  
+in 
+
+
+<br/>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
+
+</span>
+  
+
+  
+    <a class="full-article-link pull-right" rel="full-article" href="/blog/2014/05/11/reactive-programming-try-future/">Read on &rarr;</a>
+  
+  <div class="divider"></div>
+</article>
+
+            </div>
+          </div>
+        
+          
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <!-- file: _includes/article_listing.html -->
+<article>
+  <h2><a href="/blog/2014/05/11/functional-programming-in-scala/">Functional Programming in Scala</a></h2>
+  
+  <p>
+    <p>This blog post is the first one of a series of blog posts about <em>Functional Programming in Scala</em>.
+It is also a teaser for series of blog posts of about <em>Reactive Programming in Scala</em>.</p>
+
+
+
+
+<p><strong>Warning:</strong>
+Functional Programming and Reactive Programming are profound topics.
+Hopefully, you will be rewarded for your effort to read the blog posts.</p>
+
+
+
+
+  </p>
+
+  <!-- post/metadata.html --> 
+<span class="meta">
+  written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-05-11T06:21:00+02:00" pubdate data-updated="true">May 11, 2014</time>  
+in 
+
+
+<br/>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
+
+</span>
+  
+
+  
+    <a class="full-article-link pull-right" rel="full-article" href="/blog/2014/05/11/functional-programming-in-scala/">Read on &rarr;</a>
+  
+  <div class="divider"></div>
+</article>
+
+            </div>
+          </div>
         
       </div>
     </div>
