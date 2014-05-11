@@ -30,6 +30,7 @@ sidebar: false
       </div>
     </div>
   </div>
+</div>
 
 <div class="container">
   <div class="row centered">
@@ -71,26 +72,4 @@ sidebar: false
   </div>
 </div>
 
-<div class="all-posts">
-  <div class="container">
-    <div class="row">
-      <div class="list-title col-md-offset-1 col-md-10">
-        <h4>All Posts</h4>
-      </div>
-    </div>
-  </div>
-
-  <div class="article-list">
-    <div class="container">
-      {% for post in site.posts reverse %}
-      {% assign content = post.content %}
-      <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-          {% include article_listing.html %}
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
 
