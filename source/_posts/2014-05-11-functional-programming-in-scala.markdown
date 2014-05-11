@@ -6,8 +6,6 @@ author: Luc Duponcheel
 comments: true
 ---
 
-[home](/)
-
 This blog post is the first one of a series of blog posts about _Functional Programming in Scala_.
 It is also a teaser for series of blog posts of about _Reactive Programming in Scala_.
 

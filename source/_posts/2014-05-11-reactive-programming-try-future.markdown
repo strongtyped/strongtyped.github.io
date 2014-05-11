@@ -6,8 +6,6 @@ author: Luc Duponcheel
 comments: true
 ---
 
-[home](/)
-
 This is a first of two blog posts of about _Reactive Programming in Scala_.
 The blog post about [_Functional Programming in Scala_](/blog/2014/05/11/functional-programming-in-scala)
 introduced _pure computations resulting in exactly one value_.
