@@ -20,6 +20,8 @@ __Warning:__
 The types that are used in this blog post exist in the standard Scala library.
 For didactical reasons this blog post sometimes defines extra types and extra methods for existing types.
 
+<!-- more -->
+
 Failure
 -------
 

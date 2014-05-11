@@ -30,21 +30,6 @@ sidebar: false
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-offset-1 col-md-10 intro">
-       <h4>Blog Posts</h4>
-       <div id="home">
-         <ul class="posts">
-           {% for post in site.posts %}
-             <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-           {% endfor %}
-         </ul>
-       </div>
-      </div>
-  </div>
- </div>
-</div>
 
 <div class="container">
   <div class="row centered">
@@ -82,6 +67,29 @@ sidebar: false
           </p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="all-posts">
+  <div class="container">
+    <div class="row">
+      <div class="list-title col-md-offset-1 col-md-10">
+        <h4>All Posts</h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-list">
+    <div class="container">
+      {% for post in site.posts reverse %}
+      {% assign content = post.content %}
+      <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+          {% include article_listing.html %}
+        </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
 </div>

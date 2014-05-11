@@ -15,6 +15,8 @@ __Warning:__
 Functional Programming and Reactive Programming are profound topics.
 Hopefully, you will be rewarded for your effort to read the blog posts.
 
+<!-- more -->
+
 Binding
 -------
 
