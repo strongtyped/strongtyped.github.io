@@ -409,7 +409,7 @@ which is the same as `(Try[Z] => Unit) => Unit`.
 
 This _bi-duality_ turns out to transform synchronous computations into asynchronous ones.
 
-Marerializing (failure and) latency using `mkFuture`
+Materializing (failure and) latency using `mkFuture`
 ----------------------------------------------------
 
 A first step towards dealing with (failure and) latency is to write,
@@ -433,6 +433,14 @@ The code above uses `Promise[Z]` in its implementation.
 You do not need to fully understand the _definition_ of `mkFuture`.
 Think of it as the _dual_ of _fulfilling a promise_ in a separate thead, 
 and returning that promise as a future.
+
+In a way a `Promise[Z]` is both a `Callback[-Z]`,
+since it has a method `complete` that has a `Try[Z]` parameter,
+and a `Future[+Z]`,
+since it has a variable `future` that has a `Future[Z]` type.
+
+A promise is something that, in a thread safe way, can be
+written only once and can be read many times.
 
 This definition of computations in terms of `mkFuture` is, in a way,
 more complex than needed. For the moment, we are dealing
