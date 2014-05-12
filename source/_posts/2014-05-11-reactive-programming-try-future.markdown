@@ -510,7 +510,7 @@ pushed to it
    }
 ```
 
-The `execute` function for computations of type `Try` could be naturally reused.
+The `execute` function for computations of type `Try` could naturally be reused.
 
 Below, the two computations of type `Future` are executed using `execute`
 
