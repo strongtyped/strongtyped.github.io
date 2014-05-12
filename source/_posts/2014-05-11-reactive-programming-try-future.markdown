@@ -435,12 +435,14 @@ Think of it as the _dual_ of _fulfilling a promise_ in a separate thead,
 and returning that promise as a future.
 
 In a way a `Promise[Z]` is both a `Callback[-Z]`,
-since it has a method `complete` that has a `Try[Z]` parameter,
+since it has a method `complete` that has a parameter of type `Try[Z]`,
 and a `Future[+Z]`,
-since it has a variable `future` that has a `Future[Z]` type.
+since it has a variable `future` of type `Future[Z]`.
 
-A promise is something that, in a thread safe way, can be
-written only once and can be read many times.
+A promise is something that
+
+* can be fulfilled (written) only once, in a thread safe way
+* can be pushed (and read) many times.
 
 This definition of computations in terms of `mkFuture` is, in a way,
 more complex than needed. For the moment, we are dealing
