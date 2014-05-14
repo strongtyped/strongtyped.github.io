@@ -407,7 +407,8 @@ and, as such, the _bi-dual_ of a `Try[Z]` value.
 More precisely, in a way, `Future[Z]` is the same as `Callback[Z] => Unit`,
 which is the same as `(Try[Z] => Unit) => Unit`.
 
-This _bi-duality_ turns out to transform synchronous computations into asynchronous ones.
+This _bi-duality_ turns out to transform synchronous `Try` computations
+into asynchronous `Future` computations.
 
 Materializing (failure and) latency using `mkFuture`
 ----------------------------------------------------
@@ -428,7 +429,7 @@ once and for all, code that _materializes (failure and) latency at compile time_
   }
 ```
 
-The code above uses `Promise[Z]` in its implementation. 
+The code above uses the `Promise[Z]` class in its implementation. 
 
 You do not need to fully understand the _definition_ of `mkFuture`.
 Think of it as the _dual_ of _fulfilling a promise_ in a separate thead, 
@@ -444,11 +445,15 @@ A promise is something that
 * can be fulfilled (written) only once, in a thread safe way
 * can be pushed (and read) many times.
 
+It is possible, and often useful, to define futures directly in terms of promises.
+This blog post does not go into details.
+
 This definition of computations in terms of `mkFuture` is, in a way,
 more complex than needed. For the moment, we are dealing
 with reactive computations with _one_ value.
 Reactive computations with _many_ values will be defined
-in the next blog post a similar way. We want to emphasize this analogy.
+in the next blog post a in similar way.
+We want to emphasize this analogy.
 
 When considering `mkFuture` as the _only_ way to
 make a future, in a way, `Future[Z]` becomes the same as `Callback[Z] => Unit`.
@@ -472,13 +477,22 @@ It is important that you understand the _usage_ of `mkFuture`
 
 * you can make a future by defining what it _pushes_ to registered callbacks
 
-Here is an example
+Not surprising, a computation of type `Try` can be transformed to a computation
+of type `Future` using this idea
+
+``` scala
+  def try2future[Z](tz: => Try[Z]): Future[Z] =
+    mkFuture { cz =>
+      cz(tz)
+    } 
+```
+The `try2future` code makes use of a _call by name_ parameter `tz`.
+
+The example below illustrates how to use `try2future`
 
 ``` scala
   def mkFutureTry[Z](block: => Z): Future[Z] =
-    mkFuture { cz =>
-      cz(mkTry{ block })
-    }
+    try2future(mkTry { block })
 ```
 
 The `mkTry` function for computations of type `Try` could naturally be reused.
