@@ -232,7 +232,8 @@ prints an indication that no more more values are pushed.
 ```
 
 We have called the method `subscribe` instead of `execute`
-because it returns a subscription that can be unsubscribed.
+because it corresponds to a `subscribe` method of `Observable` that,
+in this case , also returns a subscription that can be unsubscribed.
 
 Below, the four computations of type `Observable` are executed using `subscribe`
 
@@ -507,15 +508,6 @@ and here we run it
 
 ``` scala
 scala> { subscribe(scannedObservable) ; () }
-121321432154321completed
+112123123412345completed
 ```
-
-
-
-
-
-
-
-
-
 

@@ -528,26 +528,29 @@ that either prints the value of a successful result pushed to it or prints the m
 pushed to it
 
 ``` scala
- def execute[Z](fz: Future[Z]): Unit =
+ def register[Z](fz: Future[Z]): Unit =
    fz.register { tz =>
      execute(tz)
    }
 ```
 
+We have called the method `register` instead of `execute`
+because it corresponds to a `register` method of `Future`
+
 The `execute` function for computations of type `Try` could naturally be reused.
 
-Below, the two computations of type `Future` are executed using `execute`
+Below, the two computations of type `Future` are executed using `register`
 
 ``` scala
-scala> { execute(okFutureTryFoo) ; work('M', 120) }
+scala> { register(okFutureTryFoo) ; work('M', 120) }
 F121.M142.F121.M142.F121.M142.F121.M142.F121.M142.F121.F121.M142.F121.M142.F121.M142.
 F121.M142.fooOkM142.
-scala> { execute(okFutureTryFoo) ; work('M', 120) }
+scala> { register(okFutureTryFoo) ; work('M', 120) }
 M142.fooOkM142.M142.M142.M142.M142.M142.M142.M142.M142.
-scala> { execute(koFutureTryFoo) ; work('M', 120) }
+scala> { register(koFutureTryFoo) ; work('M', 120) }
 M142.B121.B121.M142.B121.M142.B121.M142.B121.M142.B121.M142.B121.B121.M142.B121.M142
 .B121.M142.fooKoM142.
-scala> { execute(koFutureTryFoo) ; work('M', 120) }
+scala> { register(koFutureTryFoo) ; work('M', 120) }
 M142.fooKoM142.M142.M142.M142.M142.M142.M142.M142.M142.
 scala> 
 ```
@@ -589,7 +592,7 @@ By now we have defined `mkFutureTry` and `bnd`
 
 * They constitute _a declarative DSL for describing computations_ of type `Future`
 
-We have also defined `execute`
+We have also defined `register`
 
 * It constitutes _an imperative DSL for executing computations_ of type `Future`
 
@@ -638,16 +641,16 @@ tryFutureFooBar04: scala.concurrent.Future[String] = <lazy>
 We can now, so to speak, try to print `fooOkbarOk` in an asynchronous way
 
 ``` scala
-scala> { execute(tryFutureFooBar01) ; work('M', 300) }
+scala> { register(tryFutureFooBar01) ; work('M', 300) }
 F149.M142.F149.F149.F149.M142.F149.F149.M142.F149.F149.F149.M142.F149.B151.B151.M142.
 B151.B151.B151.M142.B151.B151.B151.M142.B151.B151.fooOkbarOkM142.M142.M142.
-scala> { execute(tryFutureFooBar02) ; work('M', 300) }
+scala> { register(tryFutureFooBar02) ; work('M', 300) }
 F152.M142.F152.F152.M142.F152.F152.F152.M142.F152.F152.F152.M142.F152.B151.B151.M142.
 B151.B151.B151.M142.B151.B151.B151.M142.B151.B151.barKoM142.M142.M142.
-scala> { execute(tryFutureFooBar03) ; work('M', 300) }
+scala> { register(tryFutureFooBar03) ; work('M', 300) }
 F151.M142.F151.F151.F151.M142.F151.F151.M142.F151.F151.F151.M142.F151.fooKoM142.M142.
 M142.M142.M142.M142.
-scala> { execute(tryFutureFooBar04) ; work('M', 300) }
+scala> { register(tryFutureFooBar04) ; work('M', 300) }
 F151.M142.F151.F151.M142.F151.F151.F151.M142.F151.F151.F151.M142.F151.fooKoM142.M142.
 M142.M142.M142.M142.
 ```
@@ -693,7 +696,7 @@ By now we have defined `mkFutureTry`, `bnd` and `and`
 
 * They constitute _a declarative DSL for describing computations_ of type `Try`
 
-We have also defined `execute`
+We have also defined `register`
 
 * It constitutes _an imperative DSL for executing computations_ of type `Try`
 
@@ -741,16 +744,16 @@ tryFutureFooBar08: scala.concurrent.Future[String] = <lazy>
 We can now, so to speak, try to print `fooOkbarOk` in an asynchronous way
 
 ``` scala
-scala> { execute(tryFutureFooBar05) ; work('W', 150) }
+scala> { register(tryFutureFooBar05) ; work('W', 150) }
 B149.F154.W142.B149.B149.F154.B149.W142.F154.B149.B149.F154.B149.W142.B149.F154.B149.
 W142.B149.F154.F154.W142.F154.W142.F154.W142.F154.fooOkbarOkW142.W142.W142.
-scala> { execute(tryFutureFooBar06) ; work('W', 150) }
+scala> { register(tryFutureFooBar06) ; work('W', 150) }
 B154.F155.W142.B154.B154.F155.B154.W142.F155.B154.B154.F155.W142.B154.B154.F155.B154.
 W142.B154.F155.W142.F155.F155.W142.F155.W142.F155.fooKoW142.W142.W142.
-scala> { execute(tryFutureFooBar07) ; work('W', 150) }
+scala> { register(tryFutureFooBar07) ; work('W', 150) }
 B154.F149.W142.B154.B154.F149.B154.W142.F149.B154.B154.F149.W142.B154.B154.F149.B154
 .W142.B154.F149.W142.F149.F149.W142.F149.W142.F149.barKoW142.W142.W142.
-scala> { execute(tryFutureFooBar08) ; work('W', 150) }
+scala> { register(tryFutureFooBar08) ; work('W', 150) }
 B149.F155.W142.B149.B149.F155.B149.W142.F155.B149.B149.F155.W142.B149.B149.F155.B149.
 W142.B149.F155.W142.F155.F155.W142.F155.W142.F155.barKo and fooKoW142.W142.W142.
 ```
@@ -802,16 +805,16 @@ tryFutureFooBar12: scala.concurrent.Future[String] = <lazy>
 We can now, again, so to speak, try to print `fooOkbarOk` in an asynchronous way
 
 ``` scala
-scala> { execute(tryFutureFooBar09) ; work('W', 150) }
+scala> { register(tryFutureFooBar09) ; work('W', 150) }
 B155.F157.W142.F157.B155.F157.F157.W142.B155.F157.F157.B155.W142.F157.F157.B155.F157.
 W142.F157.B155.B155.W142.B155.W142.B155.B155.W142.fooOkbarOkW142.W142.W142.
-scala> { execute(tryFutureFooBar10) ; work('W', 150) }
+scala> { register(tryFutureFooBar10) ; work('W', 150) }
 B155.F159.W142.F159.B155.F159.W142.F159.B155.F159.F159.B155.W142.F159.F159.B155.F159.
 W142.F159.B155.B155.W142.B155.W142.B155.W142.B155.fooKoW142.W142.W142.
-scala> { execute(tryFutureFooBar11) ; work('W', 150) }
+scala> { register(tryFutureFooBar11) ; work('W', 150) }
 B155.F158.W142.F158.B155.F158.F158.W142.B155.F158.F158.B155.W142.F158.F158.B155.F158.
 W142.F158.B155.B155.W142.B155.W142.B155.W142.B155.barKoW142.W142.W142.
-scala> { execute(tryFutureFooBar12) ; work('W', 150) }
+scala> { register(tryFutureFooBar12) ; work('W', 150) }
 B155.F158.W142.F158.B155.F158.W142.F158.B155.F158.F158.B155.W142.F158.F158.B155.F158.
 W142.F158.B155.W142.B155.B155.W142.B155.W142.B155.barKo and fooKoW142.W142.W142.
 ```
