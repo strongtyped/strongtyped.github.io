@@ -665,9 +665,10 @@ and, as such, the <em>bi-dual</em> of a <code>Try[Z]</code> value.</p>
 <p>More precisely, in a way, <code>Future[Z]</code> is the same as <code>Callback[Z] =&gt; Unit</code>,
 which is the same as <code>(Try[Z] =&gt; Unit) =&gt; Unit</code>.</p>
 
-<p>This <em>bi-duality</em> turns out to transform synchronous computations into asynchronous ones.</p>
+<p>This <em>bi-duality</em> turns out to transform synchronous <code>Try</code> computations
+into asynchronous <code>Future</code> computations.</p>
 
-<h2>Marerializing (failure and) latency using <code>mkFuture</code></h2>
+<h2>Materializing (failure and) latency using <code>mkFuture</code></h2>
 
 <p>A first step towards dealing with (failure and) latency is to write,
 once and for all, code that <em>materializes (failure and) latency at compile time</em></p>
@@ -695,17 +696,34 @@ once and for all, code that <em>materializes (failure and) latency at compile ti
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The code above uses <code>Promise[Z]</code> in its implementation.</p>
+<p>The code above uses the <code>Promise[Z]</code> class in its implementation.</p>
 
 <p>You do not need to fully understand the <em>definition</em> of <code>mkFuture</code>.
 Think of it as the <em>dual</em> of <em>fulfilling a promise</em> in a separate thead,
 and returning that promise as a future.</p>
 
+<p>In a way a <code>Promise[Z]</code> is both a <code>Callback[-Z]</code>,
+since it has a method <code>complete</code> that has a parameter of type <code>Try[Z]</code>,
+and a <code>Future[+Z]</code>,
+since it has a variable <code>future</code> of type <code>Future[Z]</code>.</p>
+
+<p>A promise is something that</p>
+
+<ul>
+<li>can be fulfilled (written) only once, in a thread safe way</li>
+<li>can be pushed (and read) many times.</li>
+</ul>
+
+
+<p>It is possible, and often useful, to define futures directly in terms of promises.
+This blog post does not go into details.</p>
+
 <p>This definition of computations in terms of <code>mkFuture</code> is, in a way,
 more complex than needed. For the moment, we are dealing
 with reactive computations with <em>one</em> value.
 Reactive computations with <em>many</em> values will be defined
-in the next blog post a similar way. We want to emphasize this analogy.</p>
+in the next blog post a in similar way.
+We want to emphasize this analogy.</p>
 
 <p>When considering <code>mkFuture</code> as the <em>only</em> way to
 make a future, in a way, <code>Future[Z]</code> becomes the same as <code>Callback[Z] =&gt; Unit</code>.</p>
@@ -741,16 +759,28 @@ that is equivalent to <code>register</code>. The definition of <code>register</c
 </ul>
 
 
-<p>Here is an example</p>
+<p>Not surprising, a computation of type <code>Try</code> can be transformed to a computation
+of type <code>Future</code> using this idea</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkFutureTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">try2future</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
 </span><span class='line'>    <span class="n">mkFuture</span> <span class="o">{</span> <span class="n">cz</span> <span class="k">=&gt;</span>
-</span><span class='line'>      <span class="n">cz</span><span class="o">(</span><span class="n">mkTry</span><span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
+</span><span class='line'>      <span class="n">cz</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
 </span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>try2future</code> code makes use of a <em>call by name</em> parameter <code>tz</code>.</p>
+
+<p>The example below illustrates how to use <code>try2future</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkFutureTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">try2future</span><span class="o">(</span><span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -800,7 +830,7 @@ pushed to it</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The <code>execute</code> function for computations of type <code>Try</code> could be naturally reused.</p>
+<p>The <code>execute</code> function for computations of type <code>Try</code> could naturally be reused.</p>
 
 <p>Below, the two computations of type <code>Future</code> are executed using <code>execute</code></p>
 
@@ -1303,6 +1333,8 @@ the <code>block</code> using <code>"bar"</code>.</p>
           <a class="pull-left" href="/blog/2014/05/11/functional-programming-in-scala/" title="Previous Post: Functional Programming in Scala">&laquo; Previous: Functional Programming in Scala</a>
         
 
+        
+          <a class="pull-right" href="/blog/2014/05/14/reactive-programming-notification-observable/" title="Next Post: Reactive Programming: Notification versus Observable">Next: Reactive Programming: Notification versus Observable &raquo;</a>
         
       </div>
     </div>

@@ -4,7 +4,7 @@
   <title><![CDATA[Strong[Typed]]]></title>
   <link href="http://www.strongtyped.io/atom.xml" rel="self"/>
   <link href="http://www.strongtyped.io/"/>
-  <updated>2014-05-13T09:45:38+02:00</updated>
+  <updated>2014-05-14T13:44:40+02:00</updated>
   <id>http://www.strongtyped.io/</id>
   <author>
     <name><![CDATA[StrongTyped.io]]></name>
@@ -12,6 +12,725 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Reactive Programming: Notification Versus Observable]]></title>
+    <link href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable/"/>
+    <updated>2014-05-14T08:25:00+02:00</updated>
+    <id>http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable</id>
+    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
+
+<p>This is a second of two blog posts of about <em>Reactive Programming in Scala</em>.
+The first blog post about <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
+covered <em>reactive programs resulting in one value</em>.
+This second blog post covers <em>reactive programs resulting in many (zero or more) values</em>.</p>
+
+<p><strong>Remark:</strong>
+The types that are used in this blog post exist in the
+<a href="https://github.com/Netflix/RxJava/tree/master/language-adaptors/rxjava-scala">Scala Adaptor for RxJava</a> library.
+We refer to this library as the RxScala library.
+In contrast with the previous blog post, this blog post puts less emphasis on how
+to <em>define</em> computations. It puts more emphasis on how to <em>use</em> computations.</p>
+
+<!-- more -->
+
+
+<h2>The <code>Notification</code> type</h2>
+
+<p>The <code>Notification</code> type plays a role similar to the <code>Try</code> type, but
+it is not considered as a <em>computation</em> type (although it could be).
+Just like <code>Try</code> is a type that is similar to <code>Option</code>,
+<code>Notification</code> is a type that is similar to <code>Iterable</code>
+(but they both also somehow deal with failure).</p>
+
+<p>The <code>Notification</code> trait represents a value that is
+a <em>next</em> value, an <em>error value</em> or a <em>marker value</em>
+indicating that there are no more values.
+An instance of <code>Notification[Z]</code> is
+an instance of <code>OnNext[Z]</code> holding a value of type <code>Z</code>,
+an instance of <code>OnError[Z]</code> holding an error of type <code>Throwable</code>
+or an instance of <code>OnCompleted[Z]</code> holding no value at all.</p>
+
+<p>Code that makes use a value <code>nz</code> of type <code>Notification[Z]</code>,
+typically, makes use of a <code>match</code> on <code>nz</code>, which, you can think of as code that</p>
+
+<ul>
+<li>in a synchronous (blocking) way, <em>pulls</em> a
+next value, error value or marker non-value
+out of <code>nz</code>.</li>
+</ul>
+
+
+<p>In fact, this blog post is rarely uses notifications directly in this way.
+Much in the spirit of reactive programming,
+and as the names of the classes extending <code>Notification</code> suggest,
+notifications values are at their best when used as values that
+are <em>pushed</em> rather than <em>pulled</em>.</p>
+
+<p>Notifications values can, just as computations of type <code>Try</code>, be materialized.
+This blog post does not go into details.</p>
+
+<h2>Computations of type <code>Observable</code></h2>
+
+<p>A value of type <code>Notification[Z]</code> that is defined as a <code>def</code>
+is essentially the same as a value of type <code>Unit =&gt; Notification[Z]</code>.
+The <em>dual</em> of such a value, obtained by reversing the arrow <code>=&gt;</code>,
+is a value of type <code>Notification[Z] =&gt; Unit</code>.
+This dual is, in a way, the same as a value of type <code>Observer[Z]</code>
+since the <code>Observer[-Z]</code> trait of RxScala has three methods</p>
+
+<ul>
+<li><code>def onNext(value: Z): Unit</code></li>
+<li><code>def onError(error: Throwable): Unit</code></li>
+<li><code>def onCompleted(): Unit</code></li>
+</ul>
+
+
+<p>In a way (as illustrated in the following section)
+an <code>Observable[Z]</code> value is the <em>dual</em> of an <code>Observer[Z]</code> value,
+and, as such, the <em>bi-dual</em> of a <code>Notification[Z]</code> value.</p>
+
+<p>More precisely, in a way, <code>Observable[Z]</code> is the same as <code>Observer[Z] =&gt; Unit</code>,
+which, in a way, is the same as <code>(Notification[Z] =&gt; Unit) =&gt; Unit</code>.</p>
+
+<p>This <em>bi-duality</em> turns out to transform synchronous values of type <code>Notification</code>
+into asynchronous computations of type <code>Observable</code>.</p>
+
+<h2>Materializing failure and latency using <code>mkObservable</code></h2>
+
+<p>Just as the code in the <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future">previous blog post</a> did for <code>Future</code>
+the code below materializes failure and latency for <code>Observable</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">sz2u</span><span class="k">:</span> <span class="kt">Subscriber</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span><span class="o">(</span><span class="n">sz2u</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The RxScala library has an <code>apply</code> method in the <code>Observable</code> companion object
+that we use (in a trivial way) to define <code>mkObservable</code>.
+The definition of <code>mkObservable</code> is given for consistency reasons only
+(cfr. <code>mkTry</code> and <code>mkFuture</code> of the <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"> previous blog post</a>).</p>
+
+<p>We did not define <code>Subscriber[Z]</code> yet. Below is its definition</p>
+
+<ul>
+<li><code>trait Subscriber[-Z] extends Observer[Z] with Subscription</code></li>
+</ul>
+
+
+<p>So, a subscriber is just a special observer.</p>
+
+<p>When considering <code>mkObservable</code> as the <em>only</em> way to
+make an observable, in a way, <code>Observable[Z]</code> becomes the same as <code>Observer[Z] =&gt; Unit</code>.</p>
+
+<p>An observer can <em>subscribe</em> to an observable as shown by the following method of the <code>Observable[Z]</code> class below</p>
+
+<ul>
+<li><code>def subscribe(observer: Observer[T]): Subscription</code></li>
+</ul>
+
+
+<p>We did not define <code>Subscription</code> yet. It is a trait with the following methods</p>
+
+<ul>
+<li><code>def isUnsubscribed: Boolean</code></li>
+<li><code>def unsubscribe(): Unit</code></li>
+</ul>
+
+
+<p>The main reason why <em>subscriptions</em> exist is because observables
+push <em>many</em> values to subscribed observers and there should be a way for subscribed observers to
+unsubscribe from a subscription so that no more values are pushed to them.</p>
+
+<p>It is important that you understand the <em>usage</em> of <code>mkObservable</code></p>
+
+<ul>
+<li>you can make an observable by defining what it <em>pushes</em> to subscribed observers</li>
+</ul>
+
+
+<p>Not surprising, a computation of type <code>Future</code> can be transformed to a computation
+of type <code>Observable</code> using this idea</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">future2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">fz</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">fz</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>          <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="n">sz</span><span class="o">.</span><span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>future2observable</code> code makes use of a call by name parameter <code>fz</code>.</p>
+
+<p>The example below illustrates how to use <code>future2observable</code> to transform a computation
+of type <code>Try</code> to a computation of type <code>Observable</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">try2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">future2observable</span><span class="o">(</span><span class="n">try2future</span><span class="o">(</span><span class="n">tz</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>try2future</code> function for computations of type <code>Try</code> could naturally be reused.</p>
+
+<p>The example below illustrates how to use <code>try2observable</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkObservableTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">try2observable</span><span class="o">(</span><span class="n">mkTry</span><span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>mkTry</code> function for computations of type <code>Try</code> could naturally be reused.</p>
+
+<p>The <code>mkObservableTry</code> code makes use of a <em>call by name</em> parameter <code>block</code>
+which you can think of as code that
+on the one hand, <em>can succeed</em> or <em>can fail</em> and,
+on the other hand, <em>can take some time to be evaluated</em>.</p>
+
+<p>There is one concept that we did not explain yet.
+In the <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future">previous blog post</a>
+the type <code>Promise[Z]</code> is used in the implementation of many methods.
+We also pounted out that it is a useful type on its own.
+There exists a corresponding concept that is formalized as</p>
+
+<ul>
+<li><code>trait Subject[-Z] extends Observer[-Z] with Observable[+Z]</code></li>
+</ul>
+
+
+<p>It is possible, and often useful, to define observables directly in terms of
+<em>various kinds of</em> subjects (<code>Subject</code> is a trait).
+This blog post does not go into details.</p>
+
+<p>How are computations of type <code>Future</code> described?</p>
+
+<h2>Describing Computations of type <code>Observable</code></h2>
+
+<p>Here are four computations of type <code>Observable</code> that are described using <code>future2observable</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">tryObservableFooBar05</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">future2observable</span><span class="o">(</span><span class="n">tryFutureFooBar05</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">tryObservableFooBar06</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">future2observable</span><span class="o">(</span><span class="n">tryFutureFooBar06</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">tryObservableFooBar07</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">future2observable</span><span class="o">(</span><span class="n">tryFutureFooBar07</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">tryObservableFooBar08</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">future2observable</span><span class="o">(</span><span class="n">tryFutureFooBar08</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">tryObservableFooBar05</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">tryObservableFooBar06</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">tryObservableFooBar07</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span><span class='line'><span class="n">tryObservableFooBar08</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The examples make use of computations of type <code>Future</code>
+from <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future">the previous blog post</a></p>
+
+<p>How are computations of type <code>Observable</code> <em>executed</em> once they are described?</p>
+
+<h2>Executing Computations of type <code>Observable</code></h2>
+
+<p>For the purpose of this series of blog posts,
+executing a computation of type <code>Observable</code> can be as simple as
+subscribing an observer that prints the values pushed to it, or
+prints the message of an error pushed to it, or
+prints an indication that no more more values are pushed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">subscribe</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Subscription</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">oz</span><span class="o">.</span><span class="n">subscribe</span><span class="o">(</span><span class="k">new</span> <span class="nc">Observer</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="n">print</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;$z&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">Throwable</span><span class="o">)</span> <span class="k">=</span> <span class="n">print</span><span class="o">(</span><span class="n">s</span><span class="s">&quot;${t.getMessage}&quot;</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onCompleted</span><span class="o">()</span> <span class="k">=</span> <span class="n">print</span><span class="o">(</span><span class="s">&quot;completed&quot;</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have called the method <code>subscribe</code> instead of <code>execute</code>
+because it returns a subscription that can be unsubscribed.</p>
+
+<p>Below, the four computations of type <code>Observable</code> are executed using <code>subscribe</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">tryObservableFooBar05</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">B54</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span><span class='line'><span class="n">F194</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">F194</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">fooOkbarOkcompletedW192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">tryObservableFooBar06</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">B54</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span>
+</span><span class='line'><span class="n">F196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F196</span><span class="o">.</span><span class="n">fooKoW192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">tryObservableFooBar07</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">B196</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">B196</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span><span class='line'><span class="n">B196</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F54</span><span class="o">.</span><span class="n">barKoW192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">tryObservableFooBar08</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">B54</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">B54</span><span class="o">.</span>
+</span><span class='line'><span class="n">F197</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">F197</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoW192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span><span class="n">W192</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Transforming futures, pushing one value,
+to (a special  kind of) observables, potentially pushing many (zero or more) values,
+is, of course, not the end of the story about observables.</p>
+
+<h2>More Computations of type <code>Observable</code></h2>
+
+<p>The simple observables defined below can serve as building blocks for defining more complex observables</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">zeroObservable</span><span class="o">()</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">mkObservable</span> <span class="o">{</span> <span class="n">sn</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">errorObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">Throwable</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">nextObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">completedObservable</span><span class="o">()</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span> <span class="o">{</span> <span class="n">sn</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">sn</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">oneObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Observable</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The meaning of the simple observables above is almost trivial:
+they push <em>nothing</em> resp. an <em>error</em> resp. a <em>value</em>, resp. a <em>completed marker</em> resp. a <em>value and a completed marker</em> to subscribed observers.</p>
+
+<p>The following method shows how to define observables that push many values.
+It uses a helper function <code>subscriber2observable</code> because directly subscribing
+the subscriber <code>sz</code> below to the observable <code>oz</code> below does not work:
+a new observer, wrapping the subscriber, needs to be subscribed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">subscriber2observer</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">sz</span><span class="k">:</span> <span class="kt">Subscriber</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="k">=</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nc">Observer</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">Throwable</span><span class="o">)</span> <span class="k">=</span> <span class="n">sz</span><span class="o">.</span><span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">onCompleted</span><span class="o">()</span> <span class="k">=</span> <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">ObservableOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">startingWith</span><span class="o">(</span><span class="n">zs</span><span class="k">:</span> <span class="kt">Z*</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>      <span class="nc">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">zs</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'>        <span class="n">oz</span><span class="o">.</span><span class="n">subscribe</span><span class="o">(</span><span class="n">subscriber2observer</span><span class="o">(</span><span class="n">sz</span><span class="o">))</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>First all <code>zs</code> are pushed to subscribed observers
+and after that the observable <code>oz</code> continues pushing
+values to them.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">oneObservable</span><span class="o">(</span><span class="mi">4</span><span class="o">).</span><span class="n">startingWith</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">))</span>
+</span><span class='line'><span class="mi">1234</span><span class="n">completed</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h2>Computations of type <code>Observable</code> of the RxScala library</h2>
+
+<p>There are various ways to define observables available in the RxScala library.</p>
+
+<p>Below is an example, using <code>from</code>, that
+can be used to transform any <em>iterable</em>, which is pull based,
+to an <em>observable</em>, which is push based</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneTwoThreeFour</span> <span class="k">=</span> <span class="n">from</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">))</span>
+</span><span class='line'><span class="n">oneTwoThreeFour</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can subscribe to it (ignoring the subscription)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">oneTwoThreeFour</span><span class="o">)</span> <span class="o">;</span> <span class="o">()</span> <span class="o">}</span>
+</span><span class='line'><span class="mi">1234</span><span class="n">completed</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This transformation from iterables to observables is not as trivial
+as it looks: at any moment subscribed observers should be able to
+unsubscribe.</p>
+
+<p>Below is an example, using <code>interval</code>, that defines
+a <em>ticker</em>  that is ticking every <code>100</code> milliseconds.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">ticker</span> <span class="k">=</span> <span class="n">interval</span><span class="o">(</span><span class="mi">100</span> <span class="n">millis</span><span class="o">)</span>
+</span><span class='line'><span class="n">ticker</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can subscribe to it and unsubscribe from it when
+you are not interested in receiving further ticks any more.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'> <span class="k">val</span> <span class="n">subscription</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">ticker</span><span class="o">)</span>
+</span><span class='line'> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">600</span><span class="o">)</span>
+</span><span class='line'> <span class="n">subscription</span><span class="o">.</span><span class="n">unsubscribe</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">012345</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So what about <code>bnd</code> and <code>and</code>?</p>
+
+<h2><code>flatten</code> is your friend</h2>
+
+<p>The story is somewhat different here and we do not go into all details.
+For observables, the method <code>bnd</code> below which is defined in terms of the RxScala
+library method <code>flatten</code>
+(which, <em>non-deterministically</em>, <em>merges observables of observables</em>)
+is all we need.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2oy</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">Observable</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="nc">Observable</span><span class="o">[</span><span class="kt">Observable</span><span class="o">[</span><span class="kt">Y</span><span class="o">]]</span> <span class="o">{</span> <span class="n">ooy</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="n">oz</span><span class="o">.</span><span class="n">subscribe</span><span class="o">(</span><span class="k">new</span> <span class="nc">Observer</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">ooy</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2oy</span><span class="o">)</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">Throwable</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">ooy</span><span class="o">.</span><span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onCompleted</span><span class="o">()</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">ooy</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">})</span>
+</span><span class='line'>  <span class="o">}</span> <span class="n">flatten</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To make things interesting from a merge point of view we define
+the following verbose version of <code>interval</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">verboseInterval</span><span class="o">(</span><span class="n">t0</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">n</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">interval</span><span class="o">(</span><span class="n">x</span><span class="o">*</span><span class="mi">100</span> <span class="n">millis</span><span class="o">).</span><span class="n">take</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">millis</span> <span class="k">=</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span> <span class="o">-</span> <span class="n">t0</span><span class="o">)</span> <span class="o">/</span> <span class="mf">1000.0</span>
+</span><span class='line'>      <span class="n">println</span><span class="o">(</span><span class="n">f</span><span class="s">&quot;at ${millis}%.3f interval($x) emits $y&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">nextObservable</span><span class="o">(</span><span class="n">y</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is an observable, this time defined as a <code>def</code>,
+to take the current time into account every time it is executed,
+that uses <code>bnd</code> to merge three intervals as they are pushed
+to subscribed observers</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="n">mergedIntervals</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">from</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">x</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">verboseInterval</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="mi">2</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">oneObservable</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">mergedIntervals</span><span class="k">:</span> <span class="o">(</span><span class="kt">t:</span> <span class="kt">Long</span><span class="o">)</span><span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is instructive to try to understand the output of executing the following computation</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'> <span class="n">subscribe</span><span class="o">(</span><span class="n">mergedIntervals</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">))</span>
+</span><span class='line'> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">3000</span><span class="o">)</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">at</span> <span class="mf">0.102</span><span class="k">:</span><span class="kt">interval</span><span class="o">(</span><span class="err">1</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">0</span>
+</span><span class='line'><span class="kt">at</span> <span class="err">0</span><span class="kt">.</span><span class="err">202</span><span class="kt">:interval</span><span class="o">(</span><span class="err">2</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">0</span>
+</span><span class='line'><span class="kt">at</span> <span class="err">0</span><span class="kt">.</span><span class="err">202</span><span class="kt">:interval</span><span class="o">(</span><span class="err">1</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">1</span>
+</span><span class='line'><span class="kt">at</span> <span class="err">0</span><span class="kt">.</span><span class="err">302</span><span class="kt">:interval</span><span class="o">(</span><span class="err">3</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">0</span>
+</span><span class='line'><span class="kt">at</span> <span class="err">0</span><span class="kt">.</span><span class="err">402</span><span class="kt">:interval</span><span class="o">(</span><span class="err">2</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">1</span>
+</span><span class='line'><span class="kt">at</span> <span class="err">0</span><span class="kt">.</span><span class="err">602</span><span class="kt">:interval</span><span class="o">(</span><span class="err">3</span><span class="o">)</span> <span class="kt">emits</span> <span class="err">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>An example: <code>scanning</code></h2>
+
+<p>We end with a common use case: <em>scanning observables</em>.
+For example:
+an observable that pushes <code>"1" "2" "3" "4" "5"</code>,
+when scanned using <code>add</code>, a swapped, curried version of <code>+</code>, becomes
+an observable that pushes <code>"1" "12" "123" "1234" "12345"</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'> <span class="k">def</span> <span class="n">scanning</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">y</span><span class="k">:</span> <span class="kt">Y</span><span class="o">)(</span><span class="n">z_2_y2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span> <span class="k">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>  <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>    <span class="k">var</span> <span class="n">accY</span> <span class="k">=</span> <span class="n">y</span>
+</span><span class='line'>    <span class="n">oz</span><span class="o">.</span><span class="n">subscribe</span><span class="o">(</span><span class="k">new</span> <span class="nc">Observer</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">accY</span> <span class="k">=</span> <span class="n">z_2_y2y</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">accY</span><span class="o">)</span> <span class="o">;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">accY</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">Throwable</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">sz</span><span class="o">.</span><span class="n">onError</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="k">override</span> <span class="k">def</span> <span class="n">onCompleted</span><span class="o">()</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">})</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We used a <code>var accY</code> as an accumulator. You may argue: how ugly!
+Well, in a way, using a <code>var</code> as an <em>internal implementation detail</em> is not ugly at all.
+Erik Meijer (the brain behind the Rx extensions of .NET, upon which RxJava
+and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an imperative hacker&rdquo;</em>.</p>
+
+<p>Here is a typical <code>scanning</code> example</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)(</span><span class="n">t</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">s</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">lazy</span> <span class="k">val</span> <span class="n">scannedObservable</span> <span class="k">=</span>
+</span><span class='line'> <span class="n">from</span><span class="o">(</span><span class="nc">List</span><span class="o">(</span><span class="s">&quot;1&quot;</span><span class="o">,</span> <span class="s">&quot;2&quot;</span><span class="o">,</span> <span class="s">&quot;3&quot;</span><span class="o">,</span> <span class="s">&quot;4&quot;</span><span class="o">,</span> <span class="s">&quot;5&quot;</span><span class="o">))</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">scanning</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)(</span><span class="n">add</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">add</span><span class="k">:</span> <span class="o">(</span><span class="kt">s:</span> <span class="kt">String</span><span class="o">)(</span><span class="kt">t:</span> <span class="kt">String</span><span class="o">)</span><span class="kt">String</span>
+</span><span class='line'><span class="n">scannedObservable</span><span class="k">:</span> <span class="kt">rx.lang.scala.Observable</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and here we run it</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">scannedObservable</span><span class="o">)</span> <span class="o">;</span> <span class="o">()</span> <span class="o">}</span>
+</span><span class='line'><span class="mi">121321432154321</span><span class="n">completed</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reactive Programming: Try Versus Future]]></title>
@@ -585,9 +1304,10 @@ and, as such, the <em>bi-dual</em> of a <code>Try[Z]</code> value.</p>
 <p>More precisely, in a way, <code>Future[Z]</code> is the same as <code>Callback[Z] =&gt; Unit</code>,
 which is the same as <code>(Try[Z] =&gt; Unit) =&gt; Unit</code>.</p>
 
-<p>This <em>bi-duality</em> turns out to transform synchronous computations into asynchronous ones.</p>
+<p>This <em>bi-duality</em> turns out to transform synchronous <code>Try</code> computations
+into asynchronous <code>Future</code> computations.</p>
 
-<h2>Marerializing (failure and) latency using <code>mkFuture</code></h2>
+<h2>Materializing (failure and) latency using <code>mkFuture</code></h2>
 
 <p>A first step towards dealing with (failure and) latency is to write,
 once and for all, code that <em>materializes (failure and) latency at compile time</em></p>
@@ -615,17 +1335,34 @@ once and for all, code that <em>materializes (failure and) latency at compile ti
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The code above uses <code>Promise[Z]</code> in its implementation.</p>
+<p>The code above uses the <code>Promise[Z]</code> class in its implementation.</p>
 
 <p>You do not need to fully understand the <em>definition</em> of <code>mkFuture</code>.
 Think of it as the <em>dual</em> of <em>fulfilling a promise</em> in a separate thead,
 and returning that promise as a future.</p>
 
+<p>In a way a <code>Promise[Z]</code> is both a <code>Callback[-Z]</code>,
+since it has a method <code>complete</code> that has a parameter of type <code>Try[Z]</code>,
+and a <code>Future[+Z]</code>,
+since it has a variable <code>future</code> of type <code>Future[Z]</code>.</p>
+
+<p>A promise is something that</p>
+
+<ul>
+<li>can be fulfilled (written) only once, in a thread safe way</li>
+<li>can be pushed (and read) many times.</li>
+</ul>
+
+
+<p>It is possible, and often useful, to define futures directly in terms of promises.
+This blog post does not go into details.</p>
+
 <p>This definition of computations in terms of <code>mkFuture</code> is, in a way,
 more complex than needed. For the moment, we are dealing
 with reactive computations with <em>one</em> value.
 Reactive computations with <em>many</em> values will be defined
-in the next blog post a similar way. We want to emphasize this analogy.</p>
+in the next blog post a in similar way.
+We want to emphasize this analogy.</p>
 
 <p>When considering <code>mkFuture</code> as the <em>only</em> way to
 make a future, in a way, <code>Future[Z]</code> becomes the same as <code>Callback[Z] =&gt; Unit</code>.</p>
@@ -661,16 +1398,28 @@ that is equivalent to <code>register</code>. The definition of <code>register</c
 </ul>
 
 
-<p>Here is an example</p>
+<p>Not surprising, a computation of type <code>Try</code> can be transformed to a computation
+of type <code>Future</code> using this idea</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkFutureTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">try2future</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
 </span><span class='line'>    <span class="n">mkFuture</span> <span class="o">{</span> <span class="n">cz</span> <span class="k">=&gt;</span>
-</span><span class='line'>      <span class="n">cz</span><span class="o">(</span><span class="n">mkTry</span><span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
+</span><span class='line'>      <span class="n">cz</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
 </span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <code>try2future</code> code makes use of a <em>call by name</em> parameter <code>tz</code>.</p>
+
+<p>The example below illustrates how to use <code>try2future</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkFutureTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">try2future</span><span class="o">(</span><span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -720,7 +1469,7 @@ pushed to it</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The <code>execute</code> function for computations of type <code>Try</code> could be naturally reused.</p>
+<p>The <code>execute</code> function for computations of type <code>Try</code> could naturally be reused.</p>
 
 <p>Below, the two computations of type <code>Future</code> are executed using <code>execute</code></p>
 
