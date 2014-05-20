@@ -191,7 +191,7 @@ that schedules the code
 * `if(iz.hasNext) sz.onNext(iz.next()) else sz.onCompleted()`
 
 to run for the first time after a delay of a duration `delay`,
-and to continue running after delays of duration `delay + count * period`
+and to also continue running after delays of duration `delay + count * period`
 
 ``` scala
   private def iterator2observable[Z]
