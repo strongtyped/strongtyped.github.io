@@ -6,7 +6,7 @@ author: Luc Duponcheel
 comments: true
 ---
 
-This is a first of two blog posts of about _Reactive Programming in Scala_.
+This is a first of two blog posts about _Reactive Programming in Scala_.
 The blog post about [_Functional Programming in Scala_](/blog/2014/05/11/functional-programming-in-scala)
 introduced _pure computations resulting in exactly one value_.
 Reactive programming deals, in a functional way,
@@ -81,9 +81,8 @@ _materializes failure at compile time_
 The `mkTry` code makes use of a _call by name_ parameter `block`
 which you can think of as code that _can succeed_ or _can fail_.
 
-The standard Scala library already has an `apply` method in the `Try` companion
-object that is equivalent to `mkTry`. The definition of `mkTry` is given for
-didactical reasons only.
+The `Try` companion object of the standard Scala library already has an `apply` method
+that is equivalent to `mkTry`. The definition of `mkTry` is given for didactical reasons only.
 
 How are computations of type `Try` _described_?
 
@@ -470,7 +469,7 @@ A callback can be _registered_ to a future as shown below
     // ...
 ``` 
 
-The standard Scala library already has an `onComplete` method in the `Future` class
+The `Future` class of the standard Scala library already has an `onComplete` method 
 that is equivalent to `register`. The definition of `register` is given for didactical reasons only.
 
 It is important that you understand the _usage_ of `mkFuture`

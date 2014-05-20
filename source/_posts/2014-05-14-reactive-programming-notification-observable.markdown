@@ -8,7 +8,7 @@ comments: true
 
 [home](/)
 
-This is a second of two blog posts of about _Reactive Programming in Scala_.
+This is a second of two blog posts about _Reactive Programming in Scala_.
 The first blog post about [_Reactive Programming: Try versus Future_](/blog/2014/05/11/reactive-programming-try-future)
 covered _reactive programs resulting in one value_.
 This second blog post covers _reactive programs resulting in many (zero or more) values_.
@@ -90,7 +90,7 @@ the code below materializes failure and latency for `Observable`
     Observable(sz2u)
 ```
 
-The RxScala library has an `apply` method in the `Observable` companion object
+The `Observable` companion object of the RxScala library has an `apply` method 
 that we use (in a trivial way) to define `mkObservable`.
 The definition of `mkObservable` is given for consistency reasons only
 (cfr. `mkTry` and `mkFuture` of the [ previous blog post](/blog/2014/05/11/reactive-programming-try-future)).
