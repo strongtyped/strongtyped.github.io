@@ -4,7 +4,7 @@
   <title><![CDATA[Strong[Typed]]]></title>
   <link href="http://www.strongtyped.io/atom.xml" rel="self"/>
   <link href="http://www.strongtyped.io/"/>
-  <updated>2014-05-14T13:44:40+02:00</updated>
+  <updated>2014-05-25T22:23:50+02:00</updated>
   <id>http://www.strongtyped.io/</id>
   <author>
     <name><![CDATA[StrongTyped.io]]></name>
@@ -14,13 +14,1125 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Macros: Case Class Related Macros]]></title>
+    <link href="http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/"/>
+    <updated>2014-05-23T09:00:00+02:00</updated>
+    <id>http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros</id>
+    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
+
+<p>This is a first blog post about <em>Writing Macros in Scala</em>.
+This blog post covers two interesting pairs of macros dealing with <em>case classes</em>.
+The macros of the first pair translate <em>case classes to tuples</em>, and <em>tuples to case classes</em>.
+The macros of the second pair translate <em>case classes to maps</em>, and <em>maps to case classes</em>.</p>
+
+<p><strong>Remark:</strong>
+The macros presented in this blog can be found elsewhere on the internet.
+We tried to reuse as much code as possible for both pairs of macros using a <code>Common</code> singleton object. Moreover, we end by adding a bit of extra code of our own as well.</p>
+
+<!-- more -->
+
+
+<h2>Case classes and Tuples</h2>
+
+<p>The tranformations
+from case classes <code>Z</code> to tuples <code>T</code>
+and
+from tuples <code>T</code> to case classes <code>Z</code>
+can be formalized as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">trait</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">trait</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>The <code>toTuple</code> and <code>fromTuple</code> functions</h2>
+
+<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code>ToTuple[Z, T]</code> and <code>FromTuple[Z, T]</code>.
+Assuming the existence of such macros, it is also convenient to define functions
+<code>toTuple</code> and <code>fromTuple</code> that  <code>implicitly</code> make use of them</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">toTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">ToTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">ToTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">FromTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">FromTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The definitions above make use of type constructors <code>ToTuple_</code> resp. <code>FromTuple_</code>,
+having <em>one type parameter</em>, that are obtained by <em>partially binding</em> the
+the type <code>T</code> to the second type parameter of the type constructors <code>ToTuple</code> resp. <code>FromTuple</code>,
+having <em>two type parameters</em>.</p>
+
+<h2>An example case class</h2>
+
+<p>Consider the case class</p>
+
+<ul>
+<li><code>case class Person(name: String, age: Int)</code></li>
+</ul>
+
+
+<p>The tuple class corresponding to this case class is</p>
+
+<ul>
+<li><code>(String, Int)</code></li>
+</ul>
+
+
+<p>Here is the code that a macro should generate to convert a <code>Person</code> instance
+to a <code>(String, Int)</code> instance</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">new</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is the code that a macro should generate to convert a <code>(String, Int)</code> instance
+to a <code>Person</code> instance</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">new</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="n">_1</span><span class="o">,</span> <span class="n">t</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, what is the information that we require at compile time
+for being able to generate this code?</p>
+
+<ul>
+<li>we require the string <code>"Person"</code></li>
+<li>we require the strings <code>"String"</code> and <code>"Int"</code></li>
+<li>we require the strings <code>"name"</code> and <code>"age"</code></li>
+<li>we require the number <code>2</code> to generate the strings <code>"1"</code> and <code>"2"</code></li>
+</ul>
+
+
+<p>The last requirement is not really needed if we replace the first three
+requirements above by</p>
+
+<ul>
+<li>we require the string <code>"Person"</code></li>
+<li>we require the list of strings containing <code>"String"</code> and <code>"Int"</code></li>
+<li>we require the list of strings containing <code>"name"</code> and <code>"age"</code></li>
+</ul>
+
+
+<p>because the lists above have size <code>2</code>.</p>
+
+<p>So how can we obtain all those required strings?</p>
+
+<h2>The <code>getFieldNamesAndTypes</code> method</h2>
+
+<p>The following code is all we need to obtain the required strings</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">trait</span> <span class="nc">Common</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)(</span><span class="n">tpe</span><span class="k">:</span> <span class="kt">c.universe.Type</span><span class="o">)</span><span class="k">:</span>
+</span><span class='line'>      <span class="kt">Iterable</span><span class="o">[(</span><span class="kt">c.universe.Name</span>, <span class="kt">c.universe.Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">object</span> <span class="nc">CaseField</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">trmSym</span><span class="k">:</span> <span class="kt">TermSymbol</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[(</span><span class="kt">Name</span>, <span class="kt">Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">isVal</span> <span class="o">&amp;&amp;</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">isCaseAccessor</span><span class="o">)</span>
+</span><span class='line'>             <span class="nc">Some</span><span class="o">((</span><span class="n">newTermName</span><span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">toString</span><span class="o">.</span><span class="n">trim</span><span class="o">),</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">typeSignature</span><span class="o">))</span>
+</span><span class='line'>          <span class="k">else</span>
+</span><span class='line'>            <span class="nc">None</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">tpe</span><span class="o">.</span><span class="n">declarations</span><span class="o">.</span><span class="n">collect</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nc">CaseField</span><span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The code above has a <code>Context</code> parameter <code>c</code>, using which we can obtain all
+the types we need using <code>import c.universe._</code>.</p>
+
+<p>The only information available to start generating code from is <code>tpe</code>, having type <code>Type</code>.
+The <code>object CaseField</code>&rsquo;s <code>unapply</code> method can be used to<em> extract</em> the
+information that we need from the <em>declarations</em> of <code>tpe</code>,
+using a <em>collection</em> that uses an appropriate <code>CaseField</code> pattern matching partial function.</p>
+
+<p>Maybe, by looking at the code, you may wonder why it uses
+the somewhat complex expression <code>newTermName(trmSym.name.toString.trim)</code> instead
+of the much simpler expression <code>trmSym.name</code>.
+Writing macros is still somewhat of a <em>black art</em>.
+It turns out that using <code>trmSym.name</code> would result in strings
+<code>"name "</code> and <code>"age "</code>, with an extra blank at the end,
+and we can get rid of that extra blank using
+the more complex expression <code>newTermName(trmSym.name.toString.trim)</code>.</p>
+
+<h2>The <code>toTupleMacro</code> macro</h2>
+
+<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
+implicit <code>toTupleMacro</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">ToTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">toTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">fldSels</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="n">nmes</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">nme</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         z.$nme</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">toTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         new ToTuple[$tpe, (..$tpes)] {</span>
+</span><span class='line'><span class="s">           def toTuple(z: $tpe) = (..$fldSels)</span>
+</span><span class='line'><span class="s">         }</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">toTuple</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The macro, in this case one of type <code>ToTuple[Z, T]</code>, is <em>declared</em> using a <code>macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
+in this case of type <code>c.Expr[ToTuple[Z, T]]</code>.
+The method has an extra parameter of type <code>Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code>unzip</code>
+to turn a list of tuples into a tuple of lists. The <code>tpes</code> can be used as such in the
+quasi-quote expression that defines <code>toTuple</code>. The <code>nmes</code> can be used to define <em>field selections</em>
+<code>fldSels</code> that can be used in the quasi-quote expression that defines <code>toTuple</code>.
+The variable <code>toTuple</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[ToTuple[Z, T]]</code>
+type. Therefore we wrap <code>toTuple</code> into an expression of type <code>c.Expr[ToTuple[Z, T]]</code>.</p>
+
+<h2>The <code>fromTupleMacro</code> macro</h2>
+
+<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
+implicit <code>fromTupleMacro</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">FromTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">fromTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="n">prj</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">TermName</span> <span class="o">=</span> <span class="n">newTermName</span><span class="o">(</span><span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="n">i</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">prjs</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">nmes</span><span class="o">.</span><span class="n">toSeq</span><span class="o">.</span><span class="n">size</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         t.${prj(i)}</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">fromTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         new FromTuple[$tpe, (..$tpes)] {</span>
+</span><span class='line'><span class="s">           def fromTuple(t: (..$tpes)) = ${tpeSym}(..$prjs)</span>
+</span><span class='line'><span class="s">         }</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">fromTuple</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The macro, in this case one of type <code>FromTuple[Z, T]</code>,  is <em>declared</em> using a <code>macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
+in this case of type <code>c.Expr[FromTuple[Z, T]]</code>.
+The method has an extra parameter of type <code>Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code>unzip</code>
+to turn a list of tuples into a tuple of lists. The <code>tpes</code> can be used as such in the
+quasi-quote expression that defines <code>fromTuple</code>. The <code>nmes</code> can be used to define <em>projections</em>
+<code>prjs</code> that can be used in the quasi-quote expression that defines <code>fromTuple</code>.
+We also need <code>tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
+The variable <code>fromTuple</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[FromTuple[Z, T]]</code>
+type. Therefore we wrap <code>fromTuple</code> into an expression of type <code>c.Expr[FromTuple[Z, T]]</code>.</p>
+
+<p>Here is an example</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">toTuple</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]((</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>printing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</span><span class='line'><span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Case classes and Maps</h2>
+
+<p>The tranformations
+from case classes <code>Z</code> to maps <code>Map[String, Any]</code>
+and
+from maps <code>Map[String, Any]</code> to case classes <code>Z</code>
+can be formalized as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">type</span> <span class="kt">M</span> <span class="o">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">trait</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">trait</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>The <code>store</code> and <code>load</code> functions</h2>
+
+<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code>Store[Z]</code> and <code>Load[Z]</code>.
+Assuming the existence of such macros, it is also convenient to define functions
+<code>store</code> and <code>load</code> that <code>implicitly</code> make use of them</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">store</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span><span class="o">](</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
+</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>An example case class</h2>
+
+<p>Consider the case class</p>
+
+<ul>
+<li><code>case class Person(name: String, age: Int)</code></li>
+</ul>
+
+
+<p>Here is the code that a macro should generate to convert a <code>Person</code> instance
+to an <code>M</code> instance</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
+</span><span class='line'>      <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is the code that a macro should generate to convert an <code>M</code> instance
+to a <code>Person</code> instance</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Person</span> <span class="o">=</span>
+</span><span class='line'>      <span class="nc">Person</span><span class="o">(</span><span class="n">m</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">m</span><span class="o">(</span><span class="s">&quot;age&quot;</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The information that we require at compile time
+for being able to generate this code is exactly the same
+as when converting from and to tuples, so we can reuse
+the <code>getFieldNamesAndTypes</code> method.</p>
+
+<h2>The <code>storeMacro</code> macro</h2>
+
+<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
+implicit <code>storeMacro</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">Store</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">storeMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">mpgs</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Apply</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span><span class='line'>            <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">            ${nme.decoded} -&gt; z.${nme}</span>
+</span><span class='line'><span class="s">            &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">store</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         new Store[$tpe] {</span>
+</span><span class='line'><span class="s">           def store(z: $tpe): M =</span>
+</span><span class='line'><span class="s">             Map(..$mpgs)</span>
+</span><span class='line'><span class="s">         }</span>
+</span><span class='line'><span class="s">         &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">store</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The macro, in this case one of type <code>Store[Z]</code>, is <em>declared</em> using a <code>macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
+in this case of type <code>c.Expr[Store[Z]]</code>.
+The method has an extra parameter of type <code>Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code.
+<code>getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>mappings</em>
+<code>mpgs</code> that can be used in the quasi-quote expression that defines <code>store</code>.
+The mappings use the field names in two ways: with and without double-quotes.
+The variable <code>store</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[Store[Z]]</code>
+type. Therefore we wrap <code>store</code> into an expression of type <code>c.Expr[Store[Z]]</code>.</p>
+
+<h2>The <code>loadMacro</code> macro</h2>
+
+<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
+implicit <code>loadMacro</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">Load</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">loadMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span>
+</span><span class='line'>      <span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Tree</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>          <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+</span><span class='line'>            <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">            m(${nme.decoded}).asInstanceOf[${tpe}]</span>
+</span><span class='line'><span class="s">            &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">val</span> <span class="n">load</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">         new Load[$tpe] {</span>
+</span><span class='line'><span class="s">           def load(m: M): $tpe =</span>
+</span><span class='line'><span class="s">             ${tpeSym}(..$args)</span>
+</span><span class='line'><span class="s">         }</span>
+</span><span class='line'><span class="s">         &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">load</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The macro, in this case one of type <code>Load[Z]</code>, is <em>declared</em> using a <code>macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
+in this case of type <code>c.Expr[Load[Z]]</code>.
+The method has an extra parameter of type <code>Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code.
+<code>getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>case class constructor arguments</em>
+<code>args</code> that can be used in the quasi-quote expression that defines <code>load</code>.
+We also need <code>tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
+The variable <code>load</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[Load[Z]]</code>
+type. Therefore we wrap <code>load</code> into an expression of type <code>c.Expr[Load[Z]]</code>.</p>
+
+<p>Here is an example</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">store</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">load</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)](</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>printing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+</span><span class='line'><span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Loading and Storing other types</h2>
+
+<p>Now that we know how to load and store case class instances, what about other classes?
+If there exist <em>bidirectional mappings</em> from a class to a case class, then we can use
+those mappings to load and store instances of that class.
+The way those bidirectional mappings can be used is formalized as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">lift</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">lz</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span> <span class="k">=</span> <span class="n">z2y</span><span class="o">(</span><span class="n">lz</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">))</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">tfil</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">sy</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]()</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">store</span><span class="o">(</span><span class="n">z2y</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">lift2load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">lift</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]])</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">tfil2store</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">tfil</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We have called the first function <code>lift</code> and the second one <code>tfil</code> to emphasize that
+<code>lift</code> is <em>covariant</em> (the arrow direction is preserved) and
+<code>tfil</code> <em>contravariant</em> (the arrow direction has changed).</p>
+
+<p>Here is a first example</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">class</span> <span class="nc">Customer</span><span class="o">(</span><span class="k">val</span> <span class="n">named</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="k">val</span> <span class="n">aged</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">person2customer</span><span class="o">(</span><span class="n">person</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">person</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="n">customer2person</span><span class="o">(</span><span class="n">customer</span><span class="k">:</span> <span class="kt">Customer</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">customer</span><span class="o">.</span><span class="n">named</span><span class="o">,</span> <span class="n">customer</span><span class="o">.</span><span class="n">aged</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">person2customer</span><span class="o">).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">customer2person</span><span class="o">).</span><span class="n">store</span><span class="o">(</span><span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>printing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">Customer</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</span><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is a second example,
+making use of the bidirectional mappings from case classes to tuples</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">toTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">store</span><span class="o">((</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>printing</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</span><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reactive Programming: Schedulers and Workers]]></title>
+    <link href="http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers/"/>
+    <updated>2014-05-20T09:52:00+02:00</updated>
+    <id>http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers</id>
+    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
+
+<p>This is a third blog post about <em>Reactive Programming in Scala</em>.
+The first two blog posts,
+<a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
+resp.
+<a href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+covered reactive programs resulting in <em>one value</em> resp. <em>many values</em>.
+This blog post covers <em>schedulers</em> and <em>workers</em>.
+They are used to transform <em>iterables</em> to <em>observables</em>.
+As mentioned in
+<a href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+the transformation from iterables to observables is not as trivial as it looks: at any moment subscribed observers should be able to unsubscribe.</p>
+
+<p><strong>Remark:</strong>
+The types that are used in this blog post exist in the
+<a href="https://github.com/Netflix/RxJava/tree/master/language-adaptors/rxjava-scala">Scala Adaptor for RxJava</a> library.
+We refer to this library as the RxScala library.
+In contrast with the previous two blog posts, this blog post deals with only one function: <code>iterable2observable</code>.
+Moreover, the <code>Observable</code> companion object of the RxScala library already has a <code>from</code> method, having an iterable parameter,
+that is equivalent to <code>iterable2observable</code>.
+Dedicating a separate blog post on the definition of <code>iterable2observable</code> is done for didactical reasons only.</p>
+
+<!-- more -->
+
+
+<h2>A first attempt: the <code>iterable2observable01</code> function</h2>
+
+<p>In the
+<a href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a> blog post
+we defined a function <code>mkObservable</code> with the following signature</p>
+
+<ul>
+<li><code>def mkObservable[Z](sz2u: Subscriber[Z] =&gt; Unit): Observable[Z]</code></li>
+</ul>
+
+
+<p>The function <code>mkObservable</code> can be used to define an observable by defining what it pushes to subscribed observers.
+Using <code>mkObservable</code> we can naturally define a function <code>iterable2observable01</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable01</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">iz</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>describe a computation <code>observable01</code> using <code>iterable2observable01</code>,
+and use the computation <code>observable01</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable01</span> <span class="k">=</span> <span class="n">iterable2observable01</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription01</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable01</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription01</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345678910completed</code> being printed.</p>
+
+<p>It looks as if <code>unsubscribe</code> does not really work.</p>
+
+<h2>A second attempt: the <code>iterable2observable02</code> function</h2>
+
+<p>Maybe we should run the code</p>
+
+<ul>
+<li><code>iz.foreach { z =&gt; sz.onNext(z) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>in a separate thread, so that we can unscubscribe from the main thread.</p>
+
+<p>Using <em>schedulers</em>, and <em>workers</em> that can be created using them,
+we can naturally define a function <code>iterable2observable02</code>
+that schedules the code above to run after a <em>delay</em> of duration <code>delay</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable02</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>   <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">iterator</span> <span class="k">=</span> <span class="n">iz</span><span class="o">.</span><span class="n">iterator</span>
+</span><span class='line'>     <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>       <span class="n">scheduler</span><span class="o">.</span><span class="n">createWorker</span><span class="o">.</span><span class="n">schedule</span><span class="o">({</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span><span class='line'>         <span class="n">iz</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'>          <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>       <span class="o">},</span> <span class="n">delay</span><span class="o">)</span>
+</span><span class='line'>     <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>describe a computation <code>observable02</code> using <code>iterable2observable02</code>,
+and use the computation <code>observable02</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable02</span> <span class="k">=</span> <span class="n">iterable2observable02</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription02</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable02</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription02</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">990</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in nothing being printed at all,</p>
+
+<p>or as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable02</span> <span class="k">=</span> <span class="n">iterable2observable02</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription02</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable02</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription02</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">1010</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345678910completed</code> being printed.</p>
+
+<p>Ok, we have some period of time during which we can unsubscribe,
+but, once the observable starts pushing we cannot unsubscribe any more.</p>
+
+<p>It looks as if <code>unsubscribe</code> still does not work.</p>
+
+<h2>A final attempt: the <code>iterable2observable</code> function</h2>
+
+<p>The <em>first</em> idea behind the <code>iterable2observable</code> function is to replace the iterative code</p>
+
+<ul>
+<li><code>iz.foreach { z =&gt; sz.onNext(z) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an <em>iterable</em>, or, equivalently, the iterative code</p>
+
+<ul>
+<li><code>while(iz.hasNext) { sz.onNext(iz.next()) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an <em>iterator</em>, by code</p>
+
+<ul>
+<li><code>if(iz.hasNext) sz.onNext(iz.next()) else sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an iterator, and, somehow, do the iteration steps ourselves.</p>
+
+<p>The <em>second</em> idea behind the <code>iterable2observable</code> function is to not only
+have a <em>delay</em> of a certain duration <em>before the first iteration step</em>, but to also
+have a <em>period</em> of a certain duration <em>between consecutive iteration steps</em>.</p>
+
+<p>The <em>third</em> idea behind the <code>iterable2observable</code> function is to work with a
+<em>multi assignment subscription</em> that is updated during every iteration step.</p>
+
+<p>The <code>iterativeSchedule</code> method below uses those three ideas</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">WorkerOps</span><span class="o">(</span><span class="n">worker</span><span class="k">:</span> <span class="kt">Worker</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">iterativeSchedule</span>
+</span><span class='line'>      <span class="o">(</span><span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">(</span><span class="n">action</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Subscription</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">multipleAssignmentSubscription</span> <span class="k">=</span> <span class="nc">MultipleAssignmentSubscription</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">lazy</span> <span class="k">val</span> <span class="n">recursiveAction</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=&gt;</span> <span class="nc">Unit</span> <span class="k">=</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">var</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="k">if</span><span class="o">(!</span><span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">isUnsubscribed</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>           <span class="n">action</span><span class="o">(())</span>
+</span><span class='line'>           <span class="n">count</span> <span class="k">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>           <span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">subscription</span> <span class="k">=</span>
+</span><span class='line'>             <span class="n">worker</span><span class="o">.</span><span class="n">schedule</span><span class="o">(</span><span class="n">recursiveAction</span><span class="o">,</span> <span class="n">delay</span> <span class="o">+</span> <span class="n">count</span> <span class="o">*</span> <span class="n">period</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">subscription</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">worker</span><span class="o">.</span><span class="n">schedule</span><span class="o">(</span><span class="n">recursiveAction</span><span class="o">,</span> <span class="n">delay</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">multipleAssignmentSubscription</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We used a <code>var count</code> as a counter. You may argue: how ugly!
+Well, in a way, using a <code>var</code> as an <em>internal implementation detail</em> is not ugly at all.
+Erik Meijer (the brain behind the Rx extensions of .NET, upon which RxJava
+and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an imperative hacker&rdquo;</em>.</p>
+
+<p>We can now naturally define a function <code>iterable2observable</code>
+that schedules the code</p>
+
+<ul>
+<li><code>if(iz.hasNext) sz.onNext(iz.next()) else sz.onCompleted()</code></li>
+</ul>
+
+
+<p>to run for the first time after a delay of a duration <code>delay</code>,
+and to also continue running after delays of duration <code>delay + count * period</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">private</span> <span class="k">def</span> <span class="n">iterator2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>      <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">scheduler</span><span class="o">.</span><span class="n">createWorker</span><span class="o">.</span><span class="n">iterativeSchedule</span><span class="o">(</span><span class="n">delay</span><span class="o">,</span> <span class="n">period</span><span class="o">)</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="k">if</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">next</span><span class="o">())</span>
+</span><span class='line'>          <span class="k">else</span> <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">iterator2observable</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">iterator</span><span class="o">,</span> <span class="n">delay</span><span class="o">,</span> <span class="n">period</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can now describe a computation <code>observable</code> using <code>iterable2observable</code>,
+and use the computation <code>observable</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable</span> <span class="k">=</span> <span class="n">iterable2observable</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">0</span> <span class="n">second</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable</span><span class="o">)</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">4500</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345</code> being printed.</p>
+
+<h2>Infinite Observables</h2>
+
+<p>The code below also works with <em>infinite iterables</em> like the <code>nats</code> iterable below</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">nats</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Iterable</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">var</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">iterator</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">hasNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">true</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">i</span> <span class="k">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">i</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can now describe a computation <code>natsObservable</code> using <code>iterable2observable</code>
+and use the computation <code>natsObservable</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">natsObservable</span> <span class="k">=</span> <span class="n">iterable2observable</span><span class="o">(</span><span class="n">nats</span><span class="o">,</span> <span class="mi">0</span> <span class="n">second</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">natsSubscription</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">natsObservable</span><span class="o">)</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">4500</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">natsSubscription</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345</code> being printed</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Reactive Programming: Notification Versus Observable]]></title>
     <link href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable/"/>
     <updated>2014-05-14T08:25:00+02:00</updated>
     <id>http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable</id>
     <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
 
-<p>This is a second of two blog posts of about <em>Reactive Programming in Scala</em>.
+<p>This is a second of two blog posts about <em>Reactive Programming in Scala</em>.
 The first blog post about <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
 covered <em>reactive programs resulting in one value</em>.
 This second blog post covers <em>reactive programs resulting in many (zero or more) values</em>.</p>
@@ -108,7 +1220,7 @@ the code below materializes failure and latency for <code>Observable</code></p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The RxScala library has an <code>apply</code> method in the <code>Observable</code> companion object
+<p>The <code>Observable</code> companion object of the RxScala library has an <code>apply</code> method
 that we use (in a trivial way) to define <code>mkObservable</code>.
 The definition of <code>mkObservable</code> is given for consistency reasons only
 (cfr. <code>mkTry</code> and <code>mkFuture</code> of the <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"> previous blog post</a>).</p>
@@ -304,7 +1416,8 @@ prints an indication that no more more values are pushed.</p>
 
 
 <p>We have called the method <code>subscribe</code> instead of <code>execute</code>
-because it returns a subscription that can be unsubscribed.</p>
+because it corresponds to a <code>subscribe</code> method of <code>Observable</code> that,
+in this case , also returns a subscription that can be unsubscribed.</p>
 
 <p>Below, the four computations of type <code>Observable</code> are executed using <code>subscribe</code></p>
 
@@ -724,7 +1837,7 @@ and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">scannedObservable</span><span class="o">)</span> <span class="o">;</span> <span class="o">()</span> <span class="o">}</span>
-</span><span class='line'><span class="mi">121321432154321</span><span class="n">completed</span>
+</span><span class='line'><span class="mi">112123123412345</span><span class="n">completed</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -737,7 +1850,7 @@ and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an
     <link href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future/"/>
     <updated>2014-05-11T06:21:00+02:00</updated>
     <id>http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future</id>
-    <content type="html"><![CDATA[<p>This is a first of two blog posts of about <em>Reactive Programming in Scala</em>.
+    <content type="html"><![CDATA[<p>This is a first of two blog posts about <em>Reactive Programming in Scala</em>.
 The blog post about <a href="http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala"><em>Functional Programming in Scala</em></a>
 introduced <em>pure computations resulting in exactly one value</em>.
 Reactive programming deals, in a functional way,
@@ -820,9 +1933,8 @@ typically, makes use of a <code>match</code> on <code>tz</code>, which, you can 
 <p>The <code>mkTry</code> code makes use of a <em>call by name</em> parameter <code>block</code>
 which you can think of as code that <em>can succeed</em> or <em>can fail</em>.</p>
 
-<p>The standard Scala library already has an <code>apply</code> method in the <code>Try</code> companion
-object that is equivalent to <code>mkTry</code>. The definition of <code>mkTry</code> is given for
-didactical reasons only.</p>
+<p>The <code>Try</code> companion object of the standard Scala library already has an <code>apply</code> method
+that is equivalent to <code>mkTry</code>. The definition of <code>mkTry</code> is given for didactical reasons only.</p>
 
 <p>How are computations of type <code>Try</code> <em>described</em>?</p>
 
@@ -1388,7 +2500,7 @@ make a future, in a way, <code>Future[Z]</code> becomes the same as <code>Callba
 
 <p></p>
 
-<p>The standard Scala library already has an <code>onComplete</code> method in the <code>Future</code> class
+<p>The <code>Future</code> class of the standard Scala library already has an <code>onComplete</code> method
 that is equivalent to <code>register</code>. The definition of <code>register</code> is given for didactical reasons only.</p>
 
 <p>It is important that you understand the <em>usage</em> of <code>mkFuture</code></p>
@@ -1462,16 +2574,19 @@ pushed to it</p>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'> <span class="k">def</span> <span class="n">execute</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">fz</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'> <span class="k">def</span> <span class="n">register</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">fz</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
 </span><span class='line'>   <span class="n">fz</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span> <span class="n">tz</span> <span class="k">=&gt;</span>
 </span><span class='line'>     <span class="n">execute</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
 </span><span class='line'>   <span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>We have called the method <code>register</code> instead of <code>execute</code>
+because it corresponds to a <code>register</code> method of <code>Future</code></p>
+
 <p>The <code>execute</code> function for computations of type <code>Try</code> could naturally be reused.</p>
 
-<p>Below, the two computations of type <code>Future</code> are executed using <code>execute</code></p>
+<p>Below, the two computations of type <code>Future</code> are executed using <code>register</code></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1484,15 +2599,15 @@ pushed to it</p>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">fooOkM142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">M142</span><span class="o">.</span><span class="n">fooOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span>
 </span><span class='line'><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">M142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">scala</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -1554,7 +2669,7 @@ pushed to it</p>
 </ul>
 
 
-<p>We have also defined <code>execute</code></p>
+<p>We have also defined <code>register</code></p>
 
 <ul>
 <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code>Future</code></li>
@@ -1654,16 +2769,16 @@ pushed to it</p>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar01</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar01</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">fooOkbarOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar02</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar02</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">barKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar03</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar03</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar04</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar04</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;M</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span><span class='line'><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -1720,7 +2835,7 @@ you have more latency handling implementation flexibility for letting
 </ul>
 
 
-<p>We have also defined <code>execute</code></p>
+<p>We have also defined <code>register</code></p>
 
 <ul>
 <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code>Try</code></li>
@@ -1818,16 +2933,16 @@ you have more latency handling implementation flexibility for letting
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar05</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar05</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">fooOkbarOkW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar06</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar06</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar07</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar07</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span>
 </span><span class='line'><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">barKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar08</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar08</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -1927,16 +3042,16 @@ So what about the opposite?</p>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar09</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar09</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">fooOkbarOkW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar10</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar10</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar11</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar11</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">barKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFutureFooBar12</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar12</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="-Symbol">&#39;W</span><span class="err">&#39;</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
 </span><span class='line'><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span>
 </span><span class='line'><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
 </span></code></pre></td></tr></table></div></figure>

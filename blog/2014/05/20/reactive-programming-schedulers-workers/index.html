@@ -1,0 +1,561 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Reactive Programming: Schedulers and Workers - Strong[Typed]</title>
+  <meta name="author" content="StrongTyped.io">
+
+  
+  <meta name="description" content="Strong[Typed] blog Reactive Programming: Schedulers and Workers written May 20, 2014 in Posted by Luc Duponcheel home This is a third blog post &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Strong[Typed]" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-50926236-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Exo:400,500,600,500italic,600italic" rel="stylesheet" type="text/css">
+
+</head>
+
+<!-- _layouts/default.html -->
+  <body>
+
+    <!-- _layouts/post.html -->
+
+<div class="navbar">
+  <div class="navbar-fixed-top">
+      <div class="container">
+      <ul class="nav navbar-left">
+        <li>
+          <h2 class="strongtyped"><a href="/"><span class="strong">Strong<span><span class="typed">[Typed]</span></a></h2>
+        </li>
+      </ul>
+      <ul class="nav secondary-nav navbar-nav navbar-right">
+  <li><a id="blog-nav" href="/blog">blog</a></li>
+</ul>      
+    </div>
+  </div>
+</div>
+
+
+<article role="article" class="full-single-article">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1>Reactive Programming: Schedulers and Workers</h1>
+        <!-- post/metadata.html --> 
+<span class="meta">
+  written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-05-20T09:52:00+02:00" pubdate data-updated="true">May 20, 2014</time>  
+in 
+
+
+<br/>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
+
+</span>
+        <p><a href="/">home</a></p>
+
+<p>This is a third blog post about <em>Reactive Programming in Scala</em>.
+The first two blog posts,
+<a href="/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
+resp.
+<a href="/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+covered reactive programs resulting in <em>one value</em> resp. <em>many values</em>.
+This blog post covers <em>schedulers</em> and <em>workers</em>.
+They are used to transform <em>iterables</em> to <em>observables</em>.
+As mentioned in
+<a href="/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+the transformation from iterables to observables is not as trivial as it looks: at any moment subscribed observers should be able to unsubscribe.</p>
+
+<p><strong>Remark:</strong>
+The types that are used in this blog post exist in the
+<a href="https://github.com/Netflix/RxJava/tree/master/language-adaptors/rxjava-scala">Scala Adaptor for RxJava</a> library.
+We refer to this library as the RxScala library.
+In contrast with the previous two blog posts, this blog post deals with only one function: <code>iterable2observable</code>.
+Moreover, the <code>Observable</code> companion object of the RxScala library already has a <code>from</code> method, having an iterable parameter,
+that is equivalent to <code>iterable2observable</code>.
+Dedicating a separate blog post on the definition of <code>iterable2observable</code> is done for didactical reasons only.</p>
+
+<!-- more -->
+
+
+<h2>A first attempt: the <code>iterable2observable01</code> function</h2>
+
+<p>In the
+<a href="/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a> blog post
+we defined a function <code>mkObservable</code> with the following signature</p>
+
+<ul>
+<li><code>def mkObservable[Z](sz2u: Subscriber[Z] =&gt; Unit): Observable[Z]</code></li>
+</ul>
+
+
+<p>The function <code>mkObservable</code> can be used to define an observable by defining what it pushes to subscribed observers.
+Using <code>mkObservable</code> we can naturally define a function <code>iterable2observable01</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable01</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>      <span class="n">iz</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'>      <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>describe a computation <code>observable01</code> using <code>iterable2observable01</code>,
+and use the computation <code>observable01</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable01</span> <span class="k">=</span> <span class="n">iterable2observable01</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription01</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable01</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription01</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345678910completed</code> being printed.</p>
+
+<p>It looks as if <code>unsubscribe</code> does not really work.</p>
+
+<h2>A second attempt: the <code>iterable2observable02</code> function</h2>
+
+<p>Maybe we should run the code</p>
+
+<ul>
+<li><code>iz.foreach { z =&gt; sz.onNext(z) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>in a separate thread, so that we can unscubscribe from the main thread.</p>
+
+<p>Using <em>schedulers</em>, and <em>workers</em> that can be created using them,
+we can naturally define a function <code>iterable2observable02</code>
+that schedules the code above to run after a <em>delay</em> of duration <code>delay</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable02</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>   <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">iterator</span> <span class="k">=</span> <span class="n">iz</span><span class="o">.</span><span class="n">iterator</span>
+</span><span class='line'>     <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>       <span class="n">scheduler</span><span class="o">.</span><span class="n">createWorker</span><span class="o">.</span><span class="n">schedule</span><span class="o">({</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span><span class='line'>         <span class="n">iz</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="o">}</span>
+</span><span class='line'>          <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>       <span class="o">},</span> <span class="n">delay</span><span class="o">)</span>
+</span><span class='line'>     <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>describe a computation <code>observable02</code> using <code>iterable2observable02</code>,
+and use the computation <code>observable02</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable02</span> <span class="k">=</span> <span class="n">iterable2observable02</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription02</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable02</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription02</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">990</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in nothing being printed at all,</p>
+
+<p>or as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable02</span> <span class="k">=</span> <span class="n">iterable2observable02</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription02</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable02</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription02</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">1010</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345678910completed</code> being printed.</p>
+
+<p>Ok, we have some period of time during which we can unsubscribe,
+but, once the observable starts pushing we cannot unsubscribe any more.</p>
+
+<p>It looks as if <code>unsubscribe</code> still does not work.</p>
+
+<h2>A final attempt: the <code>iterable2observable</code> function</h2>
+
+<p>The <em>first</em> idea behind the <code>iterable2observable</code> function is to replace the iterative code</p>
+
+<ul>
+<li><code>iz.foreach { z =&gt; sz.onNext(z) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an <em>iterable</em>, or, equivalently, the iterative code</p>
+
+<ul>
+<li><code>while(iz.hasNext) { sz.onNext(iz.next()) } ; sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an <em>iterator</em>, by code</p>
+
+<ul>
+<li><code>if(iz.hasNext) sz.onNext(iz.next()) else sz.onCompleted()</code></li>
+</ul>
+
+
+<p>where <code>iz</code> is an iterator, and, somehow, do the iteration steps ourselves.</p>
+
+<p>The <em>second</em> idea behind the <code>iterable2observable</code> function is to not only
+have a <em>delay</em> of a certain duration <em>before the first iteration step</em>, but to also
+have a <em>period</em> of a certain duration <em>between consecutive iteration steps</em>.</p>
+
+<p>The <em>third</em> idea behind the <code>iterable2observable</code> function is to work with a
+<em>multi assignment subscription</em> that is updated during every iteration step.</p>
+
+<p>The <code>iterativeSchedule</code> method below uses those three ideas</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">WorkerOps</span><span class="o">(</span><span class="n">worker</span><span class="k">:</span> <span class="kt">Worker</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">iterativeSchedule</span>
+</span><span class='line'>      <span class="o">(</span><span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">(</span><span class="n">action</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span><span class="k">:</span> <span class="kt">Subscription</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">multipleAssignmentSubscription</span> <span class="k">=</span> <span class="nc">MultipleAssignmentSubscription</span><span class="o">();</span>
+</span><span class='line'>      <span class="k">lazy</span> <span class="k">val</span> <span class="n">recursiveAction</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=&gt;</span> <span class="nc">Unit</span> <span class="k">=</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">var</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="k">if</span><span class="o">(!</span><span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">isUnsubscribed</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>           <span class="n">action</span><span class="o">(())</span>
+</span><span class='line'>           <span class="n">count</span> <span class="k">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>           <span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">subscription</span> <span class="k">=</span>
+</span><span class='line'>             <span class="n">worker</span><span class="o">.</span><span class="n">schedule</span><span class="o">(</span><span class="n">recursiveAction</span><span class="o">,</span> <span class="n">delay</span> <span class="o">+</span> <span class="n">count</span> <span class="o">*</span> <span class="n">period</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>      <span class="n">multipleAssignmentSubscription</span><span class="o">.</span><span class="n">subscription</span> <span class="k">=</span>
+</span><span class='line'>        <span class="n">worker</span><span class="o">.</span><span class="n">schedule</span><span class="o">(</span><span class="n">recursiveAction</span><span class="o">,</span> <span class="n">delay</span><span class="o">)</span>
+</span><span class='line'>      <span class="n">multipleAssignmentSubscription</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We used a <code>var count</code> as a counter. You may argue: how ugly!
+Well, in a way, using a <code>var</code> as an <em>internal implementation detail</em> is not ugly at all.
+Erik Meijer (the brain behind the Rx extensions of .NET, upon which RxJava
+and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an imperative hacker&rdquo;</em>.</p>
+
+<p>We can now naturally define a function <code>iterable2observable</code>
+that schedules the code</p>
+
+<ul>
+<li><code>if(iz.hasNext) sz.onNext(iz.next()) else sz.onCompleted()</code></li>
+</ul>
+
+
+<p>to run for the first time after a delay of a duration <code>delay</code>,
+and to also continue running after delays of duration <code>delay + count * period</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">private</span> <span class="k">def</span> <span class="n">iterator2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>      <span class="n">mkObservable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span> <span class="n">sz</span> <span class="k">=&gt;</span>
+</span><span class='line'>        <span class="n">scheduler</span><span class="o">.</span><span class="n">createWorker</span><span class="o">.</span><span class="n">iterativeSchedule</span><span class="o">(</span><span class="n">delay</span><span class="o">,</span> <span class="n">period</span><span class="o">)</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span><span class='line'>          <span class="k">if</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">hasNext</span><span class="o">)</span> <span class="n">sz</span><span class="o">.</span><span class="n">onNext</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">next</span><span class="o">())</span>
+</span><span class='line'>          <span class="k">else</span> <span class="n">sz</span><span class="o">.</span><span class="n">onCompleted</span><span class="o">()</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">iterable2observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">iz</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Z</span><span class="o">],</span> <span class="n">delay</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">,</span> <span class="n">period</span><span class="k">:</span> <span class="kt">Duration</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">(</span><span class="k">implicit</span> <span class="n">scheduler</span><span class="k">:</span> <span class="kt">Scheduler</span><span class="o">)</span><span class="k">:</span> <span class="kt">Observable</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+</span><span class='line'>    <span class="n">iterator2observable</span><span class="o">(</span><span class="n">iz</span><span class="o">.</span><span class="n">iterator</span><span class="o">,</span> <span class="n">delay</span><span class="o">,</span> <span class="n">period</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can now describe a computation <code>observable</code> using <code>iterable2observable</code>,
+and use the computation <code>observable</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">observable</span> <span class="k">=</span> <span class="n">iterable2observable</span><span class="o">((</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">toList</span><span class="o">,</span> <span class="mi">0</span> <span class="n">second</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">subscription</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">observable</span><span class="o">)</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">4500</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">subscription</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345</code> being printed.</p>
+
+<h2>Infinite Observables</h2>
+
+<p>The code below also works with <em>infinite iterables</em> like the <code>nats</code> iterable below</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">nats</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Iterable</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">var</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">iterator</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Iterator</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">hasNext</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">true</span>
+</span><span class='line'>      <span class="k">def</span> <span class="n">next</span><span class="o">()</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">i</span> <span class="k">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">i</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can now describe a computation <code>natsObservable</code> using <code>iterable2observable</code>
+and use the computation <code>natsObservable</code> as follows</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class='line'>     <span class="k">implicit</span> <span class="k">val</span> <span class="n">scheduler</span> <span class="k">=</span> <span class="nc">NewThreadScheduler</span><span class="o">()</span>
+</span><span class='line'>     <span class="k">lazy</span> <span class="k">val</span> <span class="n">natsObservable</span> <span class="k">=</span> <span class="n">iterable2observable</span><span class="o">(</span><span class="n">nats</span><span class="o">,</span> <span class="mi">0</span> <span class="n">second</span><span class="o">,</span> <span class="mi">1</span> <span class="n">second</span><span class="o">)</span>
+</span><span class='line'>     <span class="k">val</span> <span class="n">natsSubscription</span> <span class="k">=</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">natsObservable</span><span class="o">)</span>
+</span><span class='line'>     <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">4500</span><span class="o">)</span>
+</span><span class='line'>     <span class="n">natsSubscription</span><span class="o">.</span><span class="n">unsubscribe</span><span class="o">()</span>
+</span><span class='line'>     <span class="n">println</span><span class="o">()</span>
+</span><span class='line'>  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>resulting in <code>12345</code> being printed</p>
+
+      </div>
+      <div class="col-md-10 col-md-offset-1">
+        
+        <section id="comment">
+            <h1 class="title">Comments</h1>
+            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        </section>
+        
+      </div>
+    </div>
+  </div>
+</article>
+
+<hr class="divider-short"/>
+
+
+
+<div class="archive-link">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        
+          <a class="pull-left" href="/blog/2014/05/14/reactive-programming-notification-observable/" title="Previous Post: Reactive Programming: Notification versus Observable">&laquo; Previous: Reactive Programming: Notification versus Observable</a>
+        
+
+        
+          <a class="pull-right" href="/blog/2014/05/23/case-class-related-macros/" title="Next Post: Macros: case class related macros">Next: Macros: case class related macros &raquo;</a>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+    <footer role="contentinfo"><!-- file: _includes/footer.html -->
+<footer id="footer" class="her-row">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1">
+  
+</div>
+
+<div class="col-md-2">
+
+</div>
+
+<!-- file: _includes/end_footer.html -->
+<div class="pull-right">
+  
+</div>
+
+
+    </div>
+  </div>
+</footer>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'strongtyped';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers/';
+        var disqus_url = 'http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+ 
+  </body>
+</html>

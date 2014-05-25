@@ -9,7 +9,8 @@
   <meta name="author" content="StrongTyped.io">
 
   
-  <meta name="description" content="Strong[Typed] blog Reactive Programming: Notification Versus Observable home This is a second of two blog posts of about Reactive Programming in &hellip;">
+  <meta name="description" content="Strong[Typed] blog Macros: Case Class Related Macros home This is a first blog post about Writing Macros in Scala.
+This blog post covers two &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +77,150 @@
             <div class="col-md-offset-1 col-md-10">
               <!-- file: _includes/article_listing.html -->
 <article>
+  <h2><a href="/blog/2014/05/23/case-class-related-macros/">Macros: Case Class Related Macros</a></h2>
+  
+  <p>
+    <p><a href="/">home</a></p>
+
+
+
+
+<p>This is a first blog post about <em>Writing Macros in Scala</em>.
+This blog post covers two interesting pairs of macros dealing with <em>case classes</em>.
+The macros of the first pair translate <em>case classes to tuples</em>, and <em>tuples to case classes</em>.
+The macros of the second pair translate <em>case classes to maps</em>, and <em>maps to case classes</em>.</p>
+
+
+
+
+<p><strong>Remark:</strong>
+The macros presented in this blog can be found elsewhere on the internet.
+We tried to reuse as much code as possible for both pairs of macros using a <code>Common</code> singleton object. Moreover, we end by adding a bit of extra code of our own as well.</p>
+
+
+
+
+  </p>
+
+  <!-- post/metadata.html --> 
+<span class="meta">
+  written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-05-23T09:00:00+02:00" pubdate data-updated="true">May 23, 2014</time>  
+in 
+
+
+<br/>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
+
+</span>
+  
+
+  
+    <a class="full-article-link pull-right" rel="full-article" href="/blog/2014/05/23/case-class-related-macros/">Read on &rarr;</a>
+  
+  <div class="divider"></div>
+</article>
+
+            </div>
+          </div>
+        
+          
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <!-- file: _includes/article_listing.html -->
+<article>
+  <h2><a href="/blog/2014/05/20/reactive-programming-schedulers-workers/">Reactive Programming: Schedulers and Workers</a></h2>
+  
+  <p>
+    <p><a href="/">home</a></p>
+
+
+
+
+<p>This is a third blog post about <em>Reactive Programming in Scala</em>.
+The first two blog posts,
+<a href="/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
+resp.
+<a href="/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+covered reactive programs resulting in <em>one value</em> resp. <em>many values</em>.
+This blog post covers <em>schedulers</em> and <em>workers</em>.
+They are used to transform <em>iterables</em> to <em>observables</em>.
+As mentioned in
+<a href="/blog/2014/05/14/reactive-programming-notification-observable"><em>Reactive Programming: Notification versus Observable</em></a>,
+the transformation from iterables to observables is not as trivial as it looks: at any moment subscribed observers should be able to unsubscribe.</p>
+
+
+
+
+<p><strong>Remark:</strong>
+The types that are used in this blog post exist in the
+<a href="https://github.com/Netflix/RxJava/tree/master/language-adaptors/rxjava-scala">Scala Adaptor for RxJava</a> library.
+We refer to this library as the RxScala library.
+In contrast with the previous two blog posts, this blog post deals with only one function: <code>iterable2observable</code>.
+Moreover, the <code>Observable</code> companion object of the RxScala library already has a <code>from</code> method, having an iterable parameter,
+that is equivalent to <code>iterable2observable</code>.
+Dedicating a separate blog post on the definition of <code>iterable2observable</code> is done for didactical reasons only.</p>
+
+
+
+
+  </p>
+
+  <!-- post/metadata.html --> 
+<span class="meta">
+  written 
+
+
+
+
+
+
+
+
+  
+
+
+
+<time datetime="2014-05-20T09:52:00+02:00" pubdate data-updated="true">May 20, 2014</time>  
+in 
+
+
+<br/>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
+
+</span>
+  
+
+  
+    <a class="full-article-link pull-right" rel="full-article" href="/blog/2014/05/20/reactive-programming-schedulers-workers/">Read on &rarr;</a>
+  
+  <div class="divider"></div>
+</article>
+
+            </div>
+          </div>
+        
+          
+          <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+              <!-- file: _includes/article_listing.html -->
+<article>
   <h2><a href="/blog/2014/05/14/reactive-programming-notification-observable/">Reactive Programming: Notification Versus Observable</a></h2>
   
   <p>
@@ -84,7 +229,7 @@
 
 
 
-<p>This is a second of two blog posts of about <em>Reactive Programming in Scala</em>.
+<p>This is a second of two blog posts about <em>Reactive Programming in Scala</em>.
 The first blog post about <a href="/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
 covered <em>reactive programs resulting in one value</em>.
 This second blog post covers <em>reactive programs resulting in many (zero or more) values</em>.</p>
@@ -148,7 +293,7 @@ in
   <h2><a href="/blog/2014/05/11/reactive-programming-try-future/">Reactive Programming: Try Versus Future</a></h2>
   
   <p>
-    <p>This is a first of two blog posts of about <em>Reactive Programming in Scala</em>.
+    <p>This is a first of two blog posts about <em>Reactive Programming in Scala</em>.
 The blog post about <a href="/blog/2014/05/11/functional-programming-in-scala"><em>Functional Programming in Scala</em></a>
 introduced <em>pure computations resulting in exactly one value</em>.
 Reactive programming deals, in a functional way,

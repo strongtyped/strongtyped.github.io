@@ -100,7 +100,7 @@ in
 </span>
         <p><a href="/">home</a></p>
 
-<p>This is a second of two blog posts of about <em>Reactive Programming in Scala</em>.
+<p>This is a second of two blog posts about <em>Reactive Programming in Scala</em>.
 The first blog post about <a href="/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
 covered <em>reactive programs resulting in one value</em>.
 This second blog post covers <em>reactive programs resulting in many (zero or more) values</em>.</p>
@@ -188,7 +188,7 @@ the code below materializes failure and latency for <code>Observable</code></p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The RxScala library has an <code>apply</code> method in the <code>Observable</code> companion object
+<p>The <code>Observable</code> companion object of the RxScala library has an <code>apply</code> method
 that we use (in a trivial way) to define <code>mkObservable</code>.
 The definition of <code>mkObservable</code> is given for consistency reasons only
 (cfr. <code>mkTry</code> and <code>mkFuture</code> of the <a href="/blog/2014/05/11/reactive-programming-try-future"> previous blog post</a>).</p>
@@ -384,7 +384,8 @@ prints an indication that no more more values are pushed.</p>
 
 
 <p>We have called the method <code>subscribe</code> instead of <code>execute</code>
-because it returns a subscription that can be unsubscribed.</p>
+because it corresponds to a <code>subscribe</code> method of <code>Observable</code> that,
+in this case , also returns a subscription that can be unsubscribed.</p>
 
 <p>Below, the four computations of type <code>Observable</code> are executed using <code>subscribe</code></p>
 
@@ -804,7 +805,7 @@ and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">subscribe</span><span class="o">(</span><span class="n">scannedObservable</span><span class="o">)</span> <span class="o">;</span> <span class="o">()</span> <span class="o">}</span>
-</span><span class='line'><span class="mi">121321432154321</span><span class="n">completed</span>
+</span><span class='line'><span class="mi">112123123412345</span><span class="n">completed</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -836,6 +837,8 @@ and RxScala are based) calls himself <em>&ldquo;both a functional thinker and an
           <a class="pull-left" href="/blog/2014/05/11/reactive-programming-try-future/" title="Previous Post: Reactive Programming: Try versus Future">&laquo; Previous: Reactive Programming: Try versus Future</a>
         
 
+        
+          <a class="pull-right" href="/blog/2014/05/20/reactive-programming-schedulers-workers/" title="Next Post: Reactive Programming: Schedulers and Workers">Next: Reactive Programming: Schedulers and Workers &raquo;</a>
         
       </div>
     </div>
