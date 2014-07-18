@@ -4,7 +4,7 @@
   <title><![CDATA[Strong[Typed]]]></title>
   <link href="http://www.strongtyped.io/atom.xml" rel="self"/>
   <link href="http://www.strongtyped.io/"/>
-  <updated>2014-07-11T08:37:32+02:00</updated>
+  <updated>2014-07-18T15:55:28+02:00</updated>
   <id>http://www.strongtyped.io/</id>
   <author>
     <name><![CDATA[StrongTyped.io]]></name>
@@ -14,13 +14,73 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Embracing Your Rows With Slick]]></title>
+    <link href="http://www.strongtyped.io/blog/2014/07/18/embracing-your-rows-with-slick/"/>
+    <updated>2014-07-18T09:00:00+02:00</updated>
+    <id>http://www.strongtyped.io/blog/2014/07/18/embracing-your-rows-with-slick</id>
+    <content type="html"><![CDATA[<p>This post is a follow-up of my talk &ldquo;<em>Slick in the field, learning to forget ORM</em>&rdquo; presented at ScalaDays 2014. The video is available on <a href="http://www.parleys.com/play/53a7d2c6e4b0543940d9e54c">Parleys</a> and can be watched on the bottom of this page.</p>
+
+<p>At Scala Days I presented the project <a href="https://github.com/strongtyped/active-slick">ActiveSlick</a> which is a thin layer on top of Slick (v.20) providing some abstractions to ease object lifecycle management and the implementation of a type-safe <code>ActiveRecord</code> pattern.</p>
+
+<p>Slick is wonderful piece of code that allows you to build and compose sql queries using plain Scala code. The advantages of that are many, but the most important, in my opinion, is the high re-utilisation of queries by composition and the compile time checking offered by the Scala compiler.</p>
+
+<p>This post is NOT an introduction to Slick, neither was my talk at Scala Days. The goal is to explain how I&rsquo;ve solved part of the object lifecycle management and my vision about how one should model applications using Slick.</p>
+
+<!-- more -->
+
+
+<h1>Object lifecycle management</h1>
+
+<p>It&rsquo;s very common nowadays to find articles blaming ORM frameworks and stating that ORM is an anti-pattern. I won&rsquo;t go into that discussion. I don&rsquo;t think that ORM frameworks offer a perfect solution, but much like everything in our industry, there is no perfect solutions. There is always some trade-offs to make when choosing one or other tool.</p>
+
+<p>Martin Fowler once wrote an article called <a href="http://martinfowler.com/bliki/OrmHate.html">OrmHate</a> where he discuss this ORM blaming trend. The main argument against ORM is that it tries to workaround the inherent problem of connecting an object-oriented model to relational database tables. However, Martin&rsquo;s point of view is that ORM frameworks are not only trying to solve the impedance mismatch problem, they are also helping us to deal with two representations of our data. One representation being the in-memory model expressed in an object-oriented fashion and another representation stored in relational database tables.</p>
+
+<p>These two representations of data must be kept in sync. This is a challenge that any application doing persistence needs to solve. As soon you serialise/deserialise data to and from any kind of storage you have to make sure you synchronise them correctly.</p>
+
+<p>The most common problems related to the object lifecycle are <em>identity</em> and <em>versioning</em>. Once we have <em>identity</em> and <em>versioning</em> we can answer the following questions:</p>
+
+<ul>
+<li>Is this object already persisted?</li>
+<li>Is this object dirty? Does it need to be saved back into storage?</li>
+<li>Is this object stale?</li>
+</ul>
+
+
+<p>These are the typical lifecycle questions that we have for a single object. But this is not all. We also need to deal with collections of records. We must be able to preserve the ordering of elements and to know when an object was removed from a collection or added to it.</p>
+
+<p>Contrary to other persistence libraries, Slick does not provide these facilities. To some extend this is expected as Slick is a database access library not a persistence framework. As stated in the Slick website, &ldquo;<em>Slick is a modern database query and access library for Scala</em>&rdquo;.</p>
+
+<p>The question is how can we build a framework to solve the above mentioned problems on top of Slick? How can we build a framework that helps us to deal with single object and collection lifecycle using a type-safe database query and access library?</p>
+
+<h1>Embrace your rows</h1>
+
+<p>Another import point of my talk was around the question: &ldquo;<em>How to model your domain when using Slick?</em>&rdquo;.</p>
+
+<p>A very common question on the Slick mailing list is how to model one-to-many and many-to-many relations with Slick? After years of object-oriented and ORM practice it&rsquo;s natural that we have to spent some time to learn how to think differently. By consequence, we&rsquo;ll also have to learn how to model differently.</p>
+
+<p>My take on that is that we should code and model to our rows. When using Scala we often model using immutable data structures, i.e.: case classes.  Slick of course just builds on top of this paradigm. A case class model is a mirror of a table definition and an instance of such case class is just a row that was brought into memory or a row that still need to be inserted in a table.</p>
+
+<p><strong>Embrace your rows</strong> is a call-out to adopt this way of modelling. We often say that functions are first-class citizens in functional programming. That failure is a first-class citizen in reactive programming. Well, when using Slick, rows are first-class citizens.</p>
+
+<p>We could try to fight the ORM battle once again and build a ORM framework more suited to immutable data structures, with built-in nullable &lt;&ndash;> Option conversion, with type-safe queries and query composition. But we can also model differently by keeping our in-memory model as close as possible to its relational database representation. And that&rsquo;s exactly what Slick does.</p>
+
+<p>Therefore the <a href="https://github.com/strongtyped/active-slick">ActiveSlick</a> project goal is to build a thin layer on top of Slick to solve some basic object lifecycle challenges and to promote the idea of modelling with rows, much like when using the <code>ActiveRecord</code> pattern. Hence the name <code>ActiveSlick</code>.</p>
+
+<hr />
+
+<h2>Parleys Video: Slick in the field, learning to forget ORM</h2>
+
+<iframe type="text/html" width="100%" height="410" mozallowfullscreen="true" webkitallowfullscreen="true" src="http://www.parleys.com/share.html#play/53a7d2c6e4b0543940d9e54c" frameborder="0"></iframe>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Macros: Case Class Related Macros]]></title>
     <link href="http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/"/>
     <updated>2014-05-23T09:00:00+02:00</updated>
     <id>http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros</id>
-    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
-
-<p>This is a first blog post about <em>Writing Macros in Scala</em>.
+    <content type="html"><![CDATA[<p>This is a first blog post about <em>Writing Macros in Scala</em>.
 This blog post covers two interesting pairs of macros dealing with <em>case classes</em>.
 The macros of the first pair translate <em>case classes to tuples</em>, and <em>tuples to case classes</em>.
 The macros of the second pair translate <em>case classes to maps</em>, and <em>maps to case classes</em>.</p>
@@ -759,9 +819,7 @@ making use of the bidirectional mappings from case classes to tuples</p>
     <link href="http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers/"/>
     <updated>2014-05-20T09:52:00+02:00</updated>
     <id>http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers</id>
-    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
-
-<p>This is a third blog post about <em>Reactive Programming in Scala</em>.
+    <content type="html"><![CDATA[<p>This is a third blog post about <em>Reactive Programming in Scala</em>.
 The first two blog posts,
 <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
 resp.
@@ -1130,9 +1188,7 @@ and use the computation <code>natsObservable</code> as follows</p>
     <link href="http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable/"/>
     <updated>2014-05-14T08:25:00+02:00</updated>
     <id>http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable</id>
-    <content type="html"><![CDATA[<p><a href="http://www.strongtyped.io/">home</a></p>
-
-<p>This is a second of two blog posts about <em>Reactive Programming in Scala</em>.
+    <content type="html"><![CDATA[<p>This is a second of two blog posts about <em>Reactive Programming in Scala</em>.
 The first blog post about <a href="http://www.strongtyped.io/blog/2014/05/11/reactive-programming-try-future"><em>Reactive Programming: Try versus Future</em></a>
 covered <em>reactive programs resulting in one value</em>.
 This second blog post covers <em>reactive programs resulting in many (zero or more) values</em>.</p>

@@ -12,17 +12,21 @@
         <loc>
             http://www.strongtyped.io/blog/2014/05/14/reactive-programming-notification-observable/
         </loc>
-        <lastmod>2014-05-23T22:00:20+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>
             http://www.strongtyped.io/blog/2014/05/20/reactive-programming-schedulers-workers/
         </loc>
-        <lastmod>2014-05-23T22:00:20+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/</loc>
-        <lastmod>2014-05-25T22:23:37+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.strongtyped.io/blog/2014/07/18/embracing-your-rows-with-slick/</loc>
+        <lastmod>2014-07-18T15:53:05+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/about/</loc>
@@ -30,19 +34,19 @@
     </url>
     <url>
         <loc>http://www.strongtyped.io/blog/archives/</loc>
-        <lastmod>2014-05-25T22:23:37+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/blog/</loc>
-        <lastmod>2014-05-25T22:23:37+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/</loc>
-        <lastmod>2014-07-11T08:36:35+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/posts/</loc>
-        <lastmod>2014-05-25T22:23:37+02:00</lastmod>
+        <lastmod>2014-07-18T15:53:18+02:00</lastmod>
     </url>
     <url>
         <loc>http://www.strongtyped.io/robots.txt</loc>
