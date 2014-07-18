@@ -6,8 +6,6 @@ author: Luc Duponcheel
 comments: true
 ---
 
-[home](/)
-
 This is a third blog post about _Reactive Programming in Scala_.
 The first two blog posts,
 [_Reactive Programming: Try versus Future_](/blog/2014/05/11/reactive-programming-try-future)

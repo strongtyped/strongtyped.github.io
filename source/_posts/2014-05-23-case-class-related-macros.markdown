@@ -6,8 +6,6 @@ author: Luc Duponcheel
 comments: true
 ---
 
-[home](/)
-
 This is a first blog post about _Writing Macros in Scala_.
 This blog post covers two interesting pairs of macros dealing with _case classes_.
 The macros of the first pair translate _case classes to tuples_, and _tuples to case classes_.
