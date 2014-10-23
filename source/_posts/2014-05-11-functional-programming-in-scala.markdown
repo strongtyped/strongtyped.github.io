@@ -280,7 +280,7 @@ Nevertheless it is already possible to formulate some interesting remarks.
 Some remarks
 ------------
 
-First, a somewhat philosophical (and highly subjective) remark about _syntax_:
+First, a somewhat philosophical (and highly subjective) remark about _syntax_.
 
 In _some_ way, the DSL based code reads more natural _from left to right_
 than the language based code. When initializing `z` with `"foo"` using `val z = "foo"`,

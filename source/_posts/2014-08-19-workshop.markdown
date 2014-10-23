@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Scala Workshop"
+date: 2014-08-19	 09:30:00 +0200
+author: Luc Duponcheel
+comments: true
+---
+
+This workshop gets you stared with Scala and Play.
+
+<!-- more -->
