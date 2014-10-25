@@ -1,5 +1,6 @@
     import java.io.File
 
+    import RandomVerboseSleepModule._
     import demo.EffectModule._
     import demo.FreeModule.{ Res => _, _ }
     import demo.FutureModule._

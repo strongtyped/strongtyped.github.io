@@ -20,9 +20,7 @@ object EffectModule {
     subRight[({ type λ[ω] = Identity[ω] ++ Supplier[ω] })#λ, WithFile]
 
   implicit val effect_trans_future: ({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ ~> Future =
-    identity_trans_future("identity")(0) ++
-      supplier_trans_future("supplier")(3000) ++
-      withFile_trans_future("withFile")(3000)
+    identity_trans_future ++ supplier_trans_future ++ withFile_trans_future
 
   implicit val identityEffectRes =
     new Res[({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ] {

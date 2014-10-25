@@ -1,9 +1,9 @@
 object FreeModule {
 
   import demo.ProductModule._
-  import demo.ComputationModule._
   import demo.SubModule._
   import demo.TransModule._
+  import demo.ComputationModule._
 
   object Free {
     def res[F[_], Z](fz: F[Z]): Free[F, Z] =

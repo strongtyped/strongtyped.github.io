@@ -1,6 +1,6 @@
 object ResModule {
   trait Res[F[_]] {
-    def res[Z](z: => Z): F[Z]
+    def res[Z](block_z: => Z): F[Z]
   }
 
   object Res {
