@@ -157,7 +157,7 @@ So now we have a _DSL for computations with effects_
 Examples
 --------
 
-All examples below share the following common code
+All examples below share the following code
 
 {% include_code common lang:scala common.scala %}
 
