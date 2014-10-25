@@ -1,0 +1,355 @@
+---
+layout: post
+title: "Modular Programmig With Effects"
+date: 2014-10-23	 09:00:00 +0200
+author: Luc Duponcheel
+comments: true
+---
+
+This blog post correponds to my 2015 Scala Days talk submission.
+
+The content of this blog post (deliberately) does not really go into all details.
+
+<!-- more -->
+
+Content
+-------
+
+This blog post is about _modular programming_ in general,
+and _modular programming with effects_ in particular.
+
+The talk of Rúnar Bjarnason [_Composable application architecture with reasonably priced monads_](https://parleys.com/play/53a7d2c3e4b0543940d9e538/chapter0/about)
+was also about modular programming with effects.
+
+One of the motivations of this blog post is to build upon the ideas of Rúnar's talk to introduce some extra ideas.
+
+For example:
+
+* Rúnar's talk deals with _monadic_ computational features
+* This blog post deals with both _monadic_ and _applicative_ computational features
+
+Let's start with recapitulating some common concepts.
+
+Product Type
+------------
+
+The code below defines _the product of types_
+
+{% include_code ProductModule lang:scala ProductModule.scala %}
+
+Sum Type
+--------
+
+The code below defines _the sum of types_
+
+{% include_code SumModule lang:scala SumModule.scala %}
+
+Sub Type
+--------
+
+The code below defines _subtypes_
+
+{% include_code SubModule lang:scala SubModule.scala %}
+
+Transformations
+---------------
+
+The code below defines _transformations_ and their relationship with _sums_
+
+{% include_code TransformationModule lang:scala TransModule.scala %}
+
+
+Computational Features
+----------------------
+
+The code below defines _computational features_ `res`, `and` and `bnd`
+
+{% include_code ComputationalFeatures lang:scala ComputationalFeatures.scala %}
+
+The new computational feature is the _applicative_ `and`.
+
+Free
+----
+
+The code below defines _free computations_
+
+{% include_code FreeModule lang:scala FreeModule.scala %}
+
+Take your time to look at [_Rúnar's code_](https://gist.github.com/runarorama/a8fab38e473fafa0921d), line `30` to `49`,
+and concentrate on both the (sometimes subtle) _differences_ and the _additions_.
+
+Here are some things to concentrate on
+
+* there are two case classes dealing with continuations
+	* `And`, dealing with continuations of type `Free[F, X => Z]`
+	* `Bnd`, dealing with continuations of type `X => Free[F, Z]`
+
+* requirements are partitioned as requirements for `F` and requirements for `G`
+	* the existence of `res` for `F` 
+	* the existence of `and` and `bnd` for `G`
+
+`Free[F, Z]` supports a _DSL for computations_ consisting of `res`, `and` and `bnd` (and also `end` which is defined in terms of `res`, `and` and `Result[F].res`).
+
+Future
+------
+
+the `Future` type constructor will play the role of the `G` type constructor above.
+
+The `Future[Z]` type we make use of is based upon the `SimpleJavaFuture[Z]` type which is a simple version of Java's `Future` type (ignoring capabilities like _cancellation_)
+
+{% include_code Future lang:scala Future.scala %}
+
+The only functionality you need to know about is `mkFuture`, somehow turning a block of code into a future (the implementation details are really not that important)
+
+{% include_code mkFuture lang:scala mkFuture.scala %}
+
+Futures are computations as implemented by `futureComputation` below
+
+{% include_code futureComputation lang:scala futureComputation.scala %}
+
+Here are some things to concentrate on
+
+* `bnd` is implemented using _sequential execution_
+* `and` is implemented using _parallel execution_
+
+Id
+--
+
+the `Identity` type constructor will play the role of the `F` type constructor above (for `res`, and, therefore, also `end`)
+
+{% include_code IdentityModule lang:scala IdentityModule.scala %}
+
+the transformation makes use of `show` to show what is going on (see examples below)
+
+Supplier
+--------
+
+the `Supplier` type constructor will play the role of the `F` type constructor above (for `and`, `bnd` and `supply`)
+
+{% include_code SupplierModule lang:scala SupplierModule.scala %}
+
+`Supplier` is a somewhat artificial _value supplier_ that, when transformed, incorporates both _latency_ and _verbosity_ (using `randomVerboseSleep` to show what is going on (see examples below)).
+
+WithFile
+--------
+
+the `WithFile` type constructor will play the role of the `F` type constructor above (for `and`, `bnd` and `readFile`)
+
+{% include_code WithFileModule lang:scala WithFileModule.scala %}
+
+`WithFile` is a somewhat artificial _file manipulator_ that, when transforming, incorporates both _latency_ and _verbosity_ (using `randomVerboseSleep` to show what is going on (see examples below)).
+
+Effect
+------
+
+The code below _assembles the effects_ we are going to use via the somewhat complex 
+`({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ` type constructor that combines `Id`, `Supplier` and `WithFile`
+
+{% include_code EffectModule lang:scala EffectModule.scala %}
+
+So now we have a _DSL for computations with effects_
+
+* the `and` and `bnd` computational features can be used
+* the `res` (and, therefore, `end`) computational feature of `Identity` can be used
+* the `supply` functionality of `Supplier` can be used
+* the `readFile` functionality of `WithFile` can be used
+
+Examples
+--------
+
+All examples below share the following common code
+
+{% include_code common lang:scala common.scala %}
+
+I still have to change `javaOneUniversity` to `scalaDays`
+
+`example01`
+-----------
+
+Here is a first example
+ 
+{% include_code example01 lang:scala example01.scala %}
+
+This example is _fully asysnc_ as demonstrated by the run session below
+
+```
+[info] Running demo.Fp 
+supplier 1
+supplier 1
+withFile 1
+supplier 2
+withFile 1
+withFile 2
+supplier 1
+supplier 3
+withFile 2
+supplier 2
+withFile 3
+withFile 4
+supplier 4
+withFile 3
+supplier 5
+supplied 2
+supplier 3
+withFile 5
+readFile foo
+supplier 2
+withFile 4
+supplier 3
+supplier 4
+withFile 5
+readFile bar
+supplier 4
+supplier 5
+supplied 3
+supplier 5
+supplied 1
+identity 0
+((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
+[success] Total time: 15 s
+```
+
+`example02`
+-----------
+
+Here is a second example illustrating _referential transparency_
+ 
+{% include_code example02 lang:scala example02.scala %}
+
+This example is _fully asysnc_ as demonstrated by the run session below
+
+```
+withFile 1
+supplier 1
+supplier 1
+withFile 1
+supplier 2
+supplier 1
+supplier 2
+withFile 2
+supplier 2
+supplier 3
+withFile 2
+supplier 3
+supplier 4
+withFile 3
+supplier 5
+supplied 2
+withFile 3
+supplier 4
+withFile 4
+supplier 5
+supplied 3
+supplier 3
+supplier 4
+supplier 5
+supplied 1
+withFile 4
+withFile 5
+readFile foo
+withFile 5
+readFile bar
+identity 0
+((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
+[success] Total time: 14 s
+```
+
+`example03`
+-----------
+
+Here is a third example
+ 
+{% include_code example03 lang:scala example03.scala %}
+
+This example is _not fully asysnc_ any more as demonstrated by the run session below (see lines `14` to `19` and line `34`)
+
+```
+[info] Running demo.Fp 
+supplier 1
+supplier 2
+supplier 1
+supplier 3
+supplier 2
+supplier 4
+supplier 3
+supplier 5
+supplied 2
+supplier 4
+supplier 5
+supplied 1
+supplier 1
+supplier 2
+supplier 3
+supplier 4
+supplier 5
+supplied 3
+withFile 1
+withFile 1
+withFile 2
+withFile 3
+withFile 4
+withFile 2
+withFile 5
+readFile foo
+withFile 3
+withFile 4
+withFile 5
+readFile bar
+identity 0
+((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
+[success] Total time: 24 s
+```
+
+`example04`
+-----------
+
+Here is a fourth example, where the second file to be read is determined by the content of the first file to be read
+ 
+{% include_code example04 lang:scala example04.scala %}
+
+This example is _not fully asysnc_ any more as demonstrated by the run session below (see lines `14` to `19`, lines `20` to `25` and line `34`)
+
+```
+[info] Running demo.Fp 
+supplier 1
+supplier 2
+supplier 1
+supplier 3
+supplier 2
+supplier 3
+supplier 4
+supplier 4
+supplier 5
+supplied 1
+supplier 5
+supplied 2
+supplier 1
+supplier 2
+supplier 3
+supplier 4
+supplier 5
+supplied 3
+withFile 1
+withFile 2
+withFile 3
+withFile 4
+withFile 5
+readFile foo
+withFile 1
+withFile 2
+withFile 3
+withFile 4
+withFile 5
+readFile bar
+identity 0
+((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
+[success] Total time: 35 s
+```
+
+
+
+
+
+
+
+

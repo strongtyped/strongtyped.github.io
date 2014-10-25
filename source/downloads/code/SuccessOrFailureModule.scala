@@ -67,7 +67,7 @@
               case Success(_) =>
                 fail(m)
               case Failure(m1) =>
-                fail(m operator m1)
+                fail(m1 operator m)
             }
         }
         val a2ob: A => D[B] = {
