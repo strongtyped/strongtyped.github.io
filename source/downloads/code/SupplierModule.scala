@@ -1,16 +1,16 @@
 object SupplierModule {
 
-  import demo.FreeModule._
+  import demo.FreeModule.{ Res => _, _ }
   import demo.FutureModule._
-  import demo.ResultModule._
+  import demo.ResModule._
   import demo.SleepModule._
   import demo.SubModule._
   import demo.TransModule._
 
   case class Supplier[Z](u2a: Unit => Z)
 
-  implicit val supplierResult =
-    new Result[Supplier] {
+  implicit val supplierRes =
+    new Res[Supplier] {
       override def res[Z](z: => Z) =
         Supplier {
           case () =>
@@ -30,7 +30,7 @@ object SupplierModule {
         }
     }
 
-  def supply[F[_]: Result](x: Int)(implicit supplier_sub_f: Supplier <= F): Free[F, Int] =
+  def supply[F[_]: Res](x: Int)(implicit supplier_sub_f: Supplier <= F): Free[F, Int] =
     lift(Supplier({
       case () =>
         println(s"supplied ${x}")

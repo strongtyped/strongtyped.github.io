@@ -1,10 +1,10 @@
-object ResultModule {
-  trait Result[F[_]] {
+object ResModule {
+  trait Res[F[_]] {
     def res[Z](z: => Z): F[Z]
   }
 
-  object Result {
-    def apply[F[_]: Result] = implicitly[Result[F]]
+  object Res {
+    def apply[F[_]: Res] = implicitly[Res[F]]
   }
 }
 

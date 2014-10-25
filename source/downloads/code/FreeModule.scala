@@ -1,7 +1,6 @@
 object FreeModule {
 
   import demo.ProductModule._
-  import demo.ResultModule._
   import demo.ComputationModule._
   import demo.SubModule._
   import demo.TransModule._
@@ -18,7 +17,7 @@ object FreeModule {
     def bnd[Y](z2free_y: Z => Free[F, Y]): Free[F, Y] =
       Bnd(free_z, z2free_y)
 
-    def end[Y](z2y: Z => Y)(implicit resultF: Result[F]): Free[F, Y] =
+    def end[Y](z2y: Z => Y)(implicit resultF: ResModule.Res[F]): Free[F, Y] =
       free_z and Free.res(resultF.res(z2y))
 
     def fold[G[_]: Computation](implicit f_trans_g: F ~> G): G[Z] =
@@ -28,7 +27,7 @@ object FreeModule {
         case And(free_x, free_x2z) =>
           Computation[G].and(free_x.fold)(free_x2z.fold)
         case Bnd(free_x, x2free_z) =>
-          Computation[G].bnd(free_x.fold)(x => x2free_z(x).fold)
+          Computation[G].bnd(free_x.fold)(x2free_z(_).fold)
       }
   }
 

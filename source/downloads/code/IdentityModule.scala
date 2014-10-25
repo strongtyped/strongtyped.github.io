@@ -1,14 +1,14 @@
 object IdentityModule {
   import demo.FutureModule._
   import demo.JavaFutureModule._
-  import demo.ResultModule._
+  import demo.ResModule._
   import demo.TransModule._
   import demo.Util.show
 
   case class Identity[Z](z: Z)
 
-  implicit val identityResult =
-    new Result[Identity] {
+  implicit val identityRes =
+    new Res[Identity] {
       override def res[Z](z: => Z) =
         Identity(z)
     }

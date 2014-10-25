@@ -2,7 +2,7 @@ object EffectModule {
 
   import demo.FutureModule._
   import demo.IdentityModule._
-  import demo.ResultModule._
+  import demo.ResModule._
   import demo.SubModule.<=._
   import demo.SubModule._
   import demo.SumModule._
@@ -24,10 +24,10 @@ object EffectModule {
       supplier_trans_future("supplier")(3000) ++
       withFile_trans_future("withFile")(3000)
 
-  implicit val identityEffectResult =
-    new Result[({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ] {
+  implicit val identityEffectRes =
+    new Res[({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ] {
       override def res[Z](z: => Z): Identity[Z] ++ Supplier[Z] ++ WithFile[Z] =
-        Left(Left(Result[Identity].res(z)))
+        Left(Left(Res[Identity].res(z)))
     }
 
 }
