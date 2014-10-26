@@ -24,8 +24,8 @@ object EffectModule {
 
   implicit val identityEffectRes =
     new Res[({ type λ[ω] = Identity[ω] ++ Supplier[ω] ++ WithFile[ω] })#λ] {
-      override def res[Z](z: => Z): Identity[Z] ++ Supplier[Z] ++ WithFile[Z] =
-        Left(Left(Res[Identity].res(z)))
+      override def res[Z](block_z: => Z): Identity[Z] ++ Supplier[Z] ++ WithFile[Z] =
+        Left(Left(Res[Identity].res(block_z)))
     }
 
 }

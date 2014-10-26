@@ -190,7 +190,6 @@ All examples below share the following code
 
 {% include_code common lang:scala common.scala %}
 
-_note to myself:_ still have to change `javaOneUniversity` to `scalaDays`
 
 `example01`
 -----------
@@ -203,43 +202,44 @@ This example is _fully asysnc_ as demonstrated by the run session below
 
 ```
 [info] Running demo.Fp 
+[info] Running demo.Fp 
 withFile 1
-supplier 1
 withFile 1
-withFile 2
-supplier 2
-supplier 1
 withFile 2
 withFile 3
 supplier 1
+withFile 2
+supplier 1
 withFile 3
+supplier 1
+withFile 4
+supplier 2
+supplier 2
 withFile 4
 withFile 5
+withFile 5
+readFile 1
+readFile 2
+readFile 1
+supplier 2
+readFile 2
 supplier 3
-withFile 4
-withFile 5
-supplier 2
-supplier 4
-readFile 1
-supplier 2
-readFile 1
-readFile 2
-readFile 2
-supplier 5
+supplier 3
 readFile 3
 readFile 3
 readFile 4
+supplier 4
 readFile 5
+supplier 3
 readFile 4
-supplier 3
-supplier 3
-supplier 4
 readFile 5
 supplier 4
+supplier 4
 supplier 5
 supplier 5
-((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
-[success] Total time: 11 s
+supplier 5
+((((1,2),3),/opt/home/tmp/bar),/opt/home/tmp/foo)
+[success] Total time: 13 s
 ```
 
 `example02`
@@ -256,40 +256,40 @@ This example is _fully asysnc_ as demonstrated by the run session below
 supplier 1
 withFile 1
 withFile 2
-supplier 2
-withFile 3
+supplier 1
 withFile 1
-supplier 1
-withFile 2
-withFile 4
 withFile 3
-supplier 3
+withFile 2
 supplier 1
-withFile 5
-readFile 1
 withFile 4
-readFile 2
+supplier 2
 withFile 5
 supplier 2
 supplier 3
 readFile 1
-readFile 3
-supplier 2
-readFile 4
-supplier 4
-readFile 5
-supplier 4
+withFile 3
 readFile 2
-supplier 3
+withFile 4
 readFile 3
-supplier 5
 readFile 4
+supplier 2
+withFile 5
+readFile 5
+supplier 3
+supplier 4
+readFile 1
+readFile 2
+readFile 3
+supplier 3
+readFile 4
+supplier 4
 readFile 5
 supplier 5
 supplier 4
 supplier 5
-((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
-[success] Total time: 11 s
+supplier 5
+((((1,2),3),/opt/home/tmp/bar),/opt/home/tmp/foo)
+[success] Total time: 17 s
 ```
 
 `example03`
@@ -304,14 +304,14 @@ This example is _not fully asysnc_ any more as demonstrated by the run session b
 ```
 [info] Running demo.Fp 
 supplier 1
-supplier 2
 supplier 1
-supplier 3
-supplier 4
 supplier 2
-supplier 5
+supplier 3
+supplier 2
 supplier 3
 supplier 4
+supplier 4
+supplier 5
 supplier 5
 supplier 1
 supplier 2
@@ -321,25 +321,25 @@ supplier 5
 withFile 1
 withFile 1
 withFile 2
+withFile 3
 withFile 2
-withFile 3
 withFile 4
-withFile 3
 withFile 5
+withFile 3
 withFile 4
-readFile 1
-readFile 2
 withFile 5
 readFile 1
 readFile 2
+readFile 1
+readFile 3
+readFile 2
 readFile 3
 readFile 4
-readFile 3
 readFile 4
 readFile 5
 readFile 5
-((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
-[success] Total time: 27 s
+((((1,2),3),/opt/home/tmp/bar),/opt/home/tmp/foo)
+[success] Total time: 30 s
 ```
 
 `example04`
@@ -356,12 +356,12 @@ This example is _not fully asysnc_ any more as demonstrated by the run session b
 supplier 1
 supplier 1
 supplier 2
+supplier 3
 supplier 2
-supplier 3
 supplier 4
 supplier 3
+supplier 4
 supplier 5
-supplier 4
 supplier 5
 supplier 1
 supplier 2
@@ -378,6 +378,7 @@ readFile 2
 readFile 3
 readFile 4
 readFile 5
+bar file path = /opt/home/tmp/bar
 withFile 1
 withFile 2
 withFile 3
@@ -388,8 +389,8 @@ readFile 2
 readFile 3
 readFile 4
 readFile 5
-((((1,2),3),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/bar),/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/foo)
-[success] Total time: 30 s
+((((1,2),3),/opt/home/tmp/bar),/opt/home/tmp/foo)
+[success] Total time: 33 s
 ```
 
 Appendix

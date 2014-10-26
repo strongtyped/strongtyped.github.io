@@ -7,8 +7,8 @@
       val supply1 = supply({ randomVerboseSleep("supplier")(3000); 1 })
       val supply2 = supply({ randomVerboseSleep("supplier")(3000); 2 })
       val supply3 = supply({ randomVerboseSleep("supplier")(3000); 3 })
-      val readFooFile = readFile(fooFile)
-      val readBarFile = readFile(barFile)
+      val readFooFile = readFile(fooFilePath)
+      val readBarFile = readFile(barFilePath)
       supply1 and {
         supply2 and {
           supply3 and {

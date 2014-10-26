@@ -33,5 +33,9 @@ object SupplierModule {
     }
 
   def supply[F[_]: Res, Z](block_z: => Z)(implicit supplier_sub_f: Supplier <= F): Free[F, Z] =
-    lift(supplier(block_z))
+    lift {
+      supplier {
+        block_z
+      }
+    }
 }

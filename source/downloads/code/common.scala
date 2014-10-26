@@ -17,10 +17,8 @@
     val es: ExecutorService =
       Executors.newScheduledThreadPool(8);
 
-    val path = "/opt/home/data/sbt/javaOneUniversity/src/main/scala/demo/"
+    val path = "/opt/home/tmp/"
 
-    val fooFile =
-      new File(path + "foo")
+    val fooFilePath = path + "foo"
 
-    val barFile =
-      new File(path + "bar")
+    val barFilePath = path + "bar"

@@ -11,15 +11,17 @@ object WithFileModule {
 
   import scala.io.Source
 
-  case class WithFile[Z](of: Option[File], f2z: File => Z)
+  type FilePath = String
 
-  def withFile[Z](of: Option[File])(f2z: File => Z) =
-    WithFile(of, f2z)
+  case class WithFile[Z](filePath: FilePath, file2z: File => Z)
+
+  def withFile[Z](filePath: FilePath)(file2z: File => Z) =
+    WithFile(filePath, file2z)
 
   implicit val withFileRes =
     new Res[WithFile] {
       override def res[Z](block_z: => Z) =
-        withFile(None) { _ =>
+        withFile("") { _ =>
           block_z
         }
     }
@@ -28,18 +30,21 @@ object WithFileModule {
     new (WithFile ~> Future) {
       def apply[Z](withFile: WithFile[Z]) =
         withFile match {
-          case WithFile(of, f2z) =>
+          case WithFile(filePath, file2z) =>
             mkFuture {
               randomVerboseSleep("withFile")(1500)
-              f2z(of.get)
+              file2z(new File(filePath))
             }
         }
     }
 
-  def readFile[F[_]: Res](file: File)(implicit withFile_sub_f: WithFile <= F): Free[F, String] =
-    lift(withFile(Some(file)) { file =>
-      randomVerboseSleep("readFile")(1500)
-      Source.fromFile(file).mkString
-    })
+  def readFile[F[_]: Res](filePath: FilePath)(implicit withFile_sub_f: WithFile <= F): Free[F, String] =
+    lift {
+      withFile(filePath) { file =>
+        randomVerboseSleep("readFile")(1500)
+        val content = Source.fromFile(file).mkString
+        content.substring(0, content.length() - 1)
+      }
+    }
 
 }
