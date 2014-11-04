@@ -8,7 +8,7 @@ comments: true
 
 This blog post correponds to my 2015 Scala Days talk submission.
 
-The content of this blog post (deliberately) does not really go into all details.
+The content of this blog post (deliberately) does not go into all details.
 
 <span style="color:red">__Warning__</span>
 

@@ -1,4 +1,4 @@
-//    {
-//      import Usage.OneMultiplicativeUsage._
-//      multiplicative_usage()
-//    }
+    {
+      import Usage.OneMultiplicativeUsage._
+      multiplicative_usage()
+    }

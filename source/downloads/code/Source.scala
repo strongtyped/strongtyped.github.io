@@ -12,7 +12,7 @@
           a =>
             d_a2b bnd {
               a2b =>
-                one(a2b(a))
+                a bind a2b bind one
             }
         }
       def switch[B](p_a: Predicate[A])(t_a2db: A => D[B])(f_a2db: A => D[B]): D[B] =
@@ -20,9 +20,9 @@
           a =>
             (a bind p_a) match {
               case true =>
-                t_a2db(a)
+                a bind t_a2db
               case false =>
-                f_a2db(a)
+                a bind f_a2db
             }
         }
     }

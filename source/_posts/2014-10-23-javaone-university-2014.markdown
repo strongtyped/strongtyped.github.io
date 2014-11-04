@@ -8,7 +8,7 @@ comments: true
 
 This blog post correponds to my 2014 JavaOne University course.
 
-The content of this blog post (deliberately) does not really go into all details.
+The content of this blog post (deliberately) does not go into all details.
 
 <!-- more -->
 
