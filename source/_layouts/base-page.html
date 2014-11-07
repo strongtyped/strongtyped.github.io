@@ -5,11 +5,9 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 {% include head.html %}
 <!-- _layouts/default.html -->
-  <body> 
+  <body class="bg-light"> 
 
     {{ content | expand_urls: root_url }}
 
-    <footer role="contentinfo">{% include footer.html %}</footer>
-    {% include after_footer.html %} 
   </body>
 </html>

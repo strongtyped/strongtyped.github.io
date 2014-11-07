@@ -12,6 +12,10 @@ body, .home-page, .home-field,  .article-list{
   font-size: 20px;
 }
 
+.bg-light {
+  background-color: #FFFFFF;
+}
+
 h1, h2, h3, h4, h5, h6 {
   color: $primary-color;
 }
@@ -157,10 +161,12 @@ a:hover {
   color: $primary-color;
 }
 
+
 .typed {
   font-weight: 500;
   color: $secondary-color;
 }
+
 
 .strongtyped {
   font-style:italic;
@@ -168,6 +174,14 @@ a:hover {
   > a:hover {
     text-decoration:none
   }
+}
+
+h1 .strongtyped {
+  margin-top:40px;
+  margin-bottom:40px;
+  font-size: 1.2em;
+  font-weight:bold;
+  color: $primary-color;
 }
 
 .navbar {
