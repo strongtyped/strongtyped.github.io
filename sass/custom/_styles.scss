@@ -124,11 +124,11 @@ a:hover {
 }
 
 .navbar {
-  padding: 55px 80px;
+  /*padding: 55px 80px;*/
 }
 
 .navbar-fixed-top {
-  height: 60px;
+  height: 65px;
   text-align: left;
   background-color:$header-bg;
 
@@ -152,9 +152,15 @@ a:hover {
       text-decoration:none
     }
   }
+
+  > .container {
+    vertical-align: bottom;
+  }
 }
 
-
+.full-single-article {
+  padding-top:10px;
+}
 
 .strong {
   font-weight:bold;
@@ -167,6 +173,36 @@ a:hover {
   color: $secondary-color;
 }
 
+.navbar-right {
+  .inactive {
+    font-weight:500;
+    font-style:italic;  
+    color: $primary-color;
+  }
+
+  .active {
+    font-weight: 500;
+    font-style:italic;
+    color: $secondary-color;
+  }  
+
+  .active::after {
+    content: "]";
+  }
+  
+  .active::before {
+    content: "[";
+  }
+
+
+  > a:hover {
+    text-decoration:none;
+    font-weight: 500;
+    font-style:italic;
+    color: $secondary-color;
+  }
+
+}
 
 .strongtyped {
   font-style:italic;
@@ -198,6 +234,8 @@ h1 .strongtyped {
 
 // articles
 article {
+  
+  font-size: 1.2em;
 
   .meta {
     color: $primary-color;
@@ -206,11 +244,18 @@ article {
   h1 {
     font-family: $heading-font-family;
     font-style:italic;
+
   }
 
+  .content {
+    padding-left: 20px;
+
+
+  }
 
   h2 {
     padding-top: 20px;
+    font-style:italic;
   }
 }
 
@@ -218,6 +263,7 @@ article {
   background-color: $base-bg;
   padding-top: 10px;
 }
+
 
 .article-list article {
   h2 {
@@ -238,3 +284,4 @@ article {
 .divider {
   width: 70%;
 }
+
