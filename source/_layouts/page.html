@@ -6,6 +6,7 @@ single: true
 
 {% include custom/bar.html %}
 
+
 <article role="article" class="full-single-article">
   
     <div class="row">
@@ -15,7 +16,9 @@ single: true
         <h1 class="entry-title">{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %}</h1>
       </header>
       {% endif %}
-      {{ content }}    
+      <div class="content">
+        {{ content }}    
+      </div>
       </div>
   </div>
 </article>
