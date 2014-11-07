@@ -1,8 +1,11 @@
 <ul class="nav secondary-nav navbar-nav navbar-right">
+{{ post.is_post }}
 {% for item in site.menu_items %}
 	{% if page.title == item %}
   		<li><a class="active" href="{{ root_url }}/{{ item }}">{{ item }}</a></li>
-  	{% else %}
+  	{% elsif item == "blog" and page.is_post %}
+  		<li><a class="active" href="{{ root_url }}/{{ item }}">{{ item }}</a></li>	
+  	{% else %}		
   		<li><a class="inactive" href="{{ root_url }}/{{ item }}">{{ item }}</a></li>	
   	{% endif %}
 {% endfor %}

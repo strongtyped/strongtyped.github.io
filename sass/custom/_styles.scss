@@ -178,8 +178,10 @@ a:hover {
     font-weight:500;
     font-style:italic;  
     color: $primary-color;
-  }
-
+    padding-left: 1em;
+    padding-right: 1em;
+  }  
+  
   .active {
     font-weight: 500;
     font-style:italic;
