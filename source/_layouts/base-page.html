@@ -4,10 +4,14 @@
 <!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 {% include head.html %}
-<!-- _layouts/default.html -->
-  <body class="bg-light"> 
+<!-- _layouts/base-page.html -->
+  <body> 
 
+  	<div class="content bg-light">
     {{ content | expand_urls: root_url }}
+	</div>
+    <footer role="contentinfo">{% include footer.html %}</footer>
+    {% include after_footer.html %} 
 
   </body>
 </html>

@@ -3,18 +3,23 @@
 // To give it a try, uncomment some of the lines below rebuild your blog, and see how it works.
 // If you need a handy color picker try http://hslpicker.com
 
-$primary-color: #388cce; // blue;
+
+$primary-color: #388CCE; // blue;
 $secondary-color: #474747; //dark grey;
-$base-bg: #f7f7f7;
+
 
 $bg-primary: $primary-color;
 $bg-secondary: $secondary-color;
-$bg-page: #F7F7F7;
 
-$header-bg: #ffffff;
+$bg-header: #FFFFFF;
+
+$bg-content: #F7F7F7;
+$bg-footer: #647DA1; //#2A699B;
+$bg-main: #3C4C61;
+
 
 $heading-font-color: #444444;
-$footer-bg: #444444;
+
 
 
 $link: $primary-color;
@@ -25,14 +30,14 @@ $link-hover: $primary-color;
 $solarized: light;
 
 /* If you want to tweak the Solarized colors you can do that here */
-$base03:          #002b36; // darkest blue
+$base03:          #002B36; // darkest blue
 $base02:          #073642; // dark blue
-$base01:          #586e75; // darkest gray
-$base00:          #657b83; // dark gray
+$base01:          #586E75; // darkest gray
+$base00:          #657B83; // dark gray
 $base0:           #839496; // medium gray
-$base1:           #93a1a1; // medium light gray
-$base2:           #f8f8f8; // light gray background
-$base3:           #f8f8f8; // light gray background
+$base1:           #93A1A1; // medium light gray
+$base2:           #F8F8F8; // light gray background
+$base3:           #F8F8F8; // light gray background
 //$solar-yellow:    #b58900;
 //$solar-orange:    #cb4b16;
 //$solar-red:       #dc322f;

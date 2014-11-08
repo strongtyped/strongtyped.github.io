@@ -6,8 +6,9 @@
 {% include head.html %}
 <!-- _layouts/default.html -->
   <body> 
-
-    {{ content | expand_urls: root_url }}
+	<div class="content">
+    	{{ content | expand_urls: root_url }}
+    </div>
 
     <footer role="contentinfo">{% include footer.html %}</footer>
     {% include after_footer.html %} 

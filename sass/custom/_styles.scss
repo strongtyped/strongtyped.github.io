@@ -1,6 +1,8 @@
 // This File is imported last, and will override other styles in the cascade
 // Add styles here to make changes without digging in too much
-
+body {
+  background-color: $secondary-color;
+}
 
 body, p {
   font-family: $sans;
@@ -8,8 +10,12 @@ body, p {
 }
 
 body, .home-page, .home-field,  .article-list{
-  background-color: $base-bg;
   font-size: 20px;
+}
+
+.content {
+    background-color: $bg-content;
+    padding-bottom: 50px;
 }
 
 .bg-light {
@@ -51,7 +57,7 @@ ol {
 }
 
 .container-dark {
-  background-color: $secondary-color;
+  background-color: $bg-main;
   color: #FFFFFF;
   > h1, h2, h3, h4, h5, h6 {
     color: #FFFFFF;
@@ -74,7 +80,6 @@ ol {
     color: $secondary-color;
   }
 
-  background-color: $base-bg;
 }
 
 .intro {
@@ -120,7 +125,31 @@ a:hover {
 }
 
 .footer-row {
-  background-color: $footer-bg;
+  
+  padding-top:  20px;
+  // color: #FFFFFF;
+  background-color: $bg-footer; 
+
+  h3 {
+    color: #FFFFFF;
+    text-transform: uppercase;
+  }
+
+  a {
+    color: #FFFFFF;
+    text-decoration:none
+  }
+
+  li {
+    text-decoration: none;
+    list-style: none;
+    list-style-type: none;
+    margin: 10px;
+    vertical-align: middle;
+  }
+  dd {
+    padding-left: 15px;
+  }
 }
 
 .navbar {
@@ -130,7 +159,7 @@ a:hover {
 .navbar-fixed-top {
   height: 65px;
   text-align: left;
-  background-color:$header-bg;
+  background-color:$bg-header;
 
   border-bottom: 1px solid $primary-color;
   z-index:1000;
@@ -162,18 +191,9 @@ a:hover {
   padding-top:10px;
 }
 
-.strong {
-  font-weight:bold;
-  color: $primary-color;
-}
-
-
-.typed {
-  font-weight: 500;
-  color: $secondary-color;
-}
-
 .navbar-right {
+  font-family: $heading-font-family;
+
   .inactive {
     font-weight:500;
     font-style:italic;  
@@ -212,6 +232,19 @@ a:hover {
   > a:hover {
     text-decoration:none
   }
+
+  
+  .strong {
+    font-weight:bold;
+    color: $primary-color;
+  }
+
+
+  .typed {
+    font-weight: 500;
+    color: $secondary-color;
+  }
+
 }
 
 h1 .strongtyped {
@@ -249,10 +282,8 @@ article {
 
   }
 
-  .content {
+  .page-content {
     padding-left: 20px;
-
-
   }
 
   h2 {
@@ -262,7 +293,7 @@ article {
 }
 
 .article-list {
-  background-color: $base-bg;
+  background-color: $bg-content;
   padding-top: 10px;
 }
 
@@ -283,7 +314,32 @@ article {
   }
 }
 
+
 .divider {
   width: 70%;
 }
+.divider-large {
+  width: 90%;
+  // margin-top: 35;
+  // margin-bottom: 85px;
+}
 
+
+.sitemap-footer {
+
+  margin-top: 40px;
+  color: #FFFFFF;
+
+  li {
+    margin-right: 140px;
+  }
+
+  dd {
+    padding-left: 15px;
+  }
+  a {
+      text-decoration:none;
+      color: #FFFFFF;
+  }
+
+}

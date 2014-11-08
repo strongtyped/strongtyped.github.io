@@ -63,7 +63,7 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/delicious.
 # ----------------------- #
 
 
-menu_items: ["consulting", "training", "partners", "blog"]
+menu_items: ["consulting", "training", "company", "blog"]
 strongtyped: hey
 
 # Github repositories
