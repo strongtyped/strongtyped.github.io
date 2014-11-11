@@ -9,7 +9,7 @@
   <meta name="author" content="StrongTyped.io">
 
   
-  <meta name="description" content="Strong[Typed] blog Macros: Case Class Related Macros written May 23, 2014 in Posted by Luc Duponcheel This is a first blog post about Writing Macros &hellip;">
+  <meta name="description" content="Strong[Typed] consulting training company blog Macros: Case Class Related Macros written May 23, 2014 in Posted by Luc Duponcheel This is a first &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -47,9 +47,10 @@
 
 </head>
 
-<!-- _layouts/default.html -->
+<!-- _layouts/base-post.html -->
   <body>
 
+  	<div class="content">
     <!-- _layouts/post.html -->
 
 <div class="navbar">
@@ -61,7 +62,24 @@
         </li>
       </ul>
       <ul class="nav secondary-nav navbar-nav navbar-right">
-  <li><a id="blog-nav" href="/blog">blog</a></li>
+
+
+			
+  		<li><a class="inactive" href="/consulting">consulting</a></li>	
+  	
+
+			
+  		<li><a class="inactive" href="/training">training</a></li>	
+  	
+
+			
+  		<li><a class="inactive" href="/company">company</a></li>	
+  	
+
+	
+  		<li><a class="active" href="/blog">blog</a></li>	
+  	
+
 </ul>      
     </div>
   </div>
@@ -98,6 +116,7 @@ in
 <span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
 
 </span>
+<!-- end post/metadata.html --> 
         <p>This is a first blog post about <em>Writing Macros in Scala</em>.
 This blog post covers two interesting pairs of macros dealing with <em>case classes</em>.
 The macros of the first pair translate <em>case classes to tuples</em>, and <em>tuples to case classes</em>.
@@ -864,30 +883,87 @@ making use of the bidirectional mappings from case classes to tuples</p>
   </div>
 </div>
 
-    
+	</div>
     <footer role="contentinfo"><!-- file: _includes/footer.html -->
-<footer id="footer" class="her-row">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-1">
-  
-</div>
-
-<div class="col-md-2">
-
-</div>
-
+<footer id="footer" class="footer-row">
+	<div class="row">
+	  	<div class="col-md-10 col-md-offset-1">
+			<div class="row">
+				<div class="col-md-12">
+						<dl>
+        <dt><a href="/company">Recent posts</a></dt>
+        
+        <dd>
+        	<a href="/blog/2014/10/23/javaone-university-2014/">2014 JavaOne University: Functional Programming in Scala</a>
+        </dd>
+		
+        <dd>
+        	<a href="/blog/2014/07/18/embracing-your-rows-with-slick/">Embracing Your Rows With Slick</a>
+        </dd>
+		
+        <dd>
+        	<a href="/blog/2014/05/23/case-class-related-macros/">Macros: Case Class Related Macros</a>
+        </dd>
+		
+        <dd>
+        	<a href="/blog/2014/05/20/reactive-programming-schedulers-workers/">Reactive Programming: Schedulers and Workers</a>
+        </dd>
+		
+        <dd>
+        	<a href="/blog/2014/05/14/reactive-programming-notification-observable/">Reactive Programming: Notification Versus Observable</a>
+        </dd>
+		
+    </dl>
 <!-- file: _includes/end_footer.html -->
 <div class="pull-right">
-  
+
 </div>
 
-
-    </div>
-  </div>
-</footer>
-</footer>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer></footer>
     
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+		<div class="row  sitemap-footer">
+			<div class="col-md-3">
+				<dl>
+			        <dt><a class="sitemap-link" href="/consulting">Consulting</a></dt>
+			        <dd><a href="/consulting#mentoring">Mentoring</a></dd>
+					<dd><a href="/consulting#devdep">Development</a></dd>
+			    </dl>
+			</div>
+			<div class="col-md-3">
+				<dl>
+			        <dt><a href="/training">Training</a></dt>
+			        <dd><a href="/training#seminars">Seminars</a></dd>
+					<dd><a href="/training#workshops">Workshops</a></dd>
+			    </dl>
+			</div>
+			<div class="col-md-3">
+				<dl>
+			        <dt><a href="/company">Company</a></dt>
+					<dd><a href="/partners">Partners</a></dd>
+					<dd><a href="/team">Team</a></dd>
+					<dd><a href="mailto:info@strongtyped.io">Contact</a></dd>
+			    </dl>
+			</div>
+			<div class="col-md-3">
+				<dl>
+					<dt>Social links</dt>
+					<dd><a href="http://github.com/strongtyped">GitHub</a></dd>
+					<dd><a href="http://twitter.com/strongtyped">Twitter</a></dd>
+					<dd><a href="http://www.bescala.org">BeScala</a></dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+</div>      
+
+
+
 
 <script type="text/javascript">
       var disqus_shortname = 'strongtyped';
@@ -925,5 +1001,6 @@ making use of the bidirectional mappings from case classes to tuples</p>
 
 
  
+
   </body>
 </html>

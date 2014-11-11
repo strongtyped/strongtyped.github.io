@@ -31,7 +31,7 @@
             }
           }
         es_2_sfz
-      }      
+      }
     case class Async[A](es_2_sfa: ExecutorService => SimpleFuture[A])
       extends AsynchronousSource[A]
       with AsynchronousRunnable[A] { da: D[A] =>

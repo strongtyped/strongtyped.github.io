@@ -4,7 +4,7 @@
   <title><![CDATA[Strong[Typed]]]></title>
   <link href="http://www.strongtyped.io/atom.xml" rel="self"/>
   <link href="http://www.strongtyped.io/"/>
-  <updated>2014-10-24T15:30:40+02:00</updated>
+  <updated>2014-11-11T22:13:24+01:00</updated>
   <id>http://www.strongtyped.io/</id>
   <author>
     <name><![CDATA[StrongTyped.io]]></name>
@@ -20,7 +20,7 @@
     <id>http://www.strongtyped.io/blog/2014/10/23/javaone-university-2014</id>
     <content type="html"><![CDATA[<p>This blog post correponds to my 2014 JavaOne University course.</p>
 
-<p>The content of this blog post (deliberately) does not really go into all details.</p>
+<p>The content of this blog post (deliberately) does not go into all details.</p>
 
 <!-- more -->
 
@@ -3156,7 +3156,7 @@ It deals with a simple &ldquo;coin and candy&rdquo; state machine.</p>
 </span><span class='line'>    <span class="k">import</span> <span class="nn">java.util.concurrent.Executors</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">override</span> <span class="k">val</span> <span class="n">in</span><span class="k">:</span> <span class="kt">ExecutorService</span> <span class="o">=</span>
-</span><span class='line'>      <span class="nc">Executors</span><span class="o">.</span><span class="n">newScheduledThreadPool</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+</span><span class='line'>      <span class="nc">Executors</span><span class="o">.</span><span class="n">newScheduledThreadPool</span><span class="o">(</span><span class="mi">8</span><span class="o">);</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">override</span> <span class="k">def</span> <span class="n">asynchronous_source_usage</span><span class="o">()</span> <span class="o">{</span>
 </span><span class='line'>      <span class="k">super</span><span class="o">.</span><span class="n">asynchronous_source_usage</span>

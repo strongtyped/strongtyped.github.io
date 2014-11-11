@@ -10,7 +10,7 @@
     import java.util.concurrent.Executors
 
     override val in: ExecutorService =
-      Executors.newScheduledThreadPool(10);
+      Executors.newScheduledThreadPool(8);
 
     override def asynchronous_source_usage() {
       super.asynchronous_source_usage
