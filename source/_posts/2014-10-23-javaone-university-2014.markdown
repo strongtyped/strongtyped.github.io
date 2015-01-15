@@ -18,6 +18,8 @@ Course content
 This course is about _functional programming patterns_ in general,
 and functional programming patterns _related to datasources_ in particular.
 
+foo
+
 Course approach
 ---------------
 
@@ -50,17 +52,17 @@ At this moment we do a big (not to say gigantic) step forwards by, somehow, _add
 
 _Multiplicative data_ are formalized by the `trait`'s below
 
-{% include_code HasOne lang:scala HasOne.scala %}
+{% include_code JavaOneUniversity2014_HasOne lang:scala JavaOneUniversity2014_HasOne.scala %}
 
-{% include_code Multiplicative lang:scala Multiplicative.scala %}
+{% include_code JavaOneUniversity2014_Multiplicative lang:scala JavaOneUniversity2014_Multiplicative.scala %}
 
 where _Runnable_ is formalized by the `trait` below
 
-{% include_code Runnable lang:scala Runnable.scala %}
+{% include_code JavaOneUniversity2014_Runnable lang:scala JavaOneUniversity2014_Runnable.scala %}
 
 and the _Product Type_ `Z ** Y` is defined as
 
-{% include_code Product lang:scala Product.scala %}
+{% include_code JavaOneUniversity2014_Product lang:scala JavaOneUniversity2014_Product.scala %}
 
 `trait HasOneModule`
 
@@ -89,7 +91,7 @@ Multiplicative data usage
 
 The code below defines some examples that make use of the multiplicative data DSL
 
-{% include_code MultiplicativeUsage lang:scala MultiplicativeUsage.scala %}
+{% include_code JavaOneUniversity2014_MultiplicativeUsage lang:scala JavaOneUniversity2014_MultiplicativeUsage.scala %}
 
 Think about expressions like `one(i1) ** one(i2) ** di`
 as generalizations of expressions like `a * b * x`
@@ -101,7 +103,7 @@ Think of it as _programming to an interface_.
 
 Below is a trivial `Runnable` implementation
 
-{% include_code TrivialRunnableModule lang:scala TrivialRunnableModule.scala %}
+{% include_code JavaOneUniversity2014_TrivialRunnableModule lang:scala JavaOneUniversity2014_TrivialRunnableModule.scala %}
 
 The simplest `MultiplicativeModule` instance one can think of is one along the following lines
 
@@ -118,11 +120,11 @@ Think of `One[Z]` as a data source that produces _one value_.
 
 Given a `One[Z]` instance it is possible to define
 
-{% include_code OneMultiplicativeUsage lang:scala OneMultiplicativeUsage.scala %}
+{% include_code JavaOneUniversity2014_OneMultiplicativeUsage lang:scala JavaOneUniversity2014_OneMultiplicativeUsage.scala %}
 
 and use it as follows
 
-{% include_code OneMultiplicativeUsageInApp lang:scala OneMultiplicativeUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_OneMultiplicativeUsageInApp lang:scala JavaOneUniversity2014_OneMultiplicativeUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -158,13 +160,13 @@ Again, an important question to answer is: what should be the data semantics ass
 
 _Additive data_ are formalized by the `trait`'s below
 
-{% include_code HasZero lang:scala HasZero.scala %}
+{% include_code JavaOneUniversity2014_HasZero lang:scala JavaOneUniversity2014_HasZero.scala %}
 
-{% include_code Additive lang:scala Additive.scala %}
+{% include_code JavaOneUniversity2014_Additive lang:scala JavaOneUniversity2014_Additive.scala %}
 
 where the _Sum Type_ `Z ++ Y` is defined as
 
-{% include_code Sum lang:scala Sum.scala %}
+{% include_code JavaOneUniversity2014_Sum lang:scala JavaOneUniversity2014_Sum.scala %}
 
 `trait HasZeroModule` 
 
@@ -191,7 +193,7 @@ Polynomial data
 _Polynomial data_ are formalized by the `trait` below
 as a combination of Multiplicative data and Additive data
 
-{% include_code Polynomial lang:scala Polynomial.scala %}
+{% include_code JavaOneUniversity2014_Polynomial lang:scala JavaOneUniversity2014_Polynomial.scala %}
 
 `trait Polynomial[A]` 
     
@@ -202,7 +204,7 @@ Polynomial data usage
 
 The code below defines some examples that make use of the polynomial data DSL
 
-{% include_code PolynomialUsage lang:scala PolynomialUsage.scala %}
+{% include_code JavaOneUniversity2014_PolynomialUsage lang:scala JavaOneUniversity2014_PolynomialUsage.scala %}
 
 Again, think about expressions like `one(i1) ** one(i2) ++ (one(i1) ++ one(i2)) ** di ++ di ** di`, resp. `(one(i1) ++ di) ** (one(i2) ++ di)`
 as generalizations of expressions like `a * b + (a + b) * x + x * x` resp. `(a + x) * (b + x)`
@@ -225,11 +227,11 @@ Think of `ZeroOrOne[Z]` as a data source that produces _zero or one values_.
 
 Given a `ZeroOrOne[Z]` instance it is possible to define
 
-{% include_code ZeroOrOnePolynomialUsage lang:scala ZeroOrOnePolynomialUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrOnePolynomialUsage lang:scala JavaOneUniversity2014_ZeroOrOnePolynomialUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrOnePolynomialUsageInApp lang:scala ZeroOrOnePolynomialUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrOnePolynomialUsageInApp lang:scala JavaOneUniversity2014_ZeroOrOnePolynomialUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -271,11 +273,11 @@ Think of `ZeroOrMore[Z]` as a data source that produces _zero or more values_.
 
 Given a `ZeroOrMore[Z]` instance it is possible to define
 
-{% include_code ZeroOrMorePolynomialUsage lang:scala ZeroOrMorePolynomialUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMorePolynomialUsage lang:scala JavaOneUniversity2014_ZeroOrMorePolynomialUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrMorePolynomialUsageInApp lang:scala ZeroOrMorePolynomialUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMorePolynomialUsageInApp lang:scala JavaOneUniversity2014_ZeroOrMorePolynomialUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -313,15 +315,15 @@ You can also think of
 
 The method `bind` below, defined in terms of `apply`, formalizes binding
 
-{% include_code Bind lang:scala Bind.scala %}
+{% include_code JavaOneUniversity2014_Bind lang:scala JavaOneUniversity2014_Bind.scala %}
 
 _Data sources_, formalized by the `trait` below, generalize binding
 
-{% include_code Source lang:scala Source.scala %}
+{% include_code JavaOneUniversity2014_Source lang:scala JavaOneUniversity2014_Source.scala %}
 
 where the _Predicate Type_ `Predicate[Z]` is defined as
 
-{% include_code Predicate lang:scala Predicate.scala %}
+{% include_code JavaOneUniversity2014_Predicate lang:scala JavaOneUniversity2014_Predicate.scala %}
 
 _Note:_ We made use of `bind` just to show that it is as simple to use as `apply`.
 
@@ -367,15 +369,15 @@ Datasource usage
 
 The code below defines some examples that make use of the datasource DSL
 
-{% include_code SourceUsage lang:scala SourceUsage.scala %}
+{% include_code JavaOneUniversity2014_SourceUsage lang:scala JavaOneUniversity2014_SourceUsage.scala %}
 
 Given a `One` instance it is possible to define
 
-{% include_code OneSourceUsage lang:scala OneSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_OneSourceUsage lang:scala JavaOneUniversity2014_OneSourceUsage.scala %}
 
 and use it as follows
 
-{% include_code OneSourceUsageInApp lang:scala OneSourceUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_OneSourceUsageInApp lang:scala JavaOneUniversity2014_OneSourceUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -393,7 +395,7 @@ Polynomial datasource
 _Polynomial datasources_ are formalized by the `trait` below
 as a combination of Datasources and Polynomial data
 
-{% include_code PolynomialSource lang:scala PolynomialSource.scala %}
+{% include_code JavaOneUniversity2014_PolynomialSource lang:scala JavaOneUniversity2014_PolynomialSource.scala %}
 
 `trait PolynomialSource[A]` 
     
@@ -406,15 +408,15 @@ Polynomial datasource usage
 
 The code below defines some examples that make use of the polynomial datasource DSL
 
-{% include_code PolynomialSourceUsage lang:scala PolynomialSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_PolynomialSourceUsage lang:scala JavaOneUniversity2014_PolynomialSourceUsage.scala %}
 
 Given a `ZeroOrOne` instance it is possible to define
 
-{% include_code ZeroOrOnePolynomialSourceUsage lang:scala ZeroOrOnePolynomialSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrOnePolynomialSourceUsage lang:scala JavaOneUniversity2014_ZeroOrOnePolynomialSourceUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrOnePolynomialSourceUsageInApp lang:scala ZeroOrOnePolynomialSourceUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrOnePolynomialSourceUsageInApp lang:scala JavaOneUniversity2014_ZeroOrOnePolynomialSourceUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -431,11 +433,11 @@ Running the examples above would then result in something along the following li
 
 Given a `ZeroOrMore` instance it is possible to define
 
-{% include_code ZeroOrMorePolynomialSourceUsage lang:scala ZeroOrMorePolynomialSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMorePolynomialSourceUsage lang:scala JavaOneUniversity2014_ZeroOrMorePolynomialSourceUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrMorePolynomialSourceUsageInApp lang:scala ZeroOrMorePolynomialSourceUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMorePolynomialSourceUsageInApp lang:scala JavaOneUniversity2014_ZeroOrMorePolynomialSourceUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -455,7 +457,7 @@ Reducible data
 
 _Reducible data_ are formalized by the `trait` below
 
-{% include_code Reducible lang:scala Reducible.scala %}
+{% include_code JavaOneUniversity2014_Reducible lang:scala JavaOneUniversity2014_Reducible.scala %}
 
 `trait ReducibleModule` 
 
@@ -473,7 +475,7 @@ Traversable data
 
 _Traversable data_ are formalized by the `trait` below
 
-{% include_code Traversable lang:scala Traversable.scala %}
+{% include_code JavaOneUniversity2014_Traversable lang:scala JavaOneUniversity2014_Traversable.scala %}
 
 `trait TraversableModule`
 
@@ -490,30 +492,30 @@ Again, the definitions of `swap` and `foreach` are the most natural ones you can
 
 _Traversable polynomial data_ are formalized by the `trait` below
 
-{% include_code TraversablePolynomial lang:scala TraversablePolynomial.scala %}
+{% include_code JavaOneUniversity2014_TraversablePolynomial lang:scala JavaOneUniversity2014_TraversablePolynomial.scala %}
 
 _Traversable datasources_ are formalized by the `trait` below
 
-{% include_code TraversableSource lang:scala TraversableSource.scala %}
+{% include_code JavaOneUniversity2014_TraversableSource lang:scala JavaOneUniversity2014_TraversableSource.scala %}
 
 _Traversable polynomial datasources_ are formalized by the `trait` below
 
-{% include_code TraversablePolynomialSource lang:scala TraversablePolynomialSource.scala %}
+{% include_code JavaOneUniversity2014_TraversablePolynomialSource lang:scala JavaOneUniversity2014_TraversablePolynomialSource.scala %}
 
 Traversable polynomial data (and polynomial data) usage
 -------------------------------------------------------
 
 The code below defines some examples that make use of the traversable polynomial data (and polynomial data) DSL
 
-{% include_code TraversablePolynomialAndPolynomialUsage lang:scala TraversablePolynomialAndPolynomialUsage.scala %}
+{% include_code JavaOneUniversity2014_TraversablePolynomialAndPolynomialUsage lang:scala JavaOneUniversity2014_TraversablePolynomialAndPolynomialUsage.scala %}
 
 Given `ZeroOrMore` and `ZeroOrOne` instances it is possible to define
 
-{% include_code ZeroOrMoreAndZeroOrOneUsage lang:scala ZeroOrMoreAndZeroOrOneUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMoreAndZeroOrOneUsage lang:scala JavaOneUniversity2014_ZeroOrMoreAndZeroOrOneUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrMoreAndZeroOrOneUsageInApp lang:scala ZeroOrMoreAndZeroOrOneUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMoreAndZeroOrOneUsageInApp lang:scala JavaOneUniversity2014_ZeroOrMoreAndZeroOrOneUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -551,7 +553,7 @@ Accumulation is modeled by the _monoid_ concept.
 
 _Monoids_ are formalized by the `trait` below
 
-{% include_code Monoid lang:scala Monoid.scala %}
+{% include_code JavaOneUniversity2014_Monoid lang:scala JavaOneUniversity2014_Monoid.scala %}
 
 `trait MonoidModule` 
 
@@ -565,14 +567,14 @@ _Monoids_ are formalized by the `trait` below
 
 _Strings as monoids_ are formalized by the instance below
 
-{% include_code StringMonoid lang:scala StringMonoid.scala %}
+{% include_code JavaOneUniversity2014_StringMonoid lang:scala JavaOneUniversity2014_StringMonoid.scala %}
 
 Failing data
 ------------
 
 _Failing data_ are formalized by the `trait` below
 
-{% include_code Failing lang:scala Failing.scala %}
+{% include_code JavaOneUniversity2014_Failing lang:scala JavaOneUniversity2014_Failing.scala %}
 
 `trait FailingModule` 
 
@@ -583,7 +585,7 @@ _Failing data_ are formalized by the `trait` below
 
 _Polynomial failing data_ are formalized by the `trait` below
 
-{% include_code PolynomialFailing lang:scala PolynomialFailing.scala %}
+{% include_code JavaOneUniversity2014_PolynomialFailing lang:scala JavaOneUniversity2014_PolynomialFailing.scala %}
 
 The simplest `PolynomialFailingModule` instance one can think of is one along the following lines
 
@@ -604,22 +606,22 @@ _Note:_ `SuccessOrFailureModule` is a `trait` (`mm` still needs to be defined).
 
 The simplest `SuccessOrFailureModule` instance one can think of is the following
 
-{% include_code StringSuccessOrFailureModule lang:scala StringSuccessOrFailureModule.scala %}
+{% include_code JavaOneUniversity2014_StringSuccessOrFailureModule lang:scala JavaOneUniversity2014_StringSuccessOrFailureModule.scala %}
 
 Traversable polynomial data (and polynomial failing data) usage
 ---------------------------------------------------------------
 
 The code below defines some examples that make use of the traversable polynomial data (and polynomial failing data) DSL
 
-{% include_code TraversablePolynomialAndPolynomialFailingUsage lang:scala TraversablePolynomialAndPolynomialFailingUsage.scala %}
+{% include_code JavaOneUniversity2014_TraversablePolynomialAndPolynomialFailingUsage lang:scala JavaOneUniversity2014_TraversablePolynomialAndPolynomialFailingUsage.scala %}
 
 Given `ZeroOrMore` and `StringSuccessOrFailure` instances it is possible to define
 
-{% include_code ZeroOrMoreAndStringSuccessOrFailureUsage lang:scala ZeroOrMoreAndStringSuccessOrFailureUsage.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMoreAndStringSuccessOrFailureUsage lang:scala JavaOneUniversity2014_ZeroOrMoreAndStringSuccessOrFailureUsage.scala %}
 
 and use it as follows
 
-{% include_code ZeroOrMoreAndStringSuccessOrFailureUsageInApp lang:scala ZeroOrMoreAndStringSuccessOrFailureUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMoreAndStringSuccessOrFailureUsageInApp lang:scala JavaOneUniversity2014_ZeroOrMoreAndStringSuccessOrFailureUsageInApp.scala %}
 
 Running the examples above would then result in something along the following lines
 
@@ -654,7 +656,7 @@ Stateful data
 
 _Stateful data_ are formalized by the `trait` below
 
-{% include_code Stateful lang:scala Stateful.scala %}
+{% include_code JavaOneUniversity2014_Stateful lang:scala JavaOneUniversity2014_Stateful.scala %}
 
 `trait StatefulModule` 
 
@@ -672,7 +674,7 @@ Stateful data source
 
 _Stateful datasources_ are formalized by the `trait` below
 
-{% include_code StatefulSource lang:scala StatefulSource.scala %}
+{% include_code JavaOneUniversity2014_StatefulSource lang:scala JavaOneUniversity2014_StatefulSource.scala %}
 
 `trait StatefulSourceModule`
 
@@ -684,11 +686,11 @@ Stateful datasource usage
 The code below defines some example that makes use of the stateful datasource DSL.
 It deals with a simple "coin and candy" state machine.
 
-{% include_code StatefulSourceUsage lang:scala StatefulSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_StatefulSourceUsage lang:scala JavaOneUniversity2014_StatefulSourceUsage.scala %}
 
 The simplest stateful `Runnable` implementation is the following
 
-{% include_code StatefulRunnableModule lang:scala StatefulRunnableModule.scala %}
+{% include_code JavaOneUniversity2014_StatefulRunnableModule lang:scala JavaOneUniversity2014_StatefulRunnableModule.scala %}
 
 The simplest `StatefulSourceModule` instance one can think of is one along the following lines
 
@@ -705,11 +707,11 @@ Think of `State[Z]` as a data source that produces, _maintaining state while pro
 
 Given a `State[Z]` instance it is possible to define
 
-{% include_code StateUsage lang:scala StateUsage.scala %}
+{% include_code JavaOneUniversity2014_StateUsage lang:scala JavaOneUniversity2014_StateUsage.scala %}
 
 and use it as follows
 
-{% include_code StateUsageInApp lang:scala StateUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_StateUsageInApp lang:scala JavaOneUniversity2014_StateUsageInApp.scala %}
 
 Running the example above would then result in something along the following lines
 
@@ -722,7 +724,7 @@ Asynchronous data
 
 _Asynchronous data_ are formalized by the `trait` below
 
-{% include_code Asynchronous lang:scala Asynchronous.scala %}
+{% include_code JavaOneUniversity2014_Asynchronous lang:scala JavaOneUniversity2014_Asynchronous.scala %}
 
 `trait AsynchronousModule`
     
@@ -734,18 +736,18 @@ Asynchronous data source
 
 _Asynchronous datasources_ are declared by the `trait` below
 
-{% include_code AsynchronousSource lang:scala AsynchronousSource.scala %}
+{% include_code JavaOneUniversity2014_AsynchronousSource lang:scala JavaOneUniversity2014_AsynchronousSource.scala %}
 
 Asynchronous datasource usage
 -----------------------------
 
 The code below defines some examples that make use of the asynchronous datasource DSL
 
-{% include_code AsynchronousSourceUsage lang:scala AsynchronousSourceUsage.scala %}
+{% include_code JavaOneUniversity2014_AsynchronousSourceUsage lang:scala JavaOneUniversity2014_AsynchronousSourceUsage.scala %}
 
 The simplest asynchronous `Runnable` implementation is the following
 
-{% include_code AsynchronousRunnableModule lang:scala AsynchronousRunnableModule.scala %}
+{% include_code JavaOneUniversity2014_AsynchronousRunnableModule lang:scala JavaOneUniversity2014_AsynchronousRunnableModule.scala %}
 
 The simplest `AsynchronousSourceModule` instance one can think of is one along the following lines
 
@@ -762,11 +764,11 @@ Think of `Async[Z]` as a data source that, making use of an _executor service_, 
 
 Given a `Async[Z]` instance it is possible to a define
 
-{% include_code AsyncUsage lang:scala AsyncUsage.scala %}
+{% include_code JavaOneUniversity2014_AsyncUsage lang:scala JavaOneUniversity2014_AsyncUsage.scala %}
 
 and use it as follows
 
-{% include_code AsyncUsageInApp lang:scala AsyncUsageInApp.scala %}
+{% include_code JavaOneUniversity2014_AsyncUsageInApp lang:scala JavaOneUniversity2014_AsyncUsageInApp.scala %}
 
 Running the example above would then result in something along the following lines
 
@@ -862,50 +864,50 @@ OneModule
 
 `OneModule` is a `TraversableSourceModule`
 
-{% include_code OneModule lang:scala OneModule.scala %}
+{% include_code JavaOneUniversity2014_OneModule lang:scala JavaOneUniversity2014_OneModule.scala %}
 
 ZeroOrOneModule
 ---------------
 
 `ZeroOrOneModule` is a `TraversablePolynomialSourceModule`
 
-{% include_code ZeroOrOneModule lang:scala ZeroOrOneModule.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrOneModule lang:scala JavaOneUniversity2014_ZeroOrOneModule.scala %}
 
 ZeroOrMoreModule
 ---------------
 
 `ZeroOrMoreModule` is a `TraversablePolynomialSourceModule`
 
-{% include_code ZeroOrMoreModule lang:scala ZeroOrMoreModule.scala %}
+{% include_code JavaOneUniversity2014_ZeroOrMoreModule lang:scala JavaOneUniversity2014_ZeroOrMoreModule.scala %}
 
 SuccessOrFailureModule
 ----------------------
 
 `SuccessOrFailureModule` is a `TraversablePolynomialSourceModule` and a `PolynomialFailingModule`
 
-{% include_code SuccessOrFailureModule lang:scala SuccessOrFailureModule.scala %}
+{% include_code JavaOneUniversity2014_SuccessOrFailureModule lang:scala JavaOneUniversity2014_SuccessOrFailureModule.scala %}
 
 StateModule
 -----------
 
 `StateModule` is a `StatefulSourceModule`
 
-{% include_code StateModule lang:scala StateModule.scala %}
+{% include_code JavaOneUniversity2014_StateModule lang:scala JavaOneUniversity2014_StateModule.scala %}
 
 AsyncModule
 -----------
 
 `AsyncModule` is an `AsynchronousSourceModule`
 
-{% include_code AsyncModule lang:scala AsyncModule.scala %}
+{% include_code JavaOneUniversity2014_AsyncModule lang:scala JavaOneUniversity2014_AsyncModule.scala %}
 
 `AsyncModule` makes use of the type `TimeOut`, the _trait_ `SimpleFuture` and the _class_ `Atomic`
 
-{% include_code TimeOut lang:scala TimeOut.scala %}
+{% include_code JavaOneUniversity2014_TimeOut lang:scala JavaOneUniversity2014_TimeOut.scala %}
 
-{% include_code SimpleFuture lang:scala SimpleFuture.scala %}
+{% include_code JavaOneUniversity2014_SimpleFuture lang:scala JavaOneUniversity2014_SimpleFuture.scala %}
 
-{% include_code Atomic lang:scala Atomic.scala %}
+{% include_code JavaOneUniversity2014_Atomic lang:scala JavaOneUniversity2014_Atomic.scala %}
 
 
 
