@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Syntax and Semantics"
-date: 2015-01-09	 06:00:00 +0200
+date: 2015-01-09 06:00:00 +0200
 author: Luc Duponcheel
 comments: true
 ---

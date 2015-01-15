@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "2014 JavaOne University: Functional Programming in Scala"
-date: 2014-10-23	 09:00:00 +0200
+date: 2014-10-23 09:00:00 +0200
 author: Luc Duponcheel
 comments: true
 ---

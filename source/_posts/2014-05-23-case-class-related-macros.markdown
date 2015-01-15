@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Macros: case class related macros"
-date: 2014-05-23	 09:00:00 +0200
+date: 2014-05-23 09:00:00 +0200
 author: Luc Duponcheel
 comments: true
 ---

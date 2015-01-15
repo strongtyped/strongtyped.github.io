@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Embracing your rows with Slick"
-date: 2014-07-18   09:00:00 +0200
+date: 2014-07-18 09:00:00 +0200
 author: Renato Cavalcanti
 comments: true
 ---

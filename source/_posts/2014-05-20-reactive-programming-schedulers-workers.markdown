@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Reactive Programming: Schedulers and Workers"
-date: 2014-05-20	 09:52:00 +0200
+date: 2014-05-20 09:52:00 +0200
 author: Luc Duponcheel
 comments: true
 ---
