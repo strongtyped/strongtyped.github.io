@@ -1,3 +1,4 @@
+<div class="container">
 	<dl>
         <dt><a href="{{ root_url }}/company">Recent posts</a></dt>
         {% for post in site.posts limit: site.recent_posts %}
@@ -7,3 +8,4 @@
 		{% endfor %}
     </dl>
 {% include end_footer.html %}
+</div>
