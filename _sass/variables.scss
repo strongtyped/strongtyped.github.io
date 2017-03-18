@@ -1,0 +1,23 @@
+$brand-color: #6ba1f3;
+
+// Breakpoints
+$tablet: "(min-width: 450px)";
+$mid-point: "(min-width: 620px)";
+$desktop: "(min-width: 1200px)";
+
+$type-border: #ddd !default;
+$blockquote: $type-border !default;
+$sans: "PT Sans", "Helvetica Neue", Arial, sans-serif !default;
+$serif: "PT Serif", Georgia, Times, "Times New Roman", serif !default;
+
+$mono: Menlo, Consolas, "Liberation Mono", Courier, monospace !default;
+
+$heading-font-family: "Exo", "Futura Medium", sans-serif !default;
+
+$header-title-font-family: $heading-font-family !default;
+$header-subtitle-font-family: $heading-font-family !default;
+
+
+$code-block:  #3F3C41; 
+
+$max-width: 900px;

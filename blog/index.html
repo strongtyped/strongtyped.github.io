@@ -1,0 +1,30 @@
+---
+title: Strong[Blog]
+description: where we share our thoughts, experiences and strong opinions!
+image: https://source.unsplash.com/jLwVAUtLOAQ/2000x1000?a=.png
+---
+
+{% include blog-header.html %}
+
+<section>
+	<div class="text-container">
+		<p class="editor-link"><a href="cloudcannon:collections/_posts" class="btn"><strong>&#9998;</strong> Add Post</a></p>
+		<ul class="blog-posts">
+			{% include list-posts.html posts=paginator.posts %}
+		</ul>
+
+		{% if paginator.total_pages > 1 %}
+			<div class="pagination">
+				{% if paginator.previous_page %}
+					<a href="{{ site.baseurl }}{{ paginator.previous_page_path }}" class="previous btn">&larr; Newer posts</a>
+				{% endif %}
+
+				<span class="page_number ">{{ paginator.page }} of {{ paginator.total_pages }}</span>
+
+				{% if paginator.next_page %}
+					<a href="{{ site.baseurl }}{{ paginator.next_page_path }}" class="next btn">Older posts &rarr;</a>
+				{% endif %}
+			</div>
+		{% endif %}
+	</div>
+</section>

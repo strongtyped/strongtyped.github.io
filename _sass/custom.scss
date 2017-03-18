@@ -1,0 +1,49 @@
+
+.strongtyped {
+
+  font-style:italic;
+  font-family: $heading-font-family;
+
+  > a:hover {
+    text-decoration:none
+  }
+
+  
+  .strong {
+    font-weight:bold;
+    color: $primary-color;
+  }
+
+  .strong-light {
+    font-weight:bold;
+    color: #FFFFFF;
+  }
+
+  .typed {
+    font-weight: 500;
+    color: $secondary-color;
+  }
+
+  .typed-light {
+    font-weight: 500;
+    color: #FFFFFF;
+  }
+
+}
+
+figure { padding: 0px; }
+
+.highlight {
+  padding: 0px;
+  overflow: none;
+  background: $code-block;
+
+  .gutter {
+    padding-right: 8px;
+    border-right: 1px solid #C1C2C3;
+  }
+
+  td .code { 
+    margin-left: 8px;
+  }
+}

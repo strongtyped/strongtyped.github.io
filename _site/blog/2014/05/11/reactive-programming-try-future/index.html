@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="generator" content="Jekyll v3.3.1">
+
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300|Rubik:300">
+		<link rel="stylesheet" href="/css/syntax-dracula.css">
+		<link rel="stylesheet" href="/css/screen.css">
+		
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="/touch-icon.png" sizes="192x192">
+		<!-- <link rel="icon" type="image/png" href="/images/favicon.png"> -->
+
+		<!-- Begin Jekyll SEO tag v2.1.0 -->
+<title>Try versus Future - Strong[Typed]</title>
+<meta property="og:title" content="Try versus Future" />
+<meta name="description" content="This is a first of two blog posts about Reactive Programming in Scala. The blog post about Functional Programming in Scala introduced pure computations resulting in exactly one value. Reactive programming deals, in a functional way, with two fundamental impure aspects of computations: failure and latency. The first blog post covers reactive programs resulting in one value. The second blog post covers Reactive Programs resulting in many (zero or more) values." />
+<meta property="og:description" content="This is a first of two blog posts about Reactive Programming in Scala. The blog post about Functional Programming in Scala introduced pure computations resulting in exactly one value. Reactive programming deals, in a functional way, with two fundamental impure aspects of computations: failure and latency. The first blog post covers reactive programs resulting in one value. The second blog post covers Reactive Programs resulting in many (zero or more) values." />
+<link rel="canonical" href="http://localhost:4000/blog/2014/05/11/reactive-programming-try-future/" />
+<meta property="og:url" content="http://localhost:4000/blog/2014/05/11/reactive-programming-try-future/" />
+<meta property="og:site_name" content="Strong[Typed]" />
+<meta property="og:image" content="https://source.unsplash.com/Q47eNv_UvfM/2000x1000?a=.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-05-11T06:21:00+02:00" />
+<script type="application/ld+json">
+{"@context": "http://schema.org",
+"@type": "BlogPosting",
+"headline": "Try versus Future",
+"image": "https://source.unsplash.com/Q47eNv_UvfM/2000x1000?a=.png",
+"datePublished": "2014-05-11T06:21:00+02:00",
+"description": "This is a first of two blog posts about Reactive Programming in Scala. The blog post about Functional Programming in Scala introduced pure computations resulting in exactly one value. Reactive programming deals, in a functional way, with two fundamental impure aspects of computations: failure and latency. The first blog post covers reactive programs resulting in one value. The second blog post covers Reactive Programs resulting in many (zero or more) values.",
+"publisher": {"@type": "Organization",
+"logo": {"@type": "ImageObject",
+"url": "http://localhost:4000/siteicon.png"}},
+"url": "http://localhost:4000/blog/2014/05/11/reactive-programming-try-future/"}</script>
+<!-- End Jekyll SEO tag -->
+
+		<link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Strong[Typed]" />
+
+		
+
+
+		 <!-- webfonts -->
+		
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=Exo:400,500,600,500italic,600italic" rel="stylesheet" type="text/css">
+
+
+	</head>
+
+	<body>
+		<header id="mainHeader">
+			<div class="container">
+				<div class="company-name">
+					<a href="/">
+						<span class="dark-logo">
+							<span class="strongtyped">
+								<span class="strong">Strong</span><span class="typed">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/dark.svg" alt="dark frisco logo"> -->
+						</span>
+						<span class="light-logo">
+							<span class="strongtyped">
+						 		<span class="strong-light">Strong</span><span class="typed-light">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/light.svg" alt="light frisco logo"> -->
+						</span>
+					</a>
+				</div>
+				<nav>
+	<a class="nav-toggle" id="open-nav" href="#">&#9776;</a>
+	
+		
+		
+
+		
+		<a href="/blog/" class="" >Blog</a>
+	
+		
+		
+
+		
+		<a href="/" class="" >About</a>
+	
+</nav>
+
+				<p class="editor-link"><a style="display:inline;" href="cloudcannon:collections/_data/navigation.yml" class="btn"><strong>&#9998;</strong> Edit navigation</a></p>
+			</div>
+		</header>
+
+		<section class="hero" style="background-image: url(https://source.unsplash.com/Q47eNv_UvfM/2000x1000?a=.png)" >
+	<div class="inner-hero text-container">
+		<div class="hero-text-container">
+			<h1>Try versus Future</h1>
+			<p class="subtext"></p>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="blog-post text-container">
+		<p class="editor-link"><a href="cloudcannon:collections/_posts/2014-05-11-reactive-programming-try-future.md" class="btn"><strong>&#9998;</strong> Edit Post</a></p>
+		<div class="post-details">
+	
+	<div class="author" style="float: left;">
+		
+		
+		<div class="square-image" style="background-image: url('/images/luc.gif')"></div>
+	</div>		
+		
+	<div>
+		<div class="post-meta">
+			<div><strong>Luc Duponcheel</strong></div>
+			<div>Senior Scala / FP Developer</div>
+			<div>May 11, 2014</div>
+		</div>
+		<div class="post-cat">
+			<!-- 
+				<span class="blog-filter">
+					<a href="/category/scala/">Scala</a>
+				</span>
+			
+				<span class="blog-filter">
+					<a href="/category/reactive/">Reactive</a>
+				</span>
+			 -->
+			
+		</div>
+	</div>
+	
+</div>
+
+
+		<div class="post-content">
+
+			<p>This is a first of two blog posts about <em>Reactive Programming in Scala</em>.
+The blog post about <a href="/blog/2014/05/11/functional-programming-in-scala"><em>Functional Programming in Scala</em></a>
+introduced <em>pure computations resulting in exactly one value</em>.
+Reactive programming deals, in a functional way,
+with two fundamental <em>impure</em> aspects of computations: <em>failure</em> and <em>latency</em>.
+The first blog post covers reactive programs resulting in <em>one</em> value.
+The second blog post covers Reactive Programs resulting in <em>many</em> (<em>zero or more</em>) values.</p>
+
+<p><strong>Warning:</strong> 
+The types that are used in this blog post exist in the standard Scala library.
+For didactical reasons this blog post sometimes defines extra types and extra methods for existing types.</p>
+
+<!-- more -->
+
+<h2 id="failure">Failure</h2>
+
+<p>In Java (and many other languages for that matter) failure is modeled using <em>exceptions</em>.
+Java also added the distiction between <em>checked</em> and <em>unchecked</em> exceptions.</p>
+
+<p>When asking Java programmers if they <em>like</em> checked exceptions, many of them say they <em>hate</em> them.
+In a way this is strange because checked exceptions are part of the <em>contract</em> of your code,
+and, when using them, the compiler <em>helps</em> you by telling you whether or not
+your code <em>satisfies that contract</em>.
+In practice, many Java programmers have the feeling that the compiler is <em>annoying</em>
+them rather then helping them.</p>
+
+<p>Why?</p>
+
+<p>Well, because, when trying to satisfy the contract that comes with checked exceptions, 
+programmers are basically <em>left on their own</em>. As a consequence <code class="highlighter-rouge">try/catch</code> code propagates
+all the way through their code, cluttering up the <em>essential part</em> of their code. 
+In a way, when using checked exceptions, <em>they end up in</em> <code class="highlighter-rouge">try/catch</code> <em>hell</em>.
+Therefore many Java programmers <code class="highlighter-rouge">catch</code> checked exceptions and <code class="highlighter-rouge">throw</code> unchecked ones.</p>
+
+<p>That makes the situation even worse since, by throwing unchecked exceptions,
+programmers let failure <em>silently disappear at compile time</em>
+until it <em>loudly re-appears at runtime</em>.</p>
+
+<p>There must be a better way to deal with failure.</p>
+
+<h2 id="computations-of-type-">Computations of type <code class="highlighter-rouge">Try</code></h2>
+
+<p>The <code class="highlighter-rouge">Try</code> type represents a computation that may
+either result in a successfully computed value 
+or result in a failure.
+An instance of <code class="highlighter-rouge">Try[Z]</code> is
+either an instance of <code class="highlighter-rouge">Success[Z]</code>
+or an instance of <code class="highlighter-rouge">Failure[Z]</code>.</p>
+
+<p>Code that makes use a value <code class="highlighter-rouge">tz</code> of type <code class="highlighter-rouge">Try[Z]</code>,
+typically, makes use of a <code class="highlighter-rouge">match</code> on <code class="highlighter-rouge">tz</code>, which, you can think of as code that</p>
+
+<ul>
+  <li>in a synchronous (blocking) way, <em>pulls</em> a value or a throwable out of <code class="highlighter-rouge">tz</code></li>
+</ul>
+
+<h2 id="materializing-failure-using-">Materializing failure using <code class="highlighter-rouge">mkTry</code></h2>
+
+<p>A first step towards dealing with failure in a better way is to write, once and for all, code that
+<em>materializes failure at compile time</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">mkTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+    <span class="k">try</span> <span class="o">{</span>
+      <span class="nc">Success</span> <span class="o">{</span> <span class="n">block</span> <span class="o">}</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="n">throwable</span><span class="k">:</span> <span class="kt">Throwable</span> <span class="o">=&gt;</span>
+        <span class="nc">Failure</span><span class="o">(</span><span class="n">throwable</span><span class="o">)</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">mkTry</code> code makes use of a <em>call by name</em> parameter <code class="highlighter-rouge">block</code>
+which you can think of as code that <em>can succeed</em> or <em>can fail</em>.</p>
+
+<p>The <code class="highlighter-rouge">Try</code> companion object of the standard Scala library already has an <code class="highlighter-rouge">apply</code> method
+that is equivalent to <code class="highlighter-rouge">mkTry</code>. The definition of <code class="highlighter-rouge">mkTry</code> is given for didactical reasons only.</p>
+
+<p>How are computations of type <code class="highlighter-rouge">Try</code> <em>described</em>?</p>
+
+<h2 id="describing-computations-of-type-">Describing Computations of type <code class="highlighter-rouge">Try</code></h2>
+
+<p>To make things interesting from a failure and latency
+point of view, many example computations make use of
+the functions <code class="highlighter-rouge">work</code> and <code class="highlighter-rouge">block</code> below</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">work</span><span class="o">(</span><span class="n">c</span><span class="k">:</span> <span class="kt">Char</span><span class="o">,</span> <span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="mi">10</span><span class="o">).</span><span class="n">foreach</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span>
+      <span class="n">print</span><span class="o">(</span><span class="n">s</span><span class="s">"${c}${Thread.currentThread().getId()}."</span><span class="o">)</span>
+      <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="n">l</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">block</span><span class="o">(</span><span class="n">string</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Boolean</span><span class="o">,</span> <span class="n">c</span><span class="k">:</span> <span class="kt">Char</span><span class="o">,</span> <span class="n">l</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="n">work</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="n">l</span><span class="o">)</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">b</span><span class="o">)</span> <span class="n">s</span><span class="s">"${string}Ok"</span>
+    <span class="k">else</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">Throwable</span><span class="o">(</span><span class="n">s</span><span class="s">"${string}Ko"</span><span class="o">)</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Here are two computations of type <code class="highlighter-rouge">Try</code> that are described using <code class="highlighter-rouge">mkTry</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">okTryFoo</span> <span class="k">=</span> <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">okTryFoo</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">koTryFoo</span> <span class="k">=</span> <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">okTryFoo</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>A <code class="highlighter-rouge">lazy val</code> is used to separate the description of the computation from its execution.</p>
+
+<p>How are computations of type <code class="highlighter-rouge">Try</code> <em>executed</em> once they are described?</p>
+
+<h2 id="executing-computations-of-type-">Executing Computations of type <code class="highlighter-rouge">Try</code></h2>
+
+<p>For the purpose of this series of blog posts,
+executing a computation of type <code class="highlighter-rouge">Try</code> can be as simple as either printing the value
+pulled out of a successful result or printing the message pulled out of an unsuccessful result</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">execute</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+    <span class="n">tz</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">print</span><span class="o">(</span><span class="n">s</span><span class="s">"$z"</span><span class="o">)</span>
+      <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">print</span><span class="o">(</span><span class="n">s</span><span class="s">"${t.getMessage}"</span><span class="o">)</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Below, the two computations of type <code class="highlighter-rouge">Try</code> are executed using <code class="highlighter-rouge">execute</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">okTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">okTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">fooOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">koTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">koTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>So, what does materialized failure bring you?</p>
+
+<h2 id="-is-your-guide"><code class="highlighter-rouge">bnd</code> is your guide</h2>
+
+<p>Just as it is possible for computations of type <code class="highlighter-rouge">One</code> it is possible for computations of type <code class="highlighter-rouge">Try</code>
+to define a method <code class="highlighter-rouge">bnd</code> that can be used to <em>compose computations</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">TryOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2ty</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">tz</span> <span class="k">match</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="n">z</span> <span class="n">bind</span> <span class="n">z2ty</span>
+        <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="c1">// ...
+</span></code></pre>
+</div>
+
+<p>An important requirement for <code class="highlighter-rouge">z2ty</code> is that it <em>must not throw exceptions</em>.
+Using <code class="highlighter-rouge">mkTry</code>, it is easy to fulfill this requirement.</p>
+
+<p>With <code class="highlighter-rouge">bnd</code> in your toolbox, you are not on your own any more to deal with materialized failure.
+Indeed, the method <code class="highlighter-rouge">bnd</code> is your trustworthy guide that</p>
+
+<ul>
+  <li><em>leads you through the successful execution path</em></li>
+  <li><em>does the failure related boilerplate work for you</em></li>
+</ul>
+
+<h2 id="dsl-for-declaring-computations-of-type--part-1">DSL for declaring computations of type <code class="highlighter-rouge">Try</code> (Part 1)</h2>
+
+<p>By now we have defined <code class="highlighter-rouge">mkTry</code> and <code class="highlighter-rouge">bnd</code></p>
+
+<ul>
+  <li>They constitute <em>a declarative DSL for describing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>We have also defined <code class="highlighter-rouge">execute</code></p>
+
+<ul>
+  <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>This section contains some examples on how to make use of those DSL’s.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar01</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar02</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar03</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar04</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">tryFooBar01</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar02</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar03</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar04</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+
+</code></pre>
+</div>
+
+<p>We can now, so to speak, try to print <code class="highlighter-rouge">fooOkbarOk</code> in a synchronous way</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar01</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">fooOkbarOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar02</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">barKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar03</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar04</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>So now that failure is dealt with for you, you are perfectly happy, right?
+Well, maybe not. 
+<code class="highlighter-rouge">bnd</code> deals with failure in a somewhat specific way using a <em>fail fast</em> strategy.
+Maybe what you want is a <em>fail slow</em> strategy that <em>accumulates</em> information about what went wrong along the way.</p>
+
+<p>This is where <code class="highlighter-rouge">and</code> comes in.</p>
+
+<h2 id="-may-be-a-better-guide"><code class="highlighter-rouge">and</code> may be a better guide</h2>
+
+<p>Just as it is possible for computations of type <code class="highlighter-rouge">One</code> it is possible for computations of type <code class="highlighter-rouge">Try</code>
+to define a method <code class="highlighter-rouge">and</code> that can be used to <em>compose computations</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// ...
+</span>    <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">t_z2y</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+      <span class="o">(</span><span class="n">tz</span><span class="o">,</span> <span class="n">t_z2y</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="o">(</span><span class="nc">Success</span><span class="o">(</span><span class="n">z</span><span class="o">),</span> <span class="nc">Success</span><span class="o">(</span><span class="n">z2y</span><span class="o">))</span> <span class="k">=&gt;</span>
+          <span class="nc">Try</span> <span class="o">{</span> <span class="n">z</span> <span class="n">bind</span> <span class="n">z2y</span> <span class="o">}</span>
+        <span class="k">case</span> <span class="o">(</span><span class="nc">Success</span><span class="o">(</span><span class="k">_</span><span class="o">),</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">))</span> <span class="k">=&gt;</span>
+          <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+        <span class="k">case</span> <span class="o">(</span><span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">),</span> <span class="nc">Success</span><span class="o">(</span><span class="k">_</span><span class="o">))</span> <span class="k">=&gt;</span>
+          <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+        <span class="k">case</span> <span class="o">(</span><span class="nc">Failure</span><span class="o">(</span><span class="n">t1</span><span class="o">),</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t2</span><span class="o">))</span> <span class="k">=&gt;</span>
+          <span class="nc">Failure</span><span class="o">(</span><span class="k">new</span> <span class="nc">Throwable</span><span class="o">(</span>
+              <span class="n">t1</span><span class="o">.</span><span class="n">getMessage</span> <span class="o">+</span> 
+              <span class="s">" and "</span> <span class="o">+</span>
+              <span class="n">t2</span><span class="o">.</span><span class="n">getMessage</span><span class="o">))</span>
+      <span class="o">}</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Instead of relying on the default implementation of <code class="highlighter-rouge">and</code>
+(that would use a fail fast strategy), you can take advantage of
+the possibility to define <code class="highlighter-rouge">and</code> in another way to let it use a fail slow strategy
+and accumulate error messages. All this is possible since <code class="highlighter-rouge">and</code>
+is more abstract as <code class="highlighter-rouge">bnd</code> and, as such, allows for more implementation flexibility.</p>
+
+<p>By the way: it is absolutely not the case that this is the one and only way
+to use a fail slow strategy and accumulate information about what went wrong.
+It is better to make use of a more powerful type, like the <code class="highlighter-rouge">Validation</code> type of ScalaZ. 
+The point we want to make is that, when going for <code class="highlighter-rouge">and</code> as a guide,
+you have more failure handling implementation flexibility for letting
+<code class="highlighter-rouge">and</code> guide you along your way to a possible result.</p>
+
+<h2 id="dsl-for-declaring-computations-of-type--part-2">DSL for declaring computations of type <code class="highlighter-rouge">Try</code> (Part 2)</h2>
+
+<p>By now we have defined <code class="highlighter-rouge">mkTry</code>, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code></p>
+
+<ul>
+  <li>They constitute <em>a declarative DSL for describing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>We have also defined <code class="highlighter-rouge">execute</code></p>
+
+<ul>
+  <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>This section contains some examples on how to make use of those DSL’s.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar05</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar06</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar07</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFooBar08</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">tryFooBar05</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar06</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar07</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFooBar08</span><span class="k">:</span> <span class="kt">scala.util.Try</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>We can now, so to speak, try to print <code class="highlighter-rouge">fooOkbarOk</code> in a synchronous way</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar05</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooOkbarOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar06</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar07</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">barKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">execute</span><span class="o">(</span><span class="n">tryFooBar08</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">B142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span>
+<span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">F142</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>So far so good as far as <em>failure</em> is concerned. But what about <em>latency</em>?
+All code we have shown so far uses <em>synchronous, blocking</em> computations.</p>
+
+<h2 id="latency">Latency</h2>
+
+<p>You all know that making use of <em>synchronous, blocking</em> computations
+is not the way to deal with latency.
+In Java (and many other languages for that matter) <em>asynchronous, non-blocking</em> computations
+are used instead to deal with latency.
+Asynchronous computations are often modeled using <em>callbacks</em>.</p>
+
+<p>When asking programmers if they <em>like</em> callbacks, many of them say they <em>hate</em> them.</p>
+
+<p>Why?</p>
+
+<p>Well, because, when trying to deal with latency using callbacks, 
+programmers are basically <em>left on their own</em>. 
+In a way, when using callbacks, <em>they end up in callback hell</em>.</p>
+
+<p>There must be a better way to deal with latency.</p>
+
+<h2 id="computations-of-type--1">Computations of type <code class="highlighter-rouge">Future</code></h2>
+
+<p>A value of type <code class="highlighter-rouge">Try[Z]</code> that is defined as a <code class="highlighter-rouge">def</code>
+is essentially the same as a value of type <code class="highlighter-rouge">Unit =&gt; Try[Z]</code>.
+The <em>dual</em> of such a value, obtained by reversing the arrow <code class="highlighter-rouge">=&gt;</code>,
+is a value of type <code class="highlighter-rouge">Try[Z] =&gt; Unit</code>. This dual is formalized by the
+following type definition</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">type</span> <span class="kt">Callback</span><span class="o">[</span><span class="kt">-Z</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Unit</span>
+</code></pre>
+</div>
+
+<p>In a way (as illustrated in the following section) a <code class="highlighter-rouge">Future[Z]</code> value is the <em>dual</em> of a <code class="highlighter-rouge">Callback[Z]</code> value,
+and, as such, the <em>bi-dual</em> of a <code class="highlighter-rouge">Try[Z]</code> value.</p>
+
+<p>More precisely, in a way, <code class="highlighter-rouge">Future[Z]</code> is the same as <code class="highlighter-rouge">Callback[Z] =&gt; Unit</code>,
+which is the same as <code class="highlighter-rouge">(Try[Z] =&gt; Unit) =&gt; Unit</code>.</p>
+
+<p>This <em>bi-duality</em> turns out to transform synchronous <code class="highlighter-rouge">Try</code> computations
+into asynchronous <code class="highlighter-rouge">Future</code> computations.</p>
+
+<h2 id="materializing-failure-and-latency-using-">Materializing (failure and) latency using <code class="highlighter-rouge">mkFuture</code></h2>
+
+<p>A first step towards dealing with (failure and) latency is to write,
+once and for all, code that <em>materializes (failure and) latency at compile time</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">mkFuture</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+    <span class="o">(</span><span class="n">cz2u</span><span class="k">:</span> <span class="kt">Callback</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Unit</span><span class="o">)</span>
+    <span class="o">(</span><span class="k">implicit</span> <span class="n">executionContext</span><span class="k">:</span> <span class="kt">ExecutionContext</span><span class="o">)</span>
+    <span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">pz</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">Z</span><span class="o">]()</span>
+    <span class="n">executionContext</span><span class="o">.</span><span class="n">prepare</span><span class="o">.</span><span class="n">execute</span><span class="o">(</span><span class="k">new</span> <span class="nc">Runnable</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">run</span> <span class="o">{</span> <span class="o">{</span> <span class="o">(</span><span class="n">tz</span><span class="k">:</span> <span class="kt">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="k">=&gt;</span> <span class="n">pz</span><span class="o">.</span><span class="n">complete</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span> <span class="o">;</span> <span class="o">()</span> <span class="o">}</span> <span class="n">bind</span> <span class="n">cz2u</span> <span class="o">}</span>
+    <span class="o">})</span>
+    <span class="n">pz</span><span class="o">.</span><span class="n">future</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The code above uses the <code class="highlighter-rouge">Promise[Z]</code> class in its implementation.</p>
+
+<p>You do not need to fully understand the <em>definition</em> of <code class="highlighter-rouge">mkFuture</code>.
+Think of it as the <em>dual</em> of <em>fulfilling a promise</em> in a separate thead, 
+and returning that promise as a future.</p>
+
+<p>In a way a <code class="highlighter-rouge">Promise[Z]</code> is both a <code class="highlighter-rouge">Callback[-Z]</code>,
+since it has a method <code class="highlighter-rouge">complete</code> that has a parameter of type <code class="highlighter-rouge">Try[Z]</code>,
+and a <code class="highlighter-rouge">Future[+Z]</code>,
+since it has a variable <code class="highlighter-rouge">future</code> of type <code class="highlighter-rouge">Future[Z]</code>.</p>
+
+<p>A promise is something that</p>
+
+<ul>
+  <li>can be fulfilled (written) only once, in a thread safe way</li>
+  <li>can be pushed (and read) many times.</li>
+</ul>
+
+<p>It is possible, and often useful, to define futures directly in terms of promises.
+This blog post does not go into details.</p>
+
+<p>This definition of computations in terms of <code class="highlighter-rouge">mkFuture</code> is, in a way,
+more complex than needed. For the moment, we are dealing
+with reactive computations with <em>one</em> value.
+Reactive computations with <em>many</em> values will be defined
+in the next blog post a in similar way.
+We want to emphasize this analogy.</p>
+
+<p>When considering <code class="highlighter-rouge">mkFuture</code> as the <em>only</em> way to
+make a future, in a way, <code class="highlighter-rouge">Future[Z]</code> becomes the same as <code class="highlighter-rouge">Callback[Z] =&gt; Unit</code>.</p>
+
+<p>A callback can be <em>registered</em> to a future as shown below</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">FutureOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">fz</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">register</span><span class="o">(</span><span class="n">callback</span><span class="k">:</span> <span class="kt">Callback</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+      <span class="n">fz</span><span class="o">.</span><span class="n">onComplete</span> <span class="o">{</span> <span class="n">tz</span> <span class="k">=&gt;</span>
+        <span class="n">callback</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
+      <span class="o">}</span> 
+    <span class="o">}</span>
+    <span class="c1">// ...
+</span></code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">Future</code> class of the standard Scala library already has an <code class="highlighter-rouge">onComplete</code> method 
+that is equivalent to <code class="highlighter-rouge">register</code>. The definition of <code class="highlighter-rouge">register</code> is given for didactical reasons only.</p>
+
+<p>It is important that you understand the <em>usage</em> of <code class="highlighter-rouge">mkFuture</code></p>
+
+<ul>
+  <li>you can make a future by defining what it <em>pushes</em> to registered callbacks</li>
+</ul>
+
+<p>Not surprising, a computation of type <code class="highlighter-rouge">Try</code> can be transformed to a computation
+of type <code class="highlighter-rouge">Future</code> using this idea</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">try2future</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">tz</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Try</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">mkFuture</span> <span class="o">{</span> <span class="n">cz</span> <span class="k">=&gt;</span>
+      <span class="n">cz</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
+    <span class="o">}</span> 
+</code></pre>
+</div>
+<p>The <code class="highlighter-rouge">try2future</code> code makes use of a <em>call by name</em> parameter <code class="highlighter-rouge">tz</code>.</p>
+
+<p>The example below illustrates how to use <code class="highlighter-rouge">try2future</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">mkFutureTry</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">block</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">try2future</span><span class="o">(</span><span class="n">mkTry</span> <span class="o">{</span> <span class="n">block</span> <span class="o">})</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">mkTry</code> function for computations of type <code class="highlighter-rouge">Try</code> could naturally be reused.</p>
+
+<p>The <code class="highlighter-rouge">mkFutureTry</code> code makes use of a <em>call by name</em> parameter <code class="highlighter-rouge">block</code>
+which you can think of as code that 
+on the one hand, <em>can succeed</em> or <em>can fail</em> and,
+on the other hand, <em>can take some time to be evaluated</em>.</p>
+
+<p>How are computations of type <code class="highlighter-rouge">Future</code> described?</p>
+
+<h2 id="describing-computations-of-type--1">Describing Computations of type <code class="highlighter-rouge">Future</code></h2>
+
+<p>Here are two computations of type <code class="highlighter-rouge">Future</code> that are described using <code class="highlighter-rouge">mkFutureTry</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">okFutureTryFoo</span> <span class="k">=</span> <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">okFutureTryFoo</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">koFutureTryFoo</span> <span class="k">=</span> <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">koFutureTryFoo</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>How are computations of type <code class="highlighter-rouge">Future</code> <em>executed</em> once they are described?</p>
+
+<h2 id="executing-computations-of-type--1">Executing Computations of type <code class="highlighter-rouge">Future</code></h2>
+
+<p>For the purpose of this series of blog posts,
+executing a computation of type <code class="highlighter-rouge">Future</code> can be as simple as registering a callback
+that either prints the value of a successful result pushed to it or prints the message of an unsuccessful result
+pushed to it</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code> <span class="k">def</span> <span class="n">register</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">fz</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+   <span class="n">fz</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span> <span class="n">tz</span> <span class="k">=&gt;</span>
+     <span class="n">execute</span><span class="o">(</span><span class="n">tz</span><span class="o">)</span>
+   <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We have called the method <code class="highlighter-rouge">register</code> instead of <code class="highlighter-rouge">execute</code>
+because it corresponds to a <code class="highlighter-rouge">register</code> method of <code class="highlighter-rouge">Future</code></p>
+
+<p>The <code class="highlighter-rouge">execute</code> function for computations of type <code class="highlighter-rouge">Try</code> could naturally be reused.</p>
+
+<p>Below, the two computations of type <code class="highlighter-rouge">Future</code> are executed using <code class="highlighter-rouge">register</code></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">F121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">fooOkM142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">okFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">fooOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span>
+<span class="o">.</span><span class="n">B121</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">koFutureTryFoo</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">120</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> 
+</code></pre>
+</div>
+<p>So, what does materialized (failure and) latency bring you?</p>
+
+<h2 id="-is-your-guide-1"><code class="highlighter-rouge">bnd</code> is your guide</h2>
+
+<p>Just as it is possible for computations of type <code class="highlighter-rouge">Try</code> it is possible for computations of type <code class="highlighter-rouge">Future</code> to define a method <code class="highlighter-rouge">bnd</code> that can be used to <em>compose computations</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>    <span class="c1">// ...
+</span>    <span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2fy</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">Future</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="n">py</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">Y</span><span class="o">]()</span>
+      <span class="n">fz</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="o">(</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2fy</span><span class="o">).</span><span class="n">register</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="nc">Success</span><span class="o">(</span><span class="n">y</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">py</span><span class="o">.</span><span class="n">success</span><span class="o">(</span><span class="n">y</span><span class="o">)</span>
+            <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">py</span><span class="o">.</span><span class="n">failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+          <span class="o">}</span>
+        <span class="k">case</span> <span class="nc">Failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="n">py</span><span class="o">.</span><span class="n">failure</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+      <span class="o">}</span>
+      <span class="n">py</span><span class="o">.</span><span class="n">future</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>An important requirement for <code class="highlighter-rouge">z2fy</code> is that it must not throw exceptions. Using <code class="highlighter-rouge">mkFutureTry</code>, it is easy to fulfill this requirement.</p>
+
+<p>With <code class="highlighter-rouge">bnd</code> in your toolbox, you are not on your own any more to deal with materialized (failure and) latency. Indeed, the method <code class="highlighter-rouge">bnd</code> is your trustworthy guide that</p>
+
+<ul>
+  <li><em>leads you through the successful execution path</em></li>
+  <li><em>does the (failure and) latency related boilerplate work for you</em></li>
+</ul>
+
+<h2 id="dsl-for-declaring-computations-of-type--part-1-1">DSL for declaring computations of type <code class="highlighter-rouge">Future</code> (Part 1)</h2>
+
+<p>By now we have defined <code class="highlighter-rouge">mkFutureTry</code> and <code class="highlighter-rouge">bnd</code></p>
+
+<ul>
+  <li>They constitute <em>a declarative DSL for describing computations</em> of type <code class="highlighter-rouge">Future</code></li>
+</ul>
+
+<p>We have also defined <code class="highlighter-rouge">register</code></p>
+
+<ul>
+  <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code class="highlighter-rouge">Future</code></li>
+</ul>
+
+<p>This section contains some examples on how to make use of those DSL’s.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar01</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar02</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar03</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar04</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">tryFutureFooBar01</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar02</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar03</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar04</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>We can now, so to speak, try to print <code class="highlighter-rouge">fooOkbarOk</code> in an asynchronous way</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar01</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">fooOkbarOkM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar02</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F152</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">B151</span><span class="o">.</span><span class="n">barKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar03</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar04</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'M'</span><span class="o">,</span> <span class="mi">300</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">F151</span><span class="o">.</span><span class="n">fooKoM142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+<span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span><span class="n">M142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>So now that latency is also dealt with for you, you are perfectly happy, right?
+Well, maybe not.
+<code class="highlighter-rouge">bnd</code> deals with latency in a somewhat specific (not to say sub-optimal) way using <em>sequential</em> composition. Maybe what you want is a <em>parallel</em> composition.</p>
+
+<h2 id="-may-be-a-better-guide-1"><code class="highlighter-rouge">and</code> may be a better guide</h2>
+
+<p>Just as it is possible for computations of type <code class="highlighter-rouge">Try</code> it is possible for computations of type <code class="highlighter-rouge">Future</code>
+to define a method <code class="highlighter-rouge">and</code> that can be used to <em>compose computations</em></p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>    <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">f_z2y</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="n">py</span> <span class="k">=</span> <span class="nc">Promise</span><span class="o">[</span><span class="kt">Y</span><span class="o">]()</span>
+      <span class="n">fz</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span> <span class="n">tz</span> <span class="k">=&gt;</span>
+        <span class="n">f_z2y</span><span class="o">.</span><span class="n">register</span> <span class="o">{</span> <span class="n">t_z2y</span> <span class="k">=&gt;</span>
+          <span class="n">py</span><span class="o">.</span><span class="n">complete</span><span class="o">(</span><span class="n">tz</span> <span class="n">and</span> <span class="n">t_z2y</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+      <span class="n">py</span><span class="o">.</span><span class="n">future</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">and</code> method for computations of type <code class="highlighter-rouge">Try</code> could naturally be reused.</p>
+
+<p>Instead of relying on the default implementation of <code class="highlighter-rouge">and</code>
+(that would use sequential composition), you can take advantage of
+the possibility to define <code class="highlighter-rouge">and</code> in another way to let it use parallel composition
+All this is possible since <code class="highlighter-rouge">and</code>
+is more abstract as <code class="highlighter-rouge">bnd</code> and, as such, allows for more implementation flexibility.</p>
+
+<p>The point we want to make is that, when going for <code class="highlighter-rouge">and</code> as a guide,
+you have more latency handling implementation flexibility for letting
+<code class="highlighter-rouge">and</code> guide you along your way to a possible result.</p>
+
+<h2 id="dsl-for-declaring-computations-of-type--part-2-1">DSL for declaring computations of type <code class="highlighter-rouge">Try</code> (Part 2)</h2>
+
+<p>By now we have defined <code class="highlighter-rouge">mkFutureTry</code>, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code></p>
+
+<ul>
+  <li>They constitute <em>a declarative DSL for describing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>We have also defined <code class="highlighter-rouge">register</code></p>
+
+<ul>
+  <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code class="highlighter-rouge">Try</code></li>
+</ul>
+
+<p>This section contains some examples on how to make use of those DSL’s.</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar05</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar06</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar07</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar08</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">tryFutureFooBar05</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar06</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar07</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar08</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>We can now, so to speak, try to print <code class="highlighter-rouge">fooOkbarOk</code> in an asynchronous way</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar05</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F154</span><span class="o">.</span><span class="n">fooOkbarOkW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar06</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar07</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">B154</span>
+<span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B154</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F149</span><span class="o">.</span><span class="n">barKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar08</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">B149</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F155</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>In the examples above,
+the <code class="highlighter-rouge">block</code> using <code class="highlighter-rouge">"bar"</code> is executed faster than
+the <code class="highlighter-rouge">block</code> using <code class="highlighter-rouge">"foo"</code>. 
+So what about the opposite?</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar09</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar10</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar11</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="k">lazy</span> <span class="k">val</span> <span class="n">tryFutureFooBar12</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"bar"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'B'</span><span class="o">,</span> <span class="mi">100</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+    <span class="n">mkFutureTry</span> <span class="o">{</span> <span class="n">block</span><span class="o">(</span><span class="s">"foo"</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="sc">'F'</span><span class="o">,</span> <span class="mi">50</span><span class="o">)</span> <span class="o">}</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkFutureTry</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">tryFutureFooBar09</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar10</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar11</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+<span class="n">tryFutureFooBar12</span><span class="k">:</span> <span class="kt">scala.concurrent.Future</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>We can now, again, so to speak, try to print <code class="highlighter-rouge">fooOkbarOk</code> in an asynchronous way</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar09</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">F157</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">fooOkbarOkW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar10</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">F159</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar11</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">barKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="n">register</span><span class="o">(</span><span class="n">tryFutureFooBar12</span><span class="o">)</span> <span class="o">;</span> <span class="n">work</span><span class="o">(</span><span class="sc">'W'</span><span class="o">,</span> <span class="mi">150</span><span class="o">)</span> <span class="o">}</span>
+<span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span>
+<span class="n">W142</span><span class="o">.</span><span class="n">F158</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">B155</span><span class="o">.</span><span class="n">barKo</span> <span class="n">and</span> <span class="n">fooKoW142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span><span class="n">W142</span><span class="o">.</span>
+</code></pre>
+</div>
+
+<p>In the examples above,
+the <code class="highlighter-rouge">block</code> using <code class="highlighter-rouge">"foo"</code> is executed faster than
+the <code class="highlighter-rouge">block</code> using <code class="highlighter-rouge">"bar"</code>.</p>
+
+
+
+			<div class="blog-navigation">
+				
+					<a class="prev" href="/blog/2014/05/11/functional-programming-in-scala/">&laquo; Functional Programming in Scala</a>
+				
+				
+					<a class="next" href="/blog/2014/05/14/reactive-programming-notification-observable/">Notification versus Observable &raquo;</a>
+				
+			</div>
+
+
+			
+				<div id="disqus_thread"></div>
+				<script>
+						var disqus_shortname = 'strongtyped';
+						var disqus_config = function () {
+								this.page.url = "http://localhost:4000/blog/2014/05/11/reactive-programming-try-future/";
+								this.page.identifier = "/blog/2014/05/11/reactive-programming-try-future";
+						};
+
+						(function() {  // DON'T EDIT BELOW THIS LINE
+								var d = document, s = d.createElement('script');
+
+								dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+								s.setAttribute('data-timestamp', +new Date());
+								(d.head || d.body).appendChild(s);
+						})();
+				</script>
+				<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			
+		</div>
+	</div>
+</section>
+
+
+
+		<footer>
+			<div class="container">
+				<p class="editor-link"><a href="cloudcannon:collections/_data/footer.yml" class="btn"><strong>&#9998;</strong> Edit footer</a></p>
+				<ul class="footer-left-links">
+					
+						<li>
+							<a  href="/blog/" >
+								
+								Blog
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/" >
+								
+								About
+							</a>
+						</li>
+					
+				</ul>
+				<ul class="footer-right-links">
+					
+						<li>
+							<a target="_blank" href="https://twitter.com/strongtyped" class="twitter-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.73,5.92 11.73,8.29C11.73,8.63 11.77,8.96 11.84,9.27C8.28,9.09 5.11,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.5 2.96,10.3 2.38,10C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.43,16 6,17.26 7.89,17.29C6.43,18.45 4.58,19.13 2.56,19.13C2.22,19.13 1.88,19.11 1.54,19.07C3.44,20.29 5.7,21 8.12,21C16,21 20.33,14.46 20.33,8.79C20.33,8.6 20.33,8.42 20.32,8.23C21.16,7.63 21.88,6.87 22.46,6Z" /></svg>
+	
+								
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/feed.xml" class="rss-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+	
+								
+							</a>
+						</li>
+					
+				</ul>
+				<p class="copyright">
+					<a href="https://cloudcannon.com/">
+						Template by CloudCannon
+					</a>
+				</p>
+			</div>
+		</footer>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="/js/main.js"></script>
+	</body>
+</html>

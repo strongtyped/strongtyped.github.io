@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+<section class="hero" style="background-image: url(https://source.unsplash.com/jLwVAUtLOAQ/2000x1000)">
+
+	<div class="inner-hero text-container">
+		<div class="hero-text-container">
+			<h1 class="editable">
+			<span class="strongtyped">
+		 		<span class="strong-light">Strong</span><span class="typed-light">[Blog]...</span>
+		 	</span>
+			</h1>
+			<p class="subtext editable">where we share our experiences and strong opinions! </p>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="text-container">
+		<p class="change-category">You're currently looking at advice categorised under <strong>{{ page.title }}</strong>. <a href="{{ site.baseurl }}/blog/">View all posts</a> instead.</p>
+
+		<ul class="blog-posts">
+			{% include list-posts.html posts=page.posts %}
+		</ul>
+	</div>
+</section>

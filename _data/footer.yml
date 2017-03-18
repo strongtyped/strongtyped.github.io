@@ -1,0 +1,15 @@
+left_links:
+  - name: Blog
+    link: /blog/
+  - name: About
+    link: /
+  # - name: Contact
+  #   link: /contact/
+right_links:
+  - name:
+    link: https://twitter.com/strongtyped
+    social_icon: Twitter
+    new_window: true
+  - name:
+    link: /feed.xml
+    social_icon: RSS

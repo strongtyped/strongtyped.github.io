@@ -1,0 +1,30 @@
+
+.text-container {
+
+	max-width: 100%;
+	padding: 0;
+
+	p {
+		max-width: 750px;
+	  margin: 0 auto;
+  } 
+
+	h2 {
+		max-width: 750px;
+	  margin: 0 auto;
+  }
+  
+  .highlighter-rouge pre {
+		
+		display: block;
+		background: rgba(38, 50, 56, 1);
+
+		max-width: 100%;
+  	padding: 0;
+
+   	code {
+  		max-width: 750px;
+	  	margin: 0 auto;
+  	}
+  }
+}
