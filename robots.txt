@@ -1,4 +1,2 @@
 User-agent: *
-Disallow: 
-
-Sitemap: http://www.strongtyped.io/sitemap.xml 
+Sitemap: http://www.strongtyped.io/sitemap.xml

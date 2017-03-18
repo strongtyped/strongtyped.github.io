@@ -1,123 +1,144 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Functional Programming in Scala - Strong[Typed]</title>
-  <meta name="author" content="StrongTyped.io">
 
-  
-  <meta name="description" content="Strong[Typed] consulting training company blog Functional Programming in Scala written May 11, 2014 in Posted by Luc Duponcheel This blog post is &hellip;">
-  
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="generator" content="Jekyll v3.3.1">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300|Rubik:300">
+		<link rel="stylesheet" href="/css/syntax-darkly.css">
+		<link rel="stylesheet" href="/css/screen.css">
+		
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="/touch-icon.png" sizes="192x192">
+		<!-- <link rel="icon" type="image/png" href="/images/favicon.png"> -->
 
-  
-  <link rel="canonical" href="http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Strong[Typed]" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-50926236-1']);
-    _gaq.push(['_trackPageview']);
+		<!-- Begin Jekyll SEO tag v2.1.0 -->
+<title>Functional Programming in Scala - Strong[Typed]</title>
+<meta property="og:title" content="Functional Programming in Scala" />
+<meta name="description" content="This blog post is the first one of a series of blog posts about Functional Programming in Scala. It is also a teaser for series of blog posts of about Reactive Programming in Scala." />
+<meta property="og:description" content="This blog post is the first one of a series of blog posts about Functional Programming in Scala. It is also a teaser for series of blog posts of about Reactive Programming in Scala." />
+<link rel="canonical" href="http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala/" />
+<meta property="og:url" content="http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala/" />
+<meta property="og:site_name" content="Strong[Typed]" />
+<meta property="og:image" content="https://source.unsplash.com/tIaIRI8sjWI/2000x1000?a=.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-05-11T06:21:00+02:00" />
+<script type="application/ld+json">
+{"@context": "http://schema.org",
+"@type": "BlogPosting",
+"headline": "Functional Programming in Scala",
+"image": "https://source.unsplash.com/tIaIRI8sjWI/2000x1000?a=.png",
+"datePublished": "2014-05-11T06:21:00+02:00",
+"description": "This blog post is the first one of a series of blog posts about Functional Programming in Scala. It is also a teaser for series of blog posts of about Reactive Programming in Scala.",
+"publisher": {"@type": "Organization",
+"logo": {"@type": "ImageObject",
+"url": "http://www.strongtyped.io/siteicon.png"}},
+"url": "http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala/"}</script>
+<!-- End Jekyll SEO tag -->
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+		<link type="application/atom+xml" rel="alternate" href="http://www.strongtyped.io/feed.xml" title="Strong[Typed]" />
+
+		
 
 
+		 <!-- webfonts -->
+		
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=Exo:400,500,600,500italic,600italic" rel="stylesheet" type="text/css">
 
-</head>
 
-<!-- _layouts/base-post.html -->
-  <body>
+	</head>
 
-  	<div class="content">
-    <!-- _layouts/post.html -->
-
-<div class="navbar">
-  <div class="navbar-fixed-top">
-      <div class="container">
-      <ul class="nav navbar-left">
-        <li>
-          <h2 class="strongtyped"><a href="/"><span class="strong">Strong<span><span class="typed">[Typed]</span></a></h2>
-        </li>
-      </ul>
-      <ul class="nav secondary-nav navbar-nav navbar-right">
-
-
-			
-  		<li><a class="inactive" href="/consulting">consulting</a></li>	
-  	
-
-			
-  		<li><a class="inactive" href="/training">training</a></li>	
-  	
-
-			
-  		<li><a class="inactive" href="/company">company</a></li>	
-  	
-
+	<body>
+		<header id="mainHeader">
+			<div class="container">
+				<div class="company-name">
+					<a href="/">
+						<span class="dark-logo">
+							<span class="strongtyped">
+								<span class="strong">Strong</span><span class="typed">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/dark.svg" alt="dark frisco logo"> -->
+						</span>
+						<span class="light-logo">
+							<span class="strongtyped">
+						 		<span class="strong-light">Strong</span><span class="typed-light">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/light.svg" alt="light frisco logo"> -->
+						</span>
+					</a>
+				</div>
+				<nav>
+	<a class="nav-toggle" id="open-nav" href="#">&#9776;</a>
 	
-  		<li><a class="active" href="/blog">blog</a></li>	
-  	
+		
+		
 
-</ul>      
-    </div>
-  </div>
+		
+		<a href="/blog/" class="" >Blog</a>
+	
+		
+		
+
+		
+		<a href="/" class="" >About</a>
+	
+</nav>
+
+				<p class="editor-link"><a style="display:inline;" href="cloudcannon:collections/_data/navigation.yml" class="btn"><strong>&#9998;</strong> Edit navigation</a></p>
+			</div>
+		</header>
+
+		<section class="hero" style="background-image: url(https://source.unsplash.com/tIaIRI8sjWI/2000x1000?a=.png)" >
+	<div class="inner-hero text-container">
+		<div class="hero-text-container">
+			<h1>Functional Programming in Scala</h1>
+			<p class="subtext"></p>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="blog-post text-container">
+		<p class="editor-link"><a href="cloudcannon:collections/_posts/2014-05-11-functional-programming-in-scala.mD" class="btn"><strong>&#9998;</strong> Edit Post</a></p>
+		<div class="post-details">
+	
+	<div class="author" style="float: left;">
+		
+		
+		<div class="square-image" style="background-image: url('/images/luc.gif')"></div>
+	</div>		
+		
+	<div>
+		<div class="post-meta">
+			<div><strong>Luc Duponcheel</strong></div>
+			<div>Senior Scala / FP Developer</div>
+			<div>May 11, 2014</div>
+		</div>
+		<div class="post-cat">
+			<!-- 
+				<span class="blog-filter">
+					<a href="/category/scala/">Scala</a>
+				</span>
+			
+				<span class="blog-filter">
+					<a href="/category/fp/">Fp</a>
+				</span>
+			 -->
+			
+		</div>
+	</div>
+	
 </div>
 
 
-<article role="article" class="full-single-article">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        <h1>Functional Programming in Scala</h1>
-        <!-- post/metadata.html --> 
-<span class="meta">
-  written 
+		<div class="post-content">
 
-
-
-
-
-
-
-
-  
-
-
-
-<time datetime="2014-05-11T06:21:00+02:00" pubdate data-updated="true">May 11, 2014</time>  
-in 
-
-
-<br/>
-  
-
-<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
-
-</span>
-<!-- end post/metadata.html --> 
-        <p>This blog post is the first one of a series of blog posts about <em>Functional Programming in Scala</em>.
+			<p>This blog post is the first one of a series of blog posts about <em>Functional Programming in Scala</em>.
 It is also a teaser for series of blog posts of about <em>Reactive Programming in Scala</em>.</p>
 
 <p><strong>Warning:</strong>
@@ -126,533 +147,408 @@ Hopefully, you will be rewarded for your effort to read the blog posts.</p>
 
 <!-- more -->
 
-
-<h2>Binding</h2>
+<h2 id="binding">Binding</h2>
 
 <p>You are, most probably, used to think of</p>
 
 <ul>
-<li><em>functions</em> in terms of <em>applying</em> them to <em>values</em></li>
+  <li><em>functions</em> in terms of <em>applying</em> them to <em>values</em></li>
 </ul>
-
 
 <p>but, of course, you can also think of</p>
 
 <ul>
-<li><em>values</em> in terms of <em>binding</em> them to <em>functions</em></li>
+  <li><em>values</em> in terms of <em>binding</em> them to <em>functions</em></li>
 </ul>
 
+<p>The method <code class="highlighter-rouge">bind</code> below, defined in terms of <code class="highlighter-rouge">apply</code>, formalizes binding</p>
 
-<p>The method <code>bind</code> below, defined in terms of <code>apply</code>, formalizes binding</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">AnyOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">bind</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Y</span> <span class="o">=</span>
-</span><span class='line'>      <span class="n">z2y</span> <span class="n">apply</span> <span class="n">z</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">AnyOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">bind</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Y</span> <span class="o">=</span>
+      <span class="n">z2y</span> <span class="n">apply</span> <span class="n">z</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
 
 <p>Strictly speaking it is not necessary at all to introduce binding in Scala,
-but, sometimes, <code>bind</code> is more convenient to use than <code>apply</code>, as illustrated below</p>
+but, sometimes, <code class="highlighter-rouge">bind</code> is more convenient to use than <code class="highlighter-rouge">apply</code>, as illustrated below</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="mi">1</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span>
-</span><span class='line'><span class="n">res0</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">({</span> <span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span><span class="o">)</span>
-</span><span class='line'><span class="n">res1</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="mi">1</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">bind</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span>
+<span class="n">res0</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
 
+<span class="n">scala</span><span class="o">&gt;</span> <span class="o">{</span> <span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="o">({</span> <span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">}</span> <span class="n">apply</span> <span class="mi">1</span><span class="o">)</span>
+<span class="n">res1</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">3</span>
+</code></pre>
+</div>
 
 <ul>
-<li><p>The method <code>bind</code> naturally associates to the <em>left</em>, while
-the method <code>apply</code> associates to the <em>right</em>,
-requiring the usage of <em>parantheses</em>.</p></li>
-<li><p>The Scala type inferencer naturally infers the type of expressions using <code>bind</code>, while
-it does not infer the type of expressions using <code>apply</code>,
-requiring the usage of <em>type annotations</em>.</p></li>
+  <li>
+    <p>The method <code class="highlighter-rouge">bind</code> naturally associates to the <em>left</em>, while
+the method <code class="highlighter-rouge">apply</code> associates to the <em>right</em>,
+requiring the usage of <em>parantheses</em>.</p>
+  </li>
+  <li>
+    <p>The Scala type inferencer naturally infers the type of expressions using <code class="highlighter-rouge">bind</code>, while
+it does not infer the type of expressions using <code class="highlighter-rouge">apply</code>,
+requiring the usage of <em>type annotations</em>.</p>
+  </li>
 </ul>
 
-
-<h2>Functional Programming</h2>
+<h2 id="functional-programming">Functional Programming</h2>
 
 <p>Here is some quote about Functional Programming</p>
 
 <p><em>Functional Programming strictly separates</em></p>
 
 <ul>
-<li><em>the declarative description of computations</em></li>
-<li><em>the imperative execution of computations</em></li>
+  <li><em>the declarative description of computations</em></li>
+  <li><em>the imperative execution of computations</em></li>
 </ul>
-
 
 <p>So, what are the computations in this quote all about?</p>
 
-<h2>Computations of type <code>One</code></h2>
+<h2 id="computations-of-type-">Computations of type <code class="highlighter-rouge">One</code></h2>
 
-<p>Let&rsquo;s get started with <em>pure computations</em> that, when <em>executed</em>, result in <em>exactly one value</em>
-as defined by the following <code>case class</code></p>
+<p>Let’s get started with <em>pure computations</em> that, when <em>executed</em>, result in <em>exactly one value</em>
+as defined by the following <code class="highlighter-rouge">case class</code></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">case</span> <span class="k">class</span> <span class="nc">One</span><span class="o">[</span><span class="kt">+Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">case</span> <span class="k">class</span> <span class="nc">One</span><span class="o">[</span><span class="kt">+Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<p>Computations resulting in exactly one value are also referred to as computations of type <code>One</code>.</p>
+<p>Computations resulting in exactly one value are also referred to as computations of type <code class="highlighter-rouge">One</code>.</p>
 
 <p>When there is no danger of confusion, any kind of computation is simply referred to as a computation.</p>
 
-<h2>Constructing computations using <code>mkOne</code></h2>
+<p>Constructing computations using <code class="highlighter-rouge">mkOne</code></p>
 
-<p>Computations of type <code>One</code> can be <em>constructed</em> using <code>mkOne</code></p>
+<p>Computations of type <code class="highlighter-rouge">One</code> can be <em>constructed</em> using <code class="highlighter-rouge">mkOne</code></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">mkOne</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="nc">One</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">mkOne</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="nc">One</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<p>Agreed, introducing <code>mkOne</code> is somewhat of an overkill,
+<p>Agreed, introducing <code class="highlighter-rouge">mkOne</code> is somewhat of an overkill,
 but it is consistent with the way other kinds of computations are constructed
 in this series of posts.</p>
 
-<p>How are computations of type <code>One</code> <em>described</em>?</p>
+<p>How are computations of type <code class="highlighter-rouge">One</code> <em>described</em>?</p>
 
-<h2>Describing Computations of type <code>One</code></h2>
+<h2 id="describing-computations-of-type-">Describing Computations of type <code class="highlighter-rouge">One</code></h2>
 
-<p>Here is a computation of type <code>One</code> that is described using <code>mkOne</code></p>
+<p>Here is a computation of type <code class="highlighter-rouge">One</code> that is described using <code class="highlighter-rouge">mkOne</code></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFoo</span> <span class="k">=</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span>
-</span><span class='line'><span class="n">oneFoo</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFoo</span> <span class="k">=</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span>
+<span class="n">oneFoo</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
+</code></pre>
+</div>
 
+<p>A <code class="highlighter-rouge">lazy val</code> is used to separate the description of the computation from its execution.</p>
 
-<p>A <code>lazy val</code> is used to separate the description of the computation from its execution.</p>
+<p>How are computations of type <code class="highlighter-rouge">One</code> <em>executed</em> once they are described?</p>
 
-<p>How are computations of type <code>One</code> <em>executed</em> once they are described?</p>
-
-<h2>Executing Computations of type <code>One</code></h2>
+<p>Executing Computations of type <code class="highlighter-rouge">One</code></p>
 
 <p>For the purpose of this series of blog posts,
-executing a computation of type <code>One</code> can be as simple as <em>printing its value</em>.</p>
+executing a computation of type <code class="highlighter-rouge">One</code> can be as simple as <em>printing its value</em>.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">execute</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
-</span><span class='line'>    <span class="n">oz</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">case</span> <span class="nc">One</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">execute</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span>
+    <span class="n">oz</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">One</span><span class="o">(</span><span class="n">z</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
 
+<p>Below, the computation of type <code class="highlighter-rouge">One</code> is executed using <code class="highlighter-rouge">execute</code></p>
 
-<p>Below, the computation of type <code>One</code> is executed using <code>execute</code></p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFoo</span><span class="o">)</span>
+<span class="n">foo</span>
+</code></pre>
+</div>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFoo</span><span class="o">)</span>
-</span><span class='line'><span class="n">foo</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>The computation <code class="highlighter-rouge">oneFoo</code> is defined as a <code class="highlighter-rouge">lazy val</code>.
+<code class="highlighter-rouge">mkOne("foo")</code> is evaluated <em>the first time</em> that <code class="highlighter-rouge">oneFoo</code> is executed.
+When <code class="highlighter-rouge">oneFoo</code> would have been defined as a <code class="highlighter-rouge">def</code>, then
+<code class="highlighter-rouge">mkOne("foo")</code> would be evaluated <em>every time</em> that <code class="highlighter-rouge">oneFoo</code> is executed.
+For <code class="highlighter-rouge">oneFoo</code> the difference does not matter
+(apart from the fact that a <code class="highlighter-rouge">lazy val</code> is more time efficient and less space efficient than a <code class="highlighter-rouge">def</code>).
+Sometimes the difference between a <code class="highlighter-rouge">lazy val</code> computation and a <code class="highlighter-rouge">def</code> computation <em>does</em> matter.</p>
 
+<p>Declaring simple computations like <code class="highlighter-rouge">oneFoo</code> and executing them as <code class="highlighter-rouge">execute(oneFoo)</code> is,
+of course, not the end of the story about computations of type <code class="highlighter-rouge">One</code>.</p>
 
-<p>The computation <code>oneFoo</code> is defined as a <code>lazy val</code>.
-<code>mkOne("foo")</code> is evaluated <em>the first time</em> that <code>oneFoo</code> is executed.
-When <code>oneFoo</code> would have been defined as a <code>def</code>, then
-<code>mkOne("foo")</code> would be evaluated <em>every time</em> that <code>oneFoo</code> is executed.
-For <code>oneFoo</code> the difference does not matter
-(apart from the fact that a <code>lazy val</code> is more time efficient and less space efficient than a <code>def</code>).
-Sometimes the difference between a <code>lazy val</code> computation and a <code>def</code> computation <em>does</em> matter.</p>
+<p>Is there not a way to <em>compose</em> computations of type <code class="highlighter-rouge">One</code>?</p>
 
-<p>Declaring simple computations like <code>oneFoo</code> and executing them as <code>execute(oneFoo)</code> is,
-of course, not the end of the story about computations of type <code>One</code>.</p>
+<h2 id="composing-pure-computations-of-type-">Composing Pure Computations of type <code class="highlighter-rouge">One</code></h2>
 
-<p>Is there not a way to <em>compose</em> computations of type <code>One</code>?</p>
-
-<h2>Composing Pure Computations of type <code>One</code></h2>
-
-<p>The implicit class below defines two methods, <code>bnd</code> and <code>and</code>, that can be used to
+<p>The implicit class below defines two methods, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code>, that can be used to
 describe <em>more complex</em> computations by, somehow, <em>composing</em> them from <em>simpler</em> ones.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">OneOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2oy</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>      <span class="n">oz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2oy</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">o_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>      <span class="n">mkOne</span><span class="o">(</span><span class="n">oz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">o_z2y</span><span class="o">.</span><span class="n">z</span><span class="o">)</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">OneOps</span><span class="o">[</span><span class="kt">Z</span><span class="o">](</span><span class="n">oz</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span><span class="o">])</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">bnd</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">z2oy</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">oz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2oy</span>
+    <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">o_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">mkOne</span><span class="o">(</span><span class="n">oz</span><span class="o">.</span><span class="n">z</span> <span class="n">bind</span> <span class="n">o_z2y</span><span class="o">.</span><span class="n">z</span><span class="o">)</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
 
+<p>Although, strictly speaking, not necessary, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code> are defined in terms of <code class="highlighter-rouge">bind</code>.</p>
 
-<p>Although, strictly speaking, not necessary, <code>bnd</code> and <code>and</code> are defined in terms of <code>bind</code>.</p>
+<h2 id="dsl-for-computations-of-type-">DSL for computations of type <code class="highlighter-rouge">One</code></h2>
 
-<h2>DSL for computations of type <code>One</code></h2>
-
-<p>By now we have defined <code>mkOne</code>, <code>bnd</code> and <code>and</code></p>
+<p>By now we have defined <code class="highlighter-rouge">mkOne</code>, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code></p>
 
 <ul>
-<li>They constitute a <em>declarative DSL for describing computations</em> of type <code>One</code></li>
+  <li>They constitute a <em>declarative DSL for describing computations</em> of type <code class="highlighter-rouge">One</code></li>
 </ul>
 
-
-<p>We have also defined <code>execute</code></p>
+<p>We have also defined <code class="highlighter-rouge">execute</code></p>
 
 <ul>
-<li>It constitutes <em>an imperative DSL for executing computations</em> of type <code>One</code></li>
+  <li>It constitutes <em>an imperative DSL for executing computations</em> of type <code class="highlighter-rouge">One</code></li>
 </ul>
 
+<p>This section contains some examples on how to make use of those DSL’s.</p>
 
-<p>This section contains some examples on how to make use of those DSL&rsquo;s.</p>
+<p>All examples make use of the following <code class="highlighter-rouge">add</code> function on strings</p>
 
-<p>All examples make use of the following <code>add</code> function on strings</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">String</span><span class="o">)(</span><span class="n">y</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span>
+</code></pre>
+</div>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">String</span><span class="o">)(</span><span class="n">y</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span>
-</span></code></pre></td></tr></table></div></figure>
+<p><code class="highlighter-rouge">add</code> is a <em>curried</em> version of the <code class="highlighter-rouge">+</code> operator on strings.</p>
 
+<p>Let’s start with a computation using <code class="highlighter-rouge">bnd</code></p>
 
-<p><code>add</code> is a <em>curried</em> version of the <code>+</code> operator on strings.</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar01</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">mkOne</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
+      <span class="n">mkOne</span><span class="o">(</span><span class="s">"bar"</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
+        <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
 
-<p>Let&rsquo;s start with a computation using <code>bnd</code></p>
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">oneFooBar01</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
-</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar01</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
-</span><span class='line'>      <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">y</span> <span class="k">=&gt;</span>
-</span><span class='line'>        <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">oneFooBar01</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar01</span><span class="o">)</span>
-</span><span class='line'><span class="n">foobar</span>
-</span></code></pre></td></tr></table></div></figure>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar01</span><span class="o">)</span>
+<span class="n">foobar</span>
+</code></pre>
+</div>
 
-
-<p>The declaration of <code>oneFooBar01</code> can, informally, be explained as follows</p>
+<p>The declaration of <code class="highlighter-rouge">oneFooBar01</code> can, informally, be explained as follows</p>
 
 <ul>
-<li>evaluate the expression <code>"foo"</code> and bind the resulting value to the variable <code>z</code>, and then</li>
-<li>evaluate the expression <code>"bar"</code> and bind the resulting value to the variable <code>y</code>, and then</li>
-<li>result in the value obtained by adding <code>z</code> and <code>y</code></li>
+  <li>evaluate the expression <code class="highlighter-rouge">"foo"</code> and bind the resulting value to the variable <code class="highlighter-rouge">z</code>, and then</li>
+  <li>evaluate the expression <code class="highlighter-rouge">"bar"</code> and bind the resulting value to the variable <code class="highlighter-rouge">y</code>, and then</li>
+  <li>result in the value obtained by adding <code class="highlighter-rouge">z</code> and <code class="highlighter-rouge">y</code></li>
 </ul>
 
+<p>Let’s continue with a computation using <code class="highlighter-rouge">and</code></p>
 
-<p>Let&rsquo;s continue with a computation using <code>and</code></p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar02</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">mkOne</span><span class="o">(</span><span class="s">"bar"</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkOne</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+        <span class="n">mkOne</span><span class="o">(</span><span class="n">z</span> <span class="k">=&gt;</span> <span class="n">y</span> <span class="k">=&gt;</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
-</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar02</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
-</span><span class='line'>      <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
-</span><span class='line'>        <span class="n">mkOne</span><span class="o">(</span><span class="n">z</span> <span class="k">=&gt;</span> <span class="n">y</span> <span class="k">=&gt;</span> <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">))</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">oneFooBar02</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar02</span><span class="o">)</span>
-</span><span class='line'><span class="n">foobar</span>
-</span></code></pre></td></tr></table></div></figure>
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">oneFooBar02</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
 
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar02</span><span class="o">)</span>
+<span class="n">foobar</span>
+</code></pre>
+</div>
 
-<p>The declaration of <code>oneFooBar02</code> can, informally, be explained as follows</p>
+<p>The declaration of <code class="highlighter-rouge">oneFooBar02</code> can, informally, be explained as follows</p>
 
 <ul>
-<li>evaluate the expression <code>"bar"</code>, and evaluate the expression <code>"foo"</code>, and then</li>
-<li>bind the resulting values to the variables <code>y</code> and <code>z</code>, and then</li>
-<li>result in the value obtained by adding <code>z</code> and <code>y</code></li>
+  <li>evaluate the expression <code class="highlighter-rouge">"bar"</code>, and evaluate the expression <code class="highlighter-rouge">"foo"</code>, and then</li>
+  <li>bind the resulting values to the variables <code class="highlighter-rouge">y</code> and <code class="highlighter-rouge">z</code>, and then</li>
+  <li>result in the value obtained by adding <code class="highlighter-rouge">z</code> and <code class="highlighter-rouge">y</code></li>
 </ul>
 
-
-<p>Let&rsquo;s finish with a simplified version of the computation using <code>and</code> above
+<p>Let’s finish with a simplified version of the computation using <code class="highlighter-rouge">and</code> above
 in which there are no variables used any more</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
-</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar03</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
-</span><span class='line'>      <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
-</span><span class='line'>        <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">oneFooBar03</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar03</span><span class="o">)</span>
-</span><span class='line'><span class="n">foobar</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+  <span class="k">lazy</span> <span class="k">val</span> <span class="n">oneFooBar03</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">mkOne</span><span class="o">(</span><span class="s">"bar"</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+      <span class="n">mkOne</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="n">and</span> <span class="o">{</span>
+        <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
 
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">oneFooBar03</span><span class="k">:</span> <span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span>
 
-<p>The declaration of <code>oneFooBar03</code> can, informally, be explained as follows</p>
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">oneFooBar03</span><span class="o">)</span>
+<span class="n">foobar</span>
+</code></pre>
+</div>
+
+<p>The declaration of <code class="highlighter-rouge">oneFooBar03</code> can, informally, be explained as follows</p>
 
 <ul>
-<li>evaluate the expression <code>"bar"</code>, and evaluate the expression <code>"foo"</code>, and then</li>
-<li>result in the value obtained by adding their resulting values</li>
+  <li>evaluate the expression <code class="highlighter-rouge">"bar"</code>, and evaluate the expression <code class="highlighter-rouge">"foo"</code>, and then</li>
+  <li>result in the value obtained by adding their resulting values</li>
 </ul>
-
 
 <p>You may ask yourself: <em>this looks like much ado about nothing</em>.
 We might as well have written the following code</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">&quot;foo&quot;</span>
-</span><span class='line'>  <span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">&quot;bar&quot;</span>
-</span><span class='line'>  <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">"foo"</span>
+  <span class="k">val</span> <span class="n">z</span> <span class="k">=</span> <span class="s">"bar"</span>
+  <span class="n">add</span><span class="o">(</span><span class="n">z</span><span class="o">)(</span><span class="n">y</span><span class="o">)</span>
+</code></pre>
+</div>
 
 <p>Well, in a way you are right: for pure computations resulting in exactly one value,
-introducing <code>mkOne</code>, <code>bnd</code> and <code>and</code> <em>is</em> much ado about nothing.
+introducing <code class="highlighter-rouge">mkOne</code>, <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code> <em>is</em> much ado about nothing.
 For more interesting kinds of computations, the situation is completely different.</p>
 
 <p>Nevertheless it is already possible to formulate some interesting remarks.</p>
 
-<h2>Some remarks</h2>
+<p>Some remarks</p>
 
 <p>First, a somewhat philosophical (and highly subjective) remark about <em>syntax</em>.</p>
 
 <p>In <em>some</em> way, the DSL based code reads more natural <em>from left to right</em>
-than the language based code. When initializing <code>z</code> with <code>"foo"</code> using <code>val z = "foo"</code>,
-<em>first</em> the expression <code>"foo"</code> on the <em>right</em> hand side of <code>=</code> is evaluated and
-<em>second</em> the variable <code>z</code> on the <em>left</em> hand side of <code>=</code> is initialized with the resulting value.
+than the language based code. When initializing <code class="highlighter-rouge">z</code> with <code class="highlighter-rouge">"foo"</code> using <code class="highlighter-rouge">val z = "foo"</code>,
+<em>first</em> the expression <code class="highlighter-rouge">"foo"</code> on the <em>right</em> hand side of <code class="highlighter-rouge">=</code> is evaluated and
+<em>second</em> the variable <code class="highlighter-rouge">z</code> on the <em>left</em> hand side of <code class="highlighter-rouge">=</code> is initialized with the resulting value.
 Not very left to right indeed (in fact <em>right to left</em> instead).
 Agreed, in <em>another</em> way, the DSL based code reads less natural because of all those curly braces.
 Their nesting is usually limited since it is not a good programming practice to define
-computations using large pieces of code (good programmers write small pieces code).
+computations using large pieces of code (good programmers write small pieces code). 
 The curly braces also have an advantage: they clearly delimit the scope of the variables that are introduced.
 <em>Every disadvantage has its advantage</em> (a quote of the Dutch soccer player Johan Cruijff).</p>
 
 <p>Second, a remark about <em>semantics</em>.</p>
 
 <p>The semantics of the language based code is defined by the <em>language specification</em>.
-The semantics of the DSL based code is defined by <em>you</em> (in terms of the semantics of <code>bnd</code> and <code>and</code>).
+The semantics of the DSL based code is defined by <em>you</em> (in terms of the semantics of <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code>).
 This provides you with more flexibility.
 Agreed, again, in the case of pure computations resulting in exactly one value,
-there is not really a lot of flexibility for you to define <code>bnd</code> and <code>and</code> in a meaningful way.
+there is not really a lot of flexibility for you to define <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code> in a meaningful way.
 For more interesting kinds of computations, the situation is completely different.</p>
 
-<h2>About abstraction</h2>
+<h2 id="about-abstraction">About abstraction</h2>
 
-<p>The method <code>bnd</code> is more <em>specific</em> (<em>concrete</em>) than <code>and</code>
-(the method <code>and</code> is more <em>general</em> (<em>abstract</em>) than <code>bnd</code>).</p>
+<p>The method <code class="highlighter-rouge">bnd</code> is more <em>specific</em> (<em>concrete</em>) than <code class="highlighter-rouge">and</code>
+(the method <code class="highlighter-rouge">and</code> is more <em>general</em> (<em>abstract</em>) than <code class="highlighter-rouge">bnd</code>).</p>
 
-<p>The method <code>and</code> is more abstract than <code>bnd</code> simply because the method <code>and</code> can be defined in terms of <code>bnd</code>
-(the definition of <code>and</code> in terms of <code>bnd</code> is referred to as the <em>default</em> definition of <code>and</code>)</p>
+<p>The method <code class="highlighter-rouge">and</code> is more abstract than <code class="highlighter-rouge">bnd</code> simply because the method <code class="highlighter-rouge">and</code> can be defined in terms of <code class="highlighter-rouge">bnd</code>
+(the definition of <code class="highlighter-rouge">and</code> in terms of <code class="highlighter-rouge">bnd</code> is referred to as the <em>default</em> definition of <code class="highlighter-rouge">and</code>)</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">o_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>  <span class="n">oz</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
-</span><span class='line'>    <span class="n">o_z2y</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z2y</span> <span class="k">=&gt;</span>
-</span><span class='line'>      <span class="n">mkOne</span><span class="o">(</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2y</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>    <span class="k">def</span> <span class="n">and</span><span class="o">[</span><span class="kt">Y</span><span class="o">](</span><span class="n">o_z2y</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Z</span> <span class="k">=&gt;</span> <span class="kt">Y</span><span class="o">])</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">oz</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z</span> <span class="k">=&gt;</span>
+        <span class="n">o_z2y</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">z2y</span> <span class="k">=&gt;</span>
+          <span class="n">mkOne</span><span class="o">(</span><span class="n">z</span> <span class="n">bind</span> <span class="n">z2y</span><span class="o">)</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+</code></pre>
+</div>
 
 <p>For pure computations resulting in exactly one value, the two definitions are equivalent.
 For more interesting kinds of computations,
-<code>and</code> can be given a definition that is <em>not</em> equivalent with the default definition.</p>
+<code class="highlighter-rouge">and</code> can be given a definition that is <em>not</em> equivalent with the default definition.</p>
 
-<h2>About power of expression</h2>
+<h2 id="about-power-of-expression">About power of expression</h2>
 
-<p>The method <code>bnd</code> is <em>more powerful</em> than <code>and</code>
-(the method <code>and</code> is <em>less powerful</em> than <code>bnd</code>).</p>
+<p>The method <code class="highlighter-rouge">bnd</code> is <em>more powerful</em> than <code class="highlighter-rouge">and</code>
+(the method <code class="highlighter-rouge">and</code> is <em>less powerful</em> than <code class="highlighter-rouge">bnd</code>).</p>
 
-<p>Below is an example that illustrates that the method <code>bnd</code> is more powerful than <code>and</code>:
-when using <code>bnd</code> the variable <code>z</code> is <em>immediately in scope</em>, and can be used in the rest of the code,
-for example, to decide, based on <code>z</code>, how to proceed</p>
+<p>Below is an example that illustrates that the method <code class="highlighter-rouge">bnd</code> is more powerful than <code class="highlighter-rouge">and</code>:
+when using <code class="highlighter-rouge">bnd</code> the variable <code class="highlighter-rouge">z</code> is <em>immediately in scope</em>, and can be used in the rest of the code,
+for example, to decide, based on <code class="highlighter-rouge">z</code>, how to proceed</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
-</span><span class='line'><span class="c1">// Entering paste mode (ctrl-D to finish)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">decideBasedOn</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">mkOne</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
-</span><span class='line'>      <span class="n">s</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">case</span> <span class="s">&quot;foo&quot;</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
-</span><span class='line'>          <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">case</span> <span class="s">&quot;bar&quot;</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
-</span><span class='line'>          <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">&quot;bogus&quot;</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Exiting paste mode, now interpreting.</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">decideBasedOn</span><span class="k">:</span> <span class="o">(</span><span class="kt">string:</span> <span class="kt">String</span><span class="o">)</span><span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">))</span>
-</span><span class='line'><span class="n">foobar</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">))</span>
-</span><span class='line'><span class="n">barfoo</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">))</span>
-</span><span class='line'><span class="n">bogus</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">:</span><span class="kt">paste</span>
+<span class="c1">// Entering paste mode (ctrl-D to finish)
+</span>
+  <span class="k">def</span> <span class="n">decideBasedOn</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span>
+    <span class="n">mkOne</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">s</span> <span class="k">=&gt;</span>
+      <span class="n">s</span> <span class="k">match</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="s">"foo"</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">"bar"</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+          <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+        <span class="o">}</span>
+        <span class="k">case</span> <span class="s">"bar"</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">"foo"</span><span class="o">)</span> <span class="n">bnd</span> <span class="o">{</span> <span class="n">t</span> <span class="k">=&gt;</span>
+          <span class="n">mkOne</span><span class="o">(</span><span class="n">add</span><span class="o">(</span><span class="n">s</span><span class="o">)(</span><span class="n">t</span><span class="o">))</span>
+        <span class="o">}</span>
+        <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="n">mkOne</span><span class="o">(</span><span class="s">"bogus"</span><span class="o">)</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
 
+<span class="c1">// Exiting paste mode, now interpreting.
+</span>
+<span class="n">decideBasedOn</span><span class="k">:</span> <span class="o">(</span><span class="kt">string:</span> <span class="kt">String</span><span class="o">)</span><span class="kt">Fp.One</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">"foo"</span><span class="o">))</span>
+<span class="n">foobar</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">"bar"</span><span class="o">))</span>
+<span class="n">barfoo</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">execute</span><span class="o">(</span><span class="n">decideBasedOn</span><span class="o">(</span><span class="s">""</span><span class="o">))</span>
+<span class="n">bogus</span>
+</code></pre>
+</div>
 
 <p>The bottom line of all this is that, for most computations, the choice is yours</p>
 
 <ul>
-<li>you can go for less abstract, more powerful composition (and less implementation flexibility)</li>
-<li>you can go for more abstract, less powerful composition (and more implementation flexibility)</li>
+  <li>you can go for less abstract, more powerful composition (and less implementation flexibility)</li>
+  <li>you can go for more abstract, less powerful composition (and more implementation flexibility)</li>
 </ul>
-
 
 <p>It is all about choosing the <em>right level of abstraction</em>.
 As a programmer, you should <em>value abstraction</em>:
 it is a tool to <em>manage complexity</em>.</p>
 
-<p>Consider the difference between using <code>bnd</code> and <code>and</code></p>
+<p>Consider the difference between using <code class="highlighter-rouge">bnd</code> and <code class="highlighter-rouge">and</code></p>
 
 <ul>
-<li>the description of <code>oneFooBar01</code> requires the usage of variables</li>
-<li>the description of <code>oneFooBar03</code> does not require the usage of variables</li>
+  <li>the description of <code class="highlighter-rouge">oneFooBar01</code> requires the usage of variables</li>
+  <li>the description of <code class="highlighter-rouge">oneFooBar03</code> does not require the usage of variables</li>
 </ul>
-
 
 <p>You may ask yourself: <em>are there any other ways to compose computations</em>?</p>
 
-<h2>Other ways to compose computations</h2>
+<h2 id="other-ways-to-compose-computations">Other ways to compose computations</h2>
 
 <p>The answer is <em>yes</em>, there is one other popular way to compose computations</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">type</span> <span class="o">==&gt;[</span><span class="kt">-Z</span>, <span class="kt">+Y</span><span class="o">]</span> <span class="k">=</span> <span class="n">Z</span> <span class="k">=&gt;</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">OneArrowOps</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">oa_z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">Y</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="o">&gt;&gt;&gt;[</span><span class="kt">X</span><span class="o">](</span><span class="n">oa_y2x</span><span class="k">:</span> <span class="kt">Y</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">X</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">X</span> <span class="k">=</span>
-</span><span class='line'>      <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="n">bind</span> <span class="n">oa_z2y</span> <span class="n">bnd</span> <span class="n">oa_y2x</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code>  <span class="k">type</span> <span class="o">==&gt;[</span><span class="kt">-Z</span>, <span class="kt">+Y</span><span class="o">]</span> <span class="k">=</span> <span class="n">Z</span> <span class="k">=&gt;</span> <span class="nc">One</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span>
 
+  <span class="k">implicit</span> <span class="k">class</span> <span class="nc">OneArrowOps</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">oa_z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">Y</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="o">&gt;&gt;&gt;[</span><span class="kt">X</span><span class="o">](</span><span class="n">oa_y2x</span><span class="k">:</span> <span class="kt">Y</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">X</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span><span class="k">=&gt;</span> <span class="n">X</span> <span class="k">=</span>
+      <span class="n">z</span> <span class="k">=&gt;</span> <span class="n">z</span> <span class="n">bind</span> <span class="n">oa_z2y</span> <span class="n">bnd</span> <span class="n">oa_y2x</span>
+  <span class="o">}</span>
+</code></pre>
+</div>
 
-<p>On the one hand, since <code>&gt;&gt;&gt;</code> can be defined in terms of <code>bnd</code> (as shown above)
-<code>&gt;&gt;&gt;</code> is more abstract (and less powerful) than <code>bnd</code>.</p>
+<p>On the one hand, since <code class="highlighter-rouge">&gt;&gt;&gt;</code> can be defined in terms of <code class="highlighter-rouge">bnd</code> (as shown above)
+<code class="highlighter-rouge">&gt;&gt;&gt;</code> is more abstract (and less powerful) than <code class="highlighter-rouge">bnd</code>.</p>
 
-<p>On the other hand, since, in a way, <code>and</code> can be defined in terms of <code>&gt;&gt;&gt;</code> (not shown in this post)
-<code>and</code> is more abstract (and less powerful) than <code>&gt;&gt;&gt;</code>.</p>
+<p>On the other hand, since, in a way, <code class="highlighter-rouge">and</code> can be defined in terms of <code class="highlighter-rouge">&gt;&gt;&gt;</code> (not shown in this post)
+<code class="highlighter-rouge">and</code> is more abstract (and less powerful) than <code class="highlighter-rouge">&gt;&gt;&gt;</code>.</p>
 
 <p>The first series blog posts about functional programming
 is not dealing with this third kind of computation composition.</p>
 
-<h2>Reactive Programming</h2>
+<h2 id="reactive-programming">Reactive Programming</h2>
 
 <p>So far we worked with pure computations resulting in exactly one value.
 But, of course, there are also more interesting kinds of computations.</p>
@@ -660,158 +556,75 @@ But, of course, there are also more interesting kinds of computations.</p>
 <p><em>Reactive Programming</em>, deals with two important <em>computational features</em>: <em>failure</em> and <em>latency</em>.
 Both should be dealt with for realizing <em>responsiveness</em>.</p>
 
-<p><code>and</code> can be defined to deal with them in another way as <code>bnd</code>.</p>
-
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        
-        <section id="comment">
-            <h1 class="title">Comments</h1>
-            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-        </section>
-        
-      </div>
-    </div>
-  </div>
-</article>
-
-<hr class="divider-short"/>
+<p><code class="highlighter-rouge">and</code> can be defined to deal with them in another way as <code class="highlighter-rouge">bnd</code>.</p>
 
 
 
-<div class="archive-link">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        
-
-        
-          <a class="pull-right" href="/blog/2014/05/11/reactive-programming-try-future/" title="Next Post: Reactive Programming: Try versus Future">Next: Reactive Programming: Try versus Future &raquo;</a>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-	</div>
-    <footer role="contentinfo"><!-- file: _includes/footer.html -->
-<footer id="footer" class="footer-row">
-	<div class="row">
-	  	<div class="col-md-10 col-md-offset-1">
-			<div class="row">
-				<div class="col-md-12">
-						<dl>
-        <dt><a href="/company">Recent posts</a></dt>
-        
-        <dd>
-        	<a href="/blog/2014/10/23/javaone-university-2014/">2014 JavaOne University: Functional Programming in Scala</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/07/18/embracing-your-rows-with-slick/">Embracing Your Rows With Slick</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/23/case-class-related-macros/">Macros: Case Class Related Macros</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/20/reactive-programming-schedulers-workers/">Reactive Programming: Schedulers and Workers</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/14/reactive-programming-notification-observable/">Reactive Programming: Notification Versus Observable</a>
-        </dd>
-		
-    </dl>
-<!-- file: _includes/end_footer.html -->
-<div class="pull-right">
-
-</div>
-
-				</div>
+			<div class="blog-navigation">
+				
+				
+					<a class="next" href="/blog/2014/05/11/reactive-programming-try-future/">Try versus Future &raquo;</a>
+				
 			</div>
+
+
+			
 		</div>
 	</div>
-</footer></footer>
-    
-<div class="row">
-	<div class="col-md-10 col-md-offset-1">
-		<div class="row  sitemap-footer">
-			<div class="col-md-3">
-				<dl>
-			        <dt><a class="sitemap-link" href="/consulting">Consulting</a></dt>
-			        <dd><a href="/consulting#mentoring">Mentoring</a></dd>
-					<dd><a href="/consulting#devdep">Development</a></dd>
-			    </dl>
+</section>
+
+
+
+		<footer>
+			<div class="container">
+				<p class="editor-link"><a href="cloudcannon:collections/_data/footer.yml" class="btn"><strong>&#9998;</strong> Edit footer</a></p>
+				<ul class="footer-left-links">
+					
+						<li>
+							<a  href="/blog/" >
+								
+								Blog
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/" >
+								
+								About
+							</a>
+						</li>
+					
+				</ul>
+				<ul class="footer-right-links">
+					
+						<li>
+							<a target="_blank" href="https://twitter.com/strongtyped" class="twitter-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.73,5.92 11.73,8.29C11.73,8.63 11.77,8.96 11.84,9.27C8.28,9.09 5.11,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.5 2.96,10.3 2.38,10C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.43,16 6,17.26 7.89,17.29C6.43,18.45 4.58,19.13 2.56,19.13C2.22,19.13 1.88,19.11 1.54,19.07C3.44,20.29 5.7,21 8.12,21C16,21 20.33,14.46 20.33,8.79C20.33,8.6 20.33,8.42 20.32,8.23C21.16,7.63 21.88,6.87 22.46,6Z" /></svg>
+	
+								
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/feed.xml" class="rss-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+	
+								
+							</a>
+						</li>
+					
+				</ul>
+				<p class="copyright">
+					<a href="https://cloudcannon.com/">
+						Template by CloudCannon
+					</a>
+				</p>
 			</div>
-			<div class="col-md-3">
-				<dl>
-			        <dt><a href="/training">Training</a></dt>
-			        <dd><a href="/training#seminars">Seminars</a></dd>
-					<dd><a href="/training#workshops">Workshops</a></dd>
-			    </dl>
-			</div>
-			<div class="col-md-3">
-				<dl>
-			        <dt><a href="/company">Company</a></dt>
-					<dd><a href="/partners">Partners</a></dd>
-					<dd><a href="/team">Team</a></dd>
-					<dd><a href="mailto:info@strongtyped.io">Contact</a></dd>
-			    </dl>
-			</div>
-			<div class="col-md-3">
-				<dl>
-					<dt>Social links</dt>
-					<dd><a href="http://github.com/strongtyped">GitHub</a></dd>
-					<dd><a href="http://twitter.com/strongtyped">Twitter</a></dd>
-					<dd><a href="http://www.bescala.org">BeScala</a></dd>
-				</dl>
-			</div>
-		</div>
-	</div>
-</div>      
+		</footer>
 
-
-
-
-<script type="text/javascript">
-      var disqus_shortname = 'strongtyped';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala/';
-        var disqus_url = 'http://www.strongtyped.io/blog/2014/05/11/functional-programming-in-scala/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
- 
-
-  </body>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="/js/main.js"></script>
+	</body>
 </html>

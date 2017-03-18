@@ -1,1006 +1,732 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Macros: Case Class Related Macros - Strong[Typed]</title>
-  <meta name="author" content="StrongTyped.io">
 
-  
-  <meta name="description" content="Strong[Typed] consulting training company blog Macros: Case Class Related Macros written May 23, 2014 in Posted by Luc Duponcheel This is a first &hellip;">
-  
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="generator" content="Jekyll v3.3.1">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300|Rubik:300">
+		<link rel="stylesheet" href="/css/syntax-darkly.css">
+		<link rel="stylesheet" href="/css/screen.css">
+		
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" href="/touch-icon.png" sizes="192x192">
+		<!-- <link rel="icon" type="image/png" href="/images/favicon.png"> -->
 
-  
-  <link rel="canonical" href="http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Strong[Typed]" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-50926236-1']);
-    _gaq.push(['_trackPageview']);
+		<!-- Begin Jekyll SEO tag v2.1.0 -->
+<title>case class related macros - Strong[Typed]</title>
+<meta property="og:title" content="case class related macros" />
+<meta name="description" content="Exploring the mechanics of macros" />
+<meta property="og:description" content="Exploring the mechanics of macros" />
+<link rel="canonical" href="http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/" />
+<meta property="og:url" content="http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/" />
+<meta property="og:site_name" content="Strong[Typed]" />
+<meta property="og:image" content="https://source.unsplash.com/U9x5mG0pBiQ/2000x1000?a=.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-05-23T09:00:00+02:00" />
+<script type="application/ld+json">
+{"@context": "http://schema.org",
+"@type": "BlogPosting",
+"headline": "case class related macros",
+"image": "https://source.unsplash.com/U9x5mG0pBiQ/2000x1000?a=.png",
+"datePublished": "2014-05-23T09:00:00+02:00",
+"description": "Exploring the mechanics of macros",
+"publisher": {"@type": "Organization",
+"logo": {"@type": "ImageObject",
+"url": "http://www.strongtyped.io/siteicon.png"}},
+"url": "http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/"}</script>
+<!-- End Jekyll SEO tag -->
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+		<link type="application/atom+xml" rel="alternate" href="http://www.strongtyped.io/feed.xml" title="Strong[Typed]" />
+
+		
 
 
+		 <!-- webfonts -->
+		
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="//fonts.googleapis.com/css?family=Exo:400,500,600,500italic,600italic" rel="stylesheet" type="text/css">
 
-</head>
 
-<!-- _layouts/base-post.html -->
-  <body>
+	</head>
 
-  	<div class="content">
-    <!-- _layouts/post.html -->
-
-<div class="navbar">
-  <div class="navbar-fixed-top">
-      <div class="container">
-      <ul class="nav navbar-left">
-        <li>
-          <h2 class="strongtyped"><a href="/"><span class="strong">Strong<span><span class="typed">[Typed]</span></a></h2>
-        </li>
-      </ul>
-      <ul class="nav secondary-nav navbar-nav navbar-right">
-
-
-			
-  		<li><a class="inactive" href="/consulting">consulting</a></li>	
-  	
-
-			
-  		<li><a class="inactive" href="/training">training</a></li>	
-  	
-
-			
-  		<li><a class="inactive" href="/company">company</a></li>	
-  	
-
+	<body>
+		<header id="mainHeader">
+			<div class="container">
+				<div class="company-name">
+					<a href="/">
+						<span class="dark-logo">
+							<span class="strongtyped">
+								<span class="strong">Strong</span><span class="typed">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/dark.svg" alt="dark frisco logo"> -->
+						</span>
+						<span class="light-logo">
+							<span class="strongtyped">
+						 		<span class="strong-light">Strong</span><span class="typed-light">[Typed]</span>
+						 	</span>
+							<!-- <img width="104" height="38" src="/images/logo/light.svg" alt="light frisco logo"> -->
+						</span>
+					</a>
+				</div>
+				<nav>
+	<a class="nav-toggle" id="open-nav" href="#">&#9776;</a>
 	
-  		<li><a class="active" href="/blog">blog</a></li>	
-  	
+		
+		
 
-</ul>      
-    </div>
-  </div>
+		
+		<a href="/blog/" class="" >Blog</a>
+	
+		
+		
+
+		
+		<a href="/" class="" >About</a>
+	
+</nav>
+
+				<p class="editor-link"><a style="display:inline;" href="cloudcannon:collections/_data/navigation.yml" class="btn"><strong>&#9998;</strong> Edit navigation</a></p>
+			</div>
+		</header>
+
+		<section class="hero" style="background-image: url(https://source.unsplash.com/U9x5mG0pBiQ/2000x1000?a=.png)" >
+	<div class="inner-hero text-container">
+		<div class="hero-text-container">
+			<h1>case class related macros</h1>
+			<p class="subtext">Exploring the mechanics of macros</p>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="blog-post text-container">
+		<p class="editor-link"><a href="cloudcannon:collections/_posts/2014-05-23-case-class-related-macros.md" class="btn"><strong>&#9998;</strong> Edit Post</a></p>
+		<div class="post-details">
+	
+	<div class="author" style="float: left;">
+		
+		
+		<div class="square-image" style="background-image: url('/images/luc.gif')"></div>
+	</div>		
+		
+	<div>
+		<div class="post-meta">
+			<div><strong>Luc Duponcheel</strong></div>
+			<div>Senior Scala / FP Developer</div>
+			<div>May 23, 2014</div>
+		</div>
+		<div class="post-cat">
+			<!-- 
+				<span class="blog-filter">
+					<a href="/category/scala/">Scala</a>
+				</span>
+			
+				<span class="blog-filter">
+					<a href="/category/fp/">Fp</a>
+				</span>
+			
+				<span class="blog-filter">
+					<a href="/category/macros/">Macros</a>
+				</span>
+			 -->
+			
+		</div>
+	</div>
+	
 </div>
 
 
-<article role="article" class="full-single-article">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        <h1>Macros: Case Class Related Macros</h1>
-        <!-- post/metadata.html --> 
-<span class="meta">
-  written 
+		<div class="post-content">
 
-
-
-
-
-
-
-
-  
-
-
-
-<time datetime="2014-05-23T09:00:00+02:00" pubdate data-updated="true">May 23, 2014</time>  
-in 
-
-
-<br/>
-  
-
-<span class="byline author vcard">Posted by <span class="fn">Luc Duponcheel</span></span>
-
-</span>
-<!-- end post/metadata.html --> 
-        <p>This is a first blog post about <em>Writing Macros in Scala</em>.
+			<p>This is a first blog post about <em>Writing Macros in Scala</em>.
 This blog post covers two interesting pairs of macros dealing with <em>case classes</em>.
 The macros of the first pair translate <em>case classes to tuples</em>, and <em>tuples to case classes</em>.
 The macros of the second pair translate <em>case classes to maps</em>, and <em>maps to case classes</em>.</p>
 
 <p><strong>Remark:</strong>
 The macros presented in this blog can be found elsewhere on the internet.
-We tried to reuse as much code as possible for both pairs of macros using a <code>Common</code> singleton object. Moreover, we end by adding a bit of extra code of our own as well.</p>
+We tried to reuse as much code as possible for both pairs of macros using a <code class="highlighter-rouge">Common</code> singleton object. Moreover, we end by adding a bit of extra code of our own as well.</p>
 
 <!-- more -->
 
+<h2 id="case-classes-and-tuples">Case classes and Tuples</h2>
 
-<h2>Case classes and Tuples</h2>
+<p>The tranformations from case classes <code class="highlighter-rouge">Z</code> to tuples <code class="highlighter-rouge">T</code> and from tuples <code class="highlighter-rouge">T</code> to case classes <code class="highlighter-rouge">Z</code> can be formalized as follows</p>
 
-<p>The tranformations
-from case classes <code>Z</code> to tuples <code>T</code>
-and
-from tuples <code>T</code> to case classes <code>Z</code>
-can be formalized as follows</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span>
+<span class="o">}</span>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">trait</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">trait</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<span class="k">trait</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
+<h2 id="the--and--functions">The <code class="highlighter-rouge">toTuple</code> and <code class="highlighter-rouge">fromTuple</code> functions</h2>
 
-<h2>The <code>toTuple</code> and <code>fromTuple</code> functions</h2>
-
-<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code>ToTuple[Z, T]</code> and <code>FromTuple[Z, T]</code>.
+<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code class="highlighter-rouge">ToTuple[Z, T]</code> and <code class="highlighter-rouge">FromTuple[Z, T]</code>.
 Assuming the existence of such macros, it is also convenient to define functions
-<code>toTuple</code> and <code>fromTuple</code> that  <code>implicitly</code> make use of them</p>
+<code class="highlighter-rouge">toTuple</code> and <code class="highlighter-rouge">fromTuple</code> that  <code class="highlighter-rouge">implicitly</code> make use of them</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">toTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">ToTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">ToTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span>
-</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
-</span><span class='line'>  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">FromTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">FromTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
-</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">toTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">ToTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">ToTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span>
+  <span class="n">implicitly</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">fromTuple</span><span class="o">[</span><span class="kt">Z:</span> <span class="o">({</span> <span class="k">type</span> <span class="kt">FromTuple_</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="kt">=</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="o">})</span><span class="k">#</span><span class="kt">FromTuple_</span>, <span class="kt">T</span><span class="o">](</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
+  <span class="n">implicitly</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]].</span><span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<p>The definitions above make use of type constructors <code>ToTuple_</code> resp. <code>FromTuple_</code>,
+<p>The definitions above make use of type constructors <code class="highlighter-rouge">ToTuple_</code> resp. <code class="highlighter-rouge">FromTuple_</code>,
 having <em>one type parameter</em>, that are obtained by <em>partially binding</em> the
-the type <code>T</code> to the second type parameter of the type constructors <code>ToTuple</code> resp. <code>FromTuple</code>,
+the type <code class="highlighter-rouge">T</code> to the second type parameter of the type constructors <code class="highlighter-rouge">ToTuple</code> resp. <code class="highlighter-rouge">FromTuple</code>,
 having <em>two type parameters</em>.</p>
 
-<h2>An example case class</h2>
+<h2 id="an-example-case-class">An example case class</h2>
 
 <p>Consider the case class</p>
 
 <ul>
-<li><code>case class Person(name: String, age: Int)</code></li>
+  <li><code class="highlighter-rouge">case class Person(name: String, age: Int)</code></li>
 </ul>
-
 
 <p>The tuple class corresponding to this case class is</p>
 
 <ul>
-<li><code>(String, Int)</code></li>
+  <li><code class="highlighter-rouge">(String, Int)</code></li>
 </ul>
 
+<p>Here is the code that a macro should generate to convert a <code class="highlighter-rouge">Person</code> instance
+to a <code class="highlighter-rouge">(String, Int)</code> instance</p>
 
-<p>Here is the code that a macro should generate to convert a <code>Person</code> instance
-to a <code>(String, Int)</code> instance</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">new</span> <span class="nc">ToTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
-</span><span class='line'>  <span class="k">def</span> <span class="n">toTuple</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>Here is the code that a macro should generate to convert a <code class="highlighter-rouge">(String, Int)</code> instance
+to a <code class="highlighter-rouge">Person</code> instance</p>
 
-
-<p>Here is the code that a macro should generate to convert a <code>(String, Int)</code> instance
-to a <code>Person</code> instance</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">new</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
-</span><span class='line'>  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="n">_1</span><span class="o">,</span> <span class="n">t</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="nc">FromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">fromTuple</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="o">(</span><span class="kt">String</span><span class="o">,</span> <span class="kt">Int</span><span class="o">))</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="n">_1</span><span class="o">,</span> <span class="n">t</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>So, what is the information that we require at compile time
 for being able to generate this code?</p>
 
 <ul>
-<li>we require the string <code>"Person"</code></li>
-<li>we require the strings <code>"String"</code> and <code>"Int"</code></li>
-<li>we require the strings <code>"name"</code> and <code>"age"</code></li>
-<li>we require the number <code>2</code> to generate the strings <code>"1"</code> and <code>"2"</code></li>
+  <li>we require the string <code class="highlighter-rouge">"Person"</code></li>
+  <li>we require the strings <code class="highlighter-rouge">"String"</code> and <code class="highlighter-rouge">"Int"</code></li>
+  <li>we require the strings <code class="highlighter-rouge">"name"</code> and <code class="highlighter-rouge">"age"</code></li>
+  <li>we require the number <code class="highlighter-rouge">2</code> to generate the strings <code class="highlighter-rouge">"1"</code> and <code class="highlighter-rouge">"2"</code></li>
 </ul>
-
 
 <p>The last requirement is not really needed if we replace the first three
 requirements above by</p>
 
 <ul>
-<li>we require the string <code>"Person"</code></li>
-<li>we require the list of strings containing <code>"String"</code> and <code>"Int"</code></li>
-<li>we require the list of strings containing <code>"name"</code> and <code>"age"</code></li>
+  <li>we require the string <code class="highlighter-rouge">"Person"</code></li>
+  <li>we require the list of strings containing <code class="highlighter-rouge">"String"</code> and <code class="highlighter-rouge">"Int"</code></li>
+  <li>we require the list of strings containing <code class="highlighter-rouge">"name"</code> and <code class="highlighter-rouge">"age"</code></li>
 </ul>
 
-
-<p>because the lists above have size <code>2</code>.</p>
+<p>because the lists above have size <code class="highlighter-rouge">2</code>.</p>
 
 <p>So how can we obtain all those required strings?</p>
 
-<h2>The <code>getFieldNamesAndTypes</code> method</h2>
+<h2 id="the--method">The <code class="highlighter-rouge">getFieldNamesAndTypes</code> method</h2>
 
 <p>The following code is all we need to obtain the required strings</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">trait</span> <span class="nc">Common</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)(</span><span class="n">tpe</span><span class="k">:</span> <span class="kt">c.universe.Type</span><span class="o">)</span><span class="k">:</span>
-</span><span class='line'>      <span class="kt">Iterable</span><span class="o">[(</span><span class="kt">c.universe.Name</span>, <span class="kt">c.universe.Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">object</span> <span class="nc">CaseField</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">trmSym</span><span class="k">:</span> <span class="kt">TermSymbol</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[(</span><span class="kt">Name</span>, <span class="kt">Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>          <span class="k">if</span> <span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">isVal</span> <span class="o">&amp;&amp;</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">isCaseAccessor</span><span class="o">)</span>
-</span><span class='line'>             <span class="nc">Some</span><span class="o">((</span><span class="n">newTermName</span><span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">toString</span><span class="o">.</span><span class="n">trim</span><span class="o">),</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">typeSignature</span><span class="o">))</span>
-</span><span class='line'>          <span class="k">else</span>
-</span><span class='line'>            <span class="nc">None</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">tpe</span><span class="o">.</span><span class="n">declarations</span><span class="o">.</span><span class="n">collect</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">case</span> <span class="nc">CaseField</span><span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
-</span><span class='line'>          <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Common</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)(</span><span class="n">tpe</span><span class="k">:</span> <span class="kt">c.universe.Type</span><span class="o">)</span><span class="k">:</span>
+    <span class="kt">Iterable</span><span class="o">[(</span><span class="kt">c.universe.Name</span>, <span class="kt">c.universe.Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">c.universe._</span>
 
+    <span class="k">object</span> <span class="nc">CaseField</span> <span class="o">{</span>
+      <span class="k">def</span> <span class="n">unapply</span><span class="o">(</span><span class="n">trmSym</span><span class="k">:</span> <span class="kt">TermSymbol</span><span class="o">)</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[(</span><span class="kt">Name</span>, <span class="kt">Type</span><span class="o">)]</span> <span class="k">=</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">isVal</span> <span class="o">&amp;&amp;</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">isCaseAccessor</span><span class="o">)</span>
+           <span class="nc">Some</span><span class="o">((</span><span class="n">newTermName</span><span class="o">(</span><span class="n">trmSym</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">toString</span><span class="o">.</span><span class="n">trim</span><span class="o">),</span> <span class="n">trmSym</span><span class="o">.</span><span class="n">typeSignature</span><span class="o">))</span>
+        <span class="k">else</span>
+          <span class="nc">None</span>
+      <span class="o">}</span>
+    <span class="o">}</span>
 
-<p>The code above has a <code>Context</code> parameter <code>c</code>, using which we can obtain all
-the types we need using <code>import c.universe._</code>.</p>
+    <span class="n">tpe</span><span class="o">.</span><span class="n">declarations</span><span class="o">.</span><span class="n">collect</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">CaseField</span><span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<p>The only information available to start generating code from is <code>tpe</code>, having type <code>Type</code>.
-The <code>object CaseField</code>&rsquo;s <code>unapply</code> method can be used to<em> extract</em> the
-information that we need from the <em>declarations</em> of <code>tpe</code>,
-using a <em>collection</em> that uses an appropriate <code>CaseField</code> pattern matching partial function.</p>
+<p>The code above has a <code class="highlighter-rouge">Context</code> parameter <code class="highlighter-rouge">c</code>, using which we can obtain all
+the types we need using <code class="highlighter-rouge">import c.universe._</code>.</p>
+
+<p>The only information available to start generating code from is <code class="highlighter-rouge">tpe</code>, having type <code class="highlighter-rouge">Type</code>.
+The <code class="highlighter-rouge">object CaseField</code>’s <code class="highlighter-rouge">unapply</code> method can be used to_ extract_ the
+information that we need from the <em>declarations</em> of <code class="highlighter-rouge">tpe</code>,
+using a <em>collection</em> that uses an appropriate <code class="highlighter-rouge">CaseField</code> pattern matching partial function.</p>
 
 <p>Maybe, by looking at the code, you may wonder why it uses
-the somewhat complex expression <code>newTermName(trmSym.name.toString.trim)</code> instead
-of the much simpler expression <code>trmSym.name</code>.
+the somewhat complex expression <code class="highlighter-rouge">newTermName(trmSym.name.toString.trim)</code> instead
+of the much simpler expression <code class="highlighter-rouge">trmSym.name</code>.
 Writing macros is still somewhat of a <em>black art</em>.
-It turns out that using <code>trmSym.name</code> would result in strings
-<code>"name "</code> and <code>"age "</code>, with an extra blank at the end,
+It turns out that using <code class="highlighter-rouge">trmSym.name</code> would result in strings
+<code class="highlighter-rouge">"name "</code> and <code class="highlighter-rouge">"age "</code>, with an extra blank at the end,
 and we can get rid of that extra blank using
-the more complex expression <code>newTermName(trmSym.name.toString.trim)</code>.</p>
+the more complex expression <code class="highlighter-rouge">newTermName(trmSym.name.toString.trim)</code>.</p>
 
-<h2>The <code>toTupleMacro</code> macro</h2>
+<h2 id="the--macro">The <code class="highlighter-rouge">toTupleMacro</code> macro</h2>
 
-<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
-implicit <code>toTupleMacro</code> as follows</p>
+<p>Using the <code class="highlighter-rouge">getFieldNamesAndTypes</code> method we can now define the
+implicit <code class="highlighter-rouge">toTupleMacro</code> as follows</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">ToTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">toTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">fldSels</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="n">nmes</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">nme</span> <span class="k">=&gt;</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         z.$nme</span>
-</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">toTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         new ToTuple[$tpe, (..$tpes)] {</span>
-</span><span class='line'><span class="s">           def toTuple(z: $tpe) = (..$fldSels)</span>
-</span><span class='line'><span class="s">         }</span>
-</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">toTuple</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">ToTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">toTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
 
+  <span class="k">def</span> <span class="n">toTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">c.universe._</span>
 
-<p>The macro, in this case one of type <code>ToTuple[Z, T]</code>, is <em>declared</em> using a <code>macro</code> keyword.
-The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
-in this case of type <code>c.Expr[ToTuple[Z, T]]</code>.
-The method has an extra parameter of type <code>Context</code>.
-The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code>unzip</code>
-to turn a list of tuples into a tuple of lists. The <code>tpes</code> can be used as such in the
-quasi-quote expression that defines <code>toTuple</code>. The <code>nmes</code> can be used to define <em>field selections</em>
-<code>fldSels</code> that can be used in the quasi-quote expression that defines <code>toTuple</code>.
-The variable <code>toTuple</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[ToTuple[Z, T]]</code>
-type. Therefore we wrap <code>toTuple</code> into an expression of type <code>c.Expr[ToTuple[Z, T]]</code>.</p>
+    <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
 
-<h2>The <code>fromTupleMacro</code> macro</h2>
+    <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
 
-<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
-implicit <code>fromTupleMacro</code> as follows</p>
+    <span class="k">val</span> <span class="n">fldSels</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="n">nmes</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span> <span class="n">nme</span> <span class="k">=&gt;</span>
+      <span class="n">q</span><span class="s">"""
+       z.$nme
+      """</span>
+    <span class="o">}</span>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">FromTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">fromTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">def</span> <span class="n">prj</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">TermName</span> <span class="o">=</span> <span class="n">newTermName</span><span class="o">(</span><span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="n">i</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">prjs</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">nmes</span><span class="o">.</span><span class="n">toSeq</span><span class="o">.</span><span class="n">size</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         t.${prj(i)}</span>
-</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">fromTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         new FromTuple[$tpe, (..$tpes)] {</span>
-</span><span class='line'><span class="s">           def fromTuple(t: (..$tpes)) = ${tpeSym}(..$prjs)</span>
-</span><span class='line'><span class="s">         }</span>
-</span><span class='line'><span class="s">        &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">fromTuple</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+    <span class="k">val</span> <span class="n">toTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+      <span class="n">q</span><span class="s">"""
+       new ToTuple[$tpe, (..$tpes)] {
+         def toTuple(z: $tpe) = (..$fldSels)
+       }
+      """</span>
 
+    <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">ToTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">toTuple</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<p>The macro, in this case one of type <code>FromTuple[Z, T]</code>,  is <em>declared</em> using a <code>macro</code> keyword.
-The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
-in this case of type <code>c.Expr[FromTuple[Z, T]]</code>.
-The method has an extra parameter of type <code>Context</code>.
-The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code>unzip</code>
-to turn a list of tuples into a tuple of lists. The <code>tpes</code> can be used as such in the
-quasi-quote expression that defines <code>fromTuple</code>. The <code>nmes</code> can be used to define <em>projections</em>
-<code>prjs</code> that can be used in the quasi-quote expression that defines <code>fromTuple</code>.
-We also need <code>tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
-The variable <code>fromTuple</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[FromTuple[Z, T]]</code>
-type. Therefore we wrap <code>fromTuple</code> into an expression of type <code>c.Expr[FromTuple[Z, T]]</code>.</p>
+<p>The macro, in this case one of type <code class="highlighter-rouge">ToTuple[Z, T]</code>, is <em>declared</em> using a <code class="highlighter-rouge">macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code class="highlighter-rouge">c.Expr</code>,
+in this case of type <code class="highlighter-rouge">c.Expr[ToTuple[Z, T]]</code>.
+The method has an extra parameter of type <code class="highlighter-rouge">Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code class="highlighter-rouge">unzip</code>
+to turn a list of tuples into a tuple of lists. The <code class="highlighter-rouge">tpes</code> can be used as such in the
+quasi-quote expression that defines <code class="highlighter-rouge">toTuple</code>. The <code class="highlighter-rouge">nmes</code> can be used to define <em>field selections</em>
+<code class="highlighter-rouge">fldSels</code> that can be used in the quasi-quote expression that defines <code class="highlighter-rouge">toTuple</code>.
+The variable <code class="highlighter-rouge">toTuple</code> has type <code class="highlighter-rouge">Tree</code> and the macro needs a <code class="highlighter-rouge">c.Expr[ToTuple[Z, T]]</code>
+type. Therefore we wrap <code class="highlighter-rouge">toTuple</code> into an expression of type <code class="highlighter-rouge">c.Expr[ToTuple[Z, T]]</code>.</p>
+
+<h2 id="the--macro-1">The <code class="highlighter-rouge">fromTupleMacro</code> macro</h2>
+
+<p>Using the <code class="highlighter-rouge">getFieldNamesAndTypes</code> method we can now define the
+implicit <code class="highlighter-rouge">fromTupleMacro</code> as follows</p>
+
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">FromTuple</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">fromTupleMacro</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]</span>
+
+  <span class="k">def</span> <span class="n">fromTupleMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span>, <span class="kt">T</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">c.universe._</span>
+
+    <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+
+    <span class="k">val</span> <span class="o">(</span><span class="n">nmes</span><span class="o">,</span> <span class="n">tpes</span><span class="o">)</span> <span class="k">=</span> <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">unzip</span>
+    
+    <span class="k">def</span> <span class="n">prj</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">TermName</span> <span class="o">=</span> <span class="n">newTermName</span><span class="o">(</span><span class="s">"_"</span> <span class="o">+</span> <span class="n">i</span><span class="o">)</span>
+
+    <span class="k">val</span> <span class="n">prjs</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Select</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="mi">1</span> <span class="n">to</span> <span class="n">nmes</span><span class="o">.</span><span class="n">toSeq</span><span class="o">.</span><span class="n">size</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span>
+      <span class="n">q</span><span class="s">"""
+       t.${prj(i)}
+      """</span>
+    <span class="o">}</span>
+
+    <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
+
+    <span class="k">val</span> <span class="n">fromTuple</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+      <span class="n">q</span><span class="s">"""
+       new FromTuple[$tpe, (..$tpes)] {
+         def fromTuple(t: (..$tpes)) = ${tpeSym}(..$prjs)
+       }
+      """</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">FromTuple</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">T</span><span class="o">]](</span><span class="n">fromTuple</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The macro, in this case one of type <code class="highlighter-rouge">FromTuple[Z, T]</code>,  is <em>declared</em> using a <code class="highlighter-rouge">macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code class="highlighter-rouge">c.Expr</code>,
+in this case of type <code class="highlighter-rouge">c.Expr[FromTuple[Z, T]]</code>.
+The method has an extra parameter of type <code class="highlighter-rouge">Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. We use <code class="highlighter-rouge">unzip</code>
+to turn a list of tuples into a tuple of lists. The <code class="highlighter-rouge">tpes</code> can be used as such in the
+quasi-quote expression that defines <code class="highlighter-rouge">fromTuple</code>. The <code class="highlighter-rouge">nmes</code> can be used to define <em>projections</em>
+<code class="highlighter-rouge">prjs</code> that can be used in the quasi-quote expression that defines <code class="highlighter-rouge">fromTuple</code>.
+We also need <code class="highlighter-rouge">tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
+The variable <code class="highlighter-rouge">fromTuple</code> has type <code class="highlighter-rouge">Tree</code> and the macro needs a <code class="highlighter-rouge">c.Expr[FromTuple[Z, T]]</code>
+type. Therefore we wrap <code class="highlighter-rouge">fromTuple</code> into an expression of type <code class="highlighter-rouge">c.Expr[FromTuple[Z, T]]</code>.</p>
 
 <p>Here is an example</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
-</span><span class='line'>  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">toTuple</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]((</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> 
+    
+  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
+  
+  <span class="n">println</span><span class="o">(</span><span class="n">toTuple</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]((</span><span class="s">"John"</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>printing</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
-</span><span class='line'><span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+<span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<h2>Case classes and Maps</h2>
+<h2 id="case-classes-and-maps">Case classes and Maps</h2>
 
 <p>The tranformations
-from case classes <code>Z</code> to maps <code>Map[String, Any]</code>
+from case classes <code class="highlighter-rouge">Z</code> to maps <code class="highlighter-rouge">Map[String, Any]</code>
 and
-from maps <code>Map[String, Any]</code> to case classes <code>Z</code>
+from maps <code class="highlighter-rouge">Map[String, Any]</code> to case classes <code class="highlighter-rouge">Z</code>
 can be formalized as follows</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">type</span> <span class="kt">M</span> <span class="o">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">trait</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">trait</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">type</span> <span class="kt">M</span> <span class="o">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Any</span><span class="o">]</span>
 
+<span class="k">trait</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span>
+<span class="o">}</span>
 
-<h2>The <code>store</code> and <code>load</code> functions</h2>
+<span class="k">trait</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code>Store[Z]</code> and <code>Load[Z]</code>.
+<h2 id="the--and--functions-1">The <code class="highlighter-rouge">store</code> and <code class="highlighter-rouge">load</code> functions</h2>
+
+<p>It turns out that it is convenient to define <em>implicit macros</em> of type <code class="highlighter-rouge">Store[Z]</code> and <code class="highlighter-rouge">Load[Z]</code>.
 Assuming the existence of such macros, it is also convenient to define functions
-<code>store</code> and <code>load</code> that <code>implicitly</code> make use of them</p>
+<code class="highlighter-rouge">store</code> and <code class="highlighter-rouge">load</code> that <code class="highlighter-rouge">implicitly</code> make use of them</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">store</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
-</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
-</span><span class='line'>  <span class="k">def</span> <span class="n">load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span><span class="o">](</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
-</span><span class='line'>    <span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">store</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
+  <span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span><span class="o">](</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=</span>
+  <span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]].</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<h2>An example case class</h2>
+<h2 id="an-example-case-class-1">An example case class</h2>
 
 <p>Consider the case class</p>
 
 <ul>
-<li><code>case class Person(name: String, age: Int)</code></li>
+  <li><code class="highlighter-rouge">case class Person(name: String, age: Int)</code></li>
 </ul>
 
+<p>Here is the code that a macro should generate to convert a <code class="highlighter-rouge">Person</code> instance
+to an <code class="highlighter-rouge">M</code> instance</p>
 
-<p>Here is the code that a macro should generate to convert a <code>Person</code> instance
-to an <code>M</code> instance</p>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
+    <span class="nc">Map</span><span class="o">(</span><span class="s">"name"</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="s">"age"</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">z</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span><span class="k">:</span> <span class="kt">M</span> <span class="o">=</span>
-</span><span class='line'>      <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="n">z</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>Here is the code that a macro should generate to convert an <code class="highlighter-rouge">M</code> instance
+to a <code class="highlighter-rouge">Person</code> instance</p>
 
-
-<p>Here is the code that a macro should generate to convert an <code>M</code> instance
-to a <code>Person</code> instance</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Person</span> <span class="o">=</span>
-</span><span class='line'>      <span class="nc">Person</span><span class="o">(</span><span class="n">m</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">m</span><span class="o">(</span><span class="s">&quot;age&quot;</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Person</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span><span class="k">:</span> <span class="kt">Person</span> <span class="o">=</span>
+    <span class="nc">Person</span><span class="o">(</span><span class="n">m</span><span class="o">(</span><span class="s">"name"</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">String</span><span class="o">],</span> <span class="n">m</span><span class="o">(</span><span class="s">"age"</span><span class="o">).</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>The information that we require at compile time
 for being able to generate this code is exactly the same
 as when converting from and to tuples, so we can reuse
-the <code>getFieldNamesAndTypes</code> method.</p>
+the <code class="highlighter-rouge">getFieldNamesAndTypes</code> method.</p>
 
-<h2>The <code>storeMacro</code> macro</h2>
+<h2 id="the--macro-2">The <code class="highlighter-rouge">storeMacro</code> macro</h2>
 
-<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
-implicit <code>storeMacro</code> as follows</p>
+<p>Using the <code class="highlighter-rouge">getFieldNamesAndTypes</code> method we can now define the
+implicit <code class="highlighter-rouge">storeMacro</code> as follows</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">Store</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">storeMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">mpgs</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Apply</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>        <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
-</span><span class='line'>          <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
-</span><span class='line'>            <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">            ${nme.decoded} -&gt; z.${nme}</span>
-</span><span class='line'><span class="s">            &quot;&quot;&quot;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">store</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         new Store[$tpe] {</span>
-</span><span class='line'><span class="s">           def store(z: $tpe): M =</span>
-</span><span class='line'><span class="s">             Map(..$mpgs)</span>
-</span><span class='line'><span class="s">         }</span>
-</span><span class='line'><span class="s">         &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">store</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Store</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">storeMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
 
+  <span class="k">def</span> <span class="n">storeMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span><span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">c.universe._</span>
 
-<p>The macro, in this case one of type <code>Store[Z]</code>, is <em>declared</em> using a <code>macro</code> keyword.
-The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
-in this case of type <code>c.Expr[Store[Z]]</code>.
-The method has an extra parameter of type <code>Context</code>.
-The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code.
-<code>getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>mappings</em>
-<code>mpgs</code> that can be used in the quasi-quote expression that defines <code>store</code>.
+    <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+
+    <span class="k">val</span> <span class="n">mpgs</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Apply</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="n">q</span><span class="s">"""
+          ${nme.decoded} -&gt; z.${nme}
+          """</span>
+      <span class="o">}</span>
+
+    <span class="k">val</span> <span class="n">store</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+      <span class="n">q</span><span class="s">"""
+       new Store[$tpe] {
+         def store(z: $tpe): M =
+           Map(..$mpgs)
+       }
+       """</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">store</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The macro, in this case one of type <code class="highlighter-rouge">Store[Z]</code>, is <em>declared</em> using a <code class="highlighter-rouge">macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code class="highlighter-rouge">c.Expr</code>,
+in this case of type <code class="highlighter-rouge">c.Expr[Store[Z]]</code>.
+The method has an extra parameter of type <code class="highlighter-rouge">Context</code>.
+The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code. 
+<code class="highlighter-rouge">getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>mappings</em>
+<code class="highlighter-rouge">mpgs</code> that can be used in the quasi-quote expression that defines <code class="highlighter-rouge">store</code>.
 The mappings use the field names in two ways: with and without double-quotes.
-The variable <code>store</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[Store[Z]]</code>
-type. Therefore we wrap <code>store</code> into an expression of type <code>c.Expr[Store[Z]]</code>.</p>
+The variable <code class="highlighter-rouge">store</code> has type <code class="highlighter-rouge">Tree</code> and the macro needs a <code class="highlighter-rouge">c.Expr[Store[Z]]</code>
+type. Therefore we wrap <code class="highlighter-rouge">store</code> into an expression of type <code class="highlighter-rouge">c.Expr[Store[Z]]</code>.</p>
 
-<h2>The <code>loadMacro</code> macro</h2>
+<h2 id="the--macro-3">The <code class="highlighter-rouge">loadMacro</code> macro</h2>
 
-<p>Using the <code>getFieldNamesAndTypes</code> method we can now define the
-implicit <code>loadMacro</code> as follows</p>
+<p>Using the <code class="highlighter-rouge">getFieldNamesAndTypes</code> method we can now define the implicit <code class="highlighter-rouge">loadMacro</code> as follows</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">object</span> <span class="nc">Load</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">implicit</span> <span class="k">def</span> <span class="n">loadMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span>
-</span><span class='line'>      <span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">import</span> <span class="nn">c.universe._</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Tree</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>        <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
-</span><span class='line'>          <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
-</span><span class='line'>            <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">            m(${nme.decoded}).asInstanceOf[${tpe}]</span>
-</span><span class='line'><span class="s">            &quot;&quot;&quot;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">val</span> <span class="n">load</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
-</span><span class='line'>        <span class="n">q</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">         new Load[$tpe] {</span>
-</span><span class='line'><span class="s">           def load(m: M): $tpe =</span>
-</span><span class='line'><span class="s">             ${tpeSym}(..$args)</span>
-</span><span class='line'><span class="s">         }</span>
-</span><span class='line'><span class="s">         &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">load</span><span class="o">)</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">Load</span> <span class="k">extends</span> <span class="nc">Common</span> <span class="o">{</span>
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">loadMacro</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span> <span class="n">macro</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
 
+  <span class="k">def</span> <span class="n">loadMacroImpl</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">c.WeakTypeTag</span><span class="o">](</span>
+    <span class="n">c</span><span class="k">:</span> <span class="kt">Context</span><span class="o">)</span><span class="k">:</span> <span class="kt">c.Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">import</span> <span class="nn">c.universe._</span>
 
-<p>The macro, in this case one of type <code>Load[Z]</code>, is <em>declared</em> using a <code>macro</code> keyword.
-The macro is <em>definied</em> using a method of type <code>c.Expr</code>,
-in this case of type <code>c.Expr[Load[Z]]</code>.
-The method has an extra parameter of type <code>Context</code>.
+    <span class="k">val</span> <span class="n">tpe</span><span class="k">:</span> <span class="kt">Type</span> <span class="o">=</span> <span class="n">weakTypeOf</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span>
+
+    <span class="k">val</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Iterable</span><span class="o">[</span><span class="kt">Tree</span><span class="o">]</span> <span class="k">=</span>
+      <span class="n">getFieldNamesAndTypes</span><span class="o">(</span><span class="n">c</span><span class="o">)(</span><span class="n">tpe</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="o">(</span><span class="n">nme</span><span class="o">,</span> <span class="n">tpe</span><span class="o">)</span> <span class="k">=&gt;</span>
+          <span class="n">q</span><span class="s">"""
+          m(${nme.decoded}).asInstanceOf[${tpe}]
+          """</span>
+      <span class="o">}</span>
+
+    <span class="k">val</span> <span class="n">tpeSym</span><span class="k">:</span> <span class="kt">Symbol</span> <span class="o">=</span> <span class="n">tpe</span><span class="o">.</span><span class="n">typeSymbol</span><span class="o">.</span><span class="n">companionSymbol</span>
+
+    <span class="k">val</span> <span class="n">load</span><span class="k">:</span> <span class="kt">Tree</span> <span class="o">=</span>
+      <span class="n">q</span><span class="s">"""
+       new Load[$tpe] {
+         def load(m: M): $tpe =
+           ${tpeSym}(..$args)
+       }
+       """</span>
+
+    <span class="n">c</span><span class="o">.</span><span class="nc">Expr</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]](</span><span class="n">load</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The macro, in this case one of type <code class="highlighter-rouge">Load[Z]</code>, is <em>declared</em> using a <code class="highlighter-rouge">macro</code> keyword.
+The macro is <em>definied</em> using a method of type <code class="highlighter-rouge">c.Expr</code>,
+in this case of type <code class="highlighter-rouge">c.Expr[Load[Z]]</code>.
+The method has an extra parameter of type <code class="highlighter-rouge">Context</code>.
 The macro makes use of <em>quasi-quotes</em>, the preferred way to generate code.
-<code>getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>case class constructor arguments</em>
-<code>args</code> that can be used in the quasi-quote expression that defines <code>load</code>.
-We also need <code>tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
-The variable <code>load</code> has type <code>Tree</code> and the macro needs a <code>c.Expr[Load[Z]]</code>
-type. Therefore we wrap <code>load</code> into an expression of type <code>c.Expr[Load[Z]]</code>.</p>
+<code class="highlighter-rouge">getFieldNamesAndTypes(c)(tpe)</code> can be used to define <em>case class constructor arguments</em>
+<code class="highlighter-rouge">args</code> that can be used in the quasi-quote expression that defines <code class="highlighter-rouge">load</code>.
+We also need <code class="highlighter-rouge">tpeSym</code> the <em>type symbol</em> of the <em>companion object</em> of the case class.
+The variable <code class="highlighter-rouge">load</code> has type <code class="highlighter-rouge">Tree</code> and the macro needs a <code class="highlighter-rouge">c.Expr[Load[Z]]</code>
+type. Therefore we wrap <code class="highlighter-rouge">load</code> into an expression of type <code class="highlighter-rouge">c.Expr[Load[Z]]</code>.</p>
 
 <p>Here is an example</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
-</span><span class='line'>  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">store</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">load</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)](</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">object</span> <span class="nc">MacroApp</span> <span class="k">extends</span> <span class="nc">App</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="k">class</span> <span class="nc">Person</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> 
+    
+  <span class="k">val</span> <span class="n">person</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="mi">40</span><span class="o">)</span>
+  
+  <span class="n">println</span><span class="o">(</span><span class="n">store</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
+  <span class="n">println</span><span class="o">(</span><span class="n">load</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)](</span><span class="nc">Map</span><span class="o">(</span><span class="s">"name"</span> <span class="o">-&gt;</span> <span class="s">"John"</span><span class="o">,</span> <span class="s">"age"</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>printing</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
-</span><span class='line'><span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+<span class="nc">Person</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+</code></pre>
+</div>
 
-
-<h2>Loading and Storing other types</h2>
+<h2 id="loading-and-storing-other-types">Loading and Storing other types</h2>
 
 <p>Now that we know how to load and store case class instances, what about other classes?
 If there exist <em>bidirectional mappings</em> from a class to a case class, then we can use
 those mappings to load and store instances of that class.
 The way those bidirectional mappings can be used is formalized as follows</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">def</span> <span class="n">lift</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">lz</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]()</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span> <span class="k">=</span> <span class="n">z2y</span><span class="o">(</span><span class="n">lz</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">))</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">tfil</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">sy</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]()</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">store</span><span class="o">(</span><span class="n">z2y</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">lift2load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">lift</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]])</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">tfil2store</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
-</span><span class='line'>    <span class="n">tfil</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]])</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="n">lift</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">lz</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]()</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="k">:</span> <span class="kt">M</span><span class="o">)</span> <span class="k">=</span> <span class="n">z2y</span><span class="o">(</span><span class="n">lz</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="n">m</span><span class="o">))</span>
+  <span class="o">}</span>
 
+<span class="k">def</span> <span class="n">tfil</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">sy</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]()</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">store</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">Z</span><span class="o">)</span> <span class="k">=</span> <span class="n">sy</span><span class="o">.</span><span class="n">store</span><span class="o">(</span><span class="n">z2y</span><span class="o">(</span><span class="n">s</span><span class="o">))</span>
+  <span class="o">}</span>
 
-<p>We have called the first function <code>lift</code> and the second one <code>tfil</code> to emphasize that
-<code>lift</code> is <em>covariant</em> (the arrow direction is preserved) and
-<code>tfil</code> <em>contravariant</em> (the arrow direction has changed).</p>
+<span class="k">def</span> <span class="n">lift2load</span><span class="o">[</span><span class="kt">Z:</span> <span class="kt">Load</span>, <span class="kt">Y</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Load</span><span class="o">[</span><span class="kt">Y</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">lift</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Load</span><span class="o">[</span><span class="kt">Z</span><span class="o">]])</span>
+
+<span class="k">def</span> <span class="n">tfil2store</span><span class="o">[</span><span class="kt">Z</span>, <span class="kt">Y:</span> <span class="kt">Store</span><span class="o">](</span><span class="n">z2y</span><span class="k">:</span> <span class="kt">Z</span> <span class="o">=&gt;</span> <span class="n">Y</span><span class="o">)</span><span class="k">:</span> <span class="kt">Store</span><span class="o">[</span><span class="kt">Z</span><span class="o">]</span> <span class="k">=</span>
+  <span class="n">tfil</span><span class="o">(</span><span class="n">z2y</span><span class="o">)(</span><span class="n">implicitly</span><span class="o">[</span><span class="kt">Store</span><span class="o">[</span><span class="kt">Y</span><span class="o">]])</span>
+</code></pre>
+</div>
+
+<p>We have called the first function <code class="highlighter-rouge">lift</code> and the second one <code class="highlighter-rouge">tfil</code> to emphasize that
+<code class="highlighter-rouge">lift</code> is <em>covariant</em> (the arrow direction is preserved) and
+<code class="highlighter-rouge">tfil</code> <em>contravariant</em> (the arrow direction has changed).</p>
 
 <p>Here is a first example</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="k">class</span> <span class="nc">Customer</span><span class="o">(</span><span class="k">val</span> <span class="n">named</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="k">val</span> <span class="n">aged</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">person2customer</span><span class="o">(</span><span class="n">person</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">person</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
-</span><span class='line'>  <span class="k">def</span> <span class="n">customer2person</span><span class="o">(</span><span class="n">customer</span><span class="k">:</span> <span class="kt">Customer</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">customer</span><span class="o">.</span><span class="n">named</span><span class="o">,</span> <span class="n">customer</span><span class="o">.</span><span class="n">aged</span><span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">person2customer</span><span class="o">).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">customer2person</span><span class="o">).</span><span class="n">store</span><span class="o">(</span><span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Customer</span><span class="o">(</span><span class="k">val</span> <span class="n">named</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="k">val</span> <span class="n">aged</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
 
+<span class="k">def</span> <span class="n">person2customer</span><span class="o">(</span><span class="n">person</span><span class="k">:</span> <span class="kt">Person</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="n">person</span><span class="o">.</span><span class="n">age</span><span class="o">)</span>
+<span class="k">def</span> <span class="n">customer2person</span><span class="o">(</span><span class="n">customer</span><span class="k">:</span> <span class="kt">Customer</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Person</span><span class="o">(</span><span class="n">customer</span><span class="o">.</span><span class="n">named</span><span class="o">,</span> <span class="n">customer</span><span class="o">.</span><span class="n">aged</span><span class="o">)</span>
+
+<span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">person2customer</span><span class="o">).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">"name"</span> <span class="o">-&gt;</span> <span class="s">"John"</span><span class="o">,</span> <span class="s">"age"</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+<span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">customer2person</span><span class="o">).</span><span class="n">store</span><span class="o">(</span><span class="k">new</span> <span class="nc">Customer</span><span class="o">(</span><span class="s">"John"</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+</code></pre>
+</div>
 
 <p>printing</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">Customer</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
-</span><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="nc">Customer</span><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+<span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+</code></pre>
+</div>
 
 <p>Here is a second example,
 making use of the bidirectional mappings from case classes to tuples</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">toTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="o">-&gt;</span> <span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
-</span><span class='line'>  <span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">store</span><span class="o">((</span><span class="s">&quot;John&quot;</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="n">println</span><span class="o">(</span><span class="n">lift2load</span><span class="o">(</span><span class="n">toTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">load</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">"name"</span> <span class="o">-&gt;</span> <span class="s">"John"</span><span class="o">,</span> <span class="s">"age"</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)))</span>
+<span class="n">println</span><span class="o">(</span><span class="n">tfil2store</span><span class="o">(</span><span class="n">fromTuple</span><span class="o">[</span><span class="kt">Person</span>, <span class="o">(</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">)]).</span><span class="n">store</span><span class="o">((</span><span class="s">"John"</span><span class="o">,</span> <span class="mi">40</span><span class="o">)))</span>
+</code></pre>
+</div>
 
 <p>printing</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
-</span><span class='line'><span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-      </div>
-      <div class="col-md-10 col-md-offset-1">
-        
-        <section id="comment">
-            <h1 class="title">Comments</h1>
-            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-        </section>
-        
-      </div>
-    </div>
-  </div>
-</article>
-
-<hr class="divider-short"/>
-
-
-
-<div class="archive-link">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-10 col-md-offset-1">
-        
-          <a class="pull-left" href="/blog/2014/05/20/reactive-programming-schedulers-workers/" title="Previous Post: Reactive Programming: Schedulers and Workers">&laquo; Previous: Reactive Programming: Schedulers and Workers</a>
-        
-
-        
-          <a class="pull-right" href="/blog/2014/07/18/embracing-your-rows-with-slick/" title="Next Post: Embracing your rows with Slick">Next: Embracing your rows with Slick &raquo;</a>
-        
-      </div>
-    </div>
-  </div>
+<div class="language-scala highlighter-rouge"><pre class="highlight"><code><span class="o">(</span><span class="nc">John</span><span class="o">,</span><span class="mi">40</span><span class="o">)</span>
+<span class="nc">Map</span><span class="o">(</span><span class="n">name</span> <span class="o">-&gt;</span> <span class="nc">John</span><span class="o">,</span> <span class="n">age</span> <span class="o">-&gt;</span> <span class="mi">40</span><span class="o">)</span>
+</code></pre>
 </div>
 
-	</div>
-    <footer role="contentinfo"><!-- file: _includes/footer.html -->
-<footer id="footer" class="footer-row">
-	<div class="row">
-	  	<div class="col-md-10 col-md-offset-1">
-			<div class="row">
-				<div class="col-md-12">
-						<dl>
-        <dt><a href="/company">Recent posts</a></dt>
-        
-        <dd>
-        	<a href="/blog/2014/10/23/javaone-university-2014/">2014 JavaOne University: Functional Programming in Scala</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/07/18/embracing-your-rows-with-slick/">Embracing Your Rows With Slick</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/23/case-class-related-macros/">Macros: Case Class Related Macros</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/20/reactive-programming-schedulers-workers/">Reactive Programming: Schedulers and Workers</a>
-        </dd>
-		
-        <dd>
-        	<a href="/blog/2014/05/14/reactive-programming-notification-observable/">Reactive Programming: Notification Versus Observable</a>
-        </dd>
-		
-    </dl>
-<!-- file: _includes/end_footer.html -->
-<div class="pull-right">
 
-</div>
-
-				</div>
+			<div class="blog-navigation">
+				
+					<a class="prev" href="/blog/2014/05/20/reactive-programming-schedulers-workers/">&laquo; Schedulers and Workers</a>
+				
+				
 			</div>
+
+
+			
+				<div id="disqus_thread"></div>
+				<script>
+						var disqus_shortname = 'strongtyped';
+						var disqus_config = function () {
+								this.page.url = "http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/";
+								this.page.identifier = "/blog/2014/05/23/case-class-related-macros";
+						};
+
+						(function() {  // DON'T EDIT BELOW THIS LINE
+								var d = document, s = d.createElement('script');
+
+								dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+								s.setAttribute('data-timestamp', +new Date());
+								(d.head || d.body).appendChild(s);
+						})();
+				</script>
+				<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+			
 		</div>
 	</div>
-</footer></footer>
-    
-<div class="row">
-	<div class="col-md-10 col-md-offset-1">
-		<div class="row  sitemap-footer">
-			<div class="col-md-3">
-				<dl>
-			        <dt><a class="sitemap-link" href="/consulting">Consulting</a></dt>
-			        <dd><a href="/consulting#mentoring">Mentoring</a></dd>
-					<dd><a href="/consulting#devdep">Development</a></dd>
-			    </dl>
+</section>
+
+
+
+		<footer>
+			<div class="container">
+				<p class="editor-link"><a href="cloudcannon:collections/_data/footer.yml" class="btn"><strong>&#9998;</strong> Edit footer</a></p>
+				<ul class="footer-left-links">
+					
+						<li>
+							<a  href="/blog/" >
+								
+								Blog
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/" >
+								
+								About
+							</a>
+						</li>
+					
+				</ul>
+				<ul class="footer-right-links">
+					
+						<li>
+							<a target="_blank" href="https://twitter.com/strongtyped" class="twitter-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M22.46,6C21.69,6.35 20.86,6.58 20,6.69C20.88,6.16 21.56,5.32 21.88,4.31C21.05,4.81 20.13,5.16 19.16,5.36C18.37,4.5 17.26,4 16,4C13.65,4 11.73,5.92 11.73,8.29C11.73,8.63 11.77,8.96 11.84,9.27C8.28,9.09 5.11,7.38 3,4.79C2.63,5.42 2.42,6.16 2.42,6.94C2.42,8.43 3.17,9.75 4.33,10.5C3.62,10.5 2.96,10.3 2.38,10C2.38,10 2.38,10 2.38,10.03C2.38,12.11 3.86,13.85 5.82,14.24C5.46,14.34 5.08,14.39 4.69,14.39C4.42,14.39 4.15,14.36 3.89,14.31C4.43,16 6,17.26 7.89,17.29C6.43,18.45 4.58,19.13 2.56,19.13C2.22,19.13 1.88,19.11 1.54,19.07C3.44,20.29 5.7,21 8.12,21C16,21 20.33,14.46 20.33,8.79C20.33,8.6 20.33,8.42 20.32,8.23C21.16,7.63 21.88,6.87 22.46,6Z" /></svg>
+	
+								
+							</a>
+						</li>
+					
+						<li>
+							<a  href="/feed.xml" class="rss-icon">
+								
+		<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+	
+								
+							</a>
+						</li>
+					
+				</ul>
+				<p class="copyright">
+					<a href="https://cloudcannon.com/">
+						Template by CloudCannon
+					</a>
+				</p>
 			</div>
-			<div class="col-md-3">
-				<dl>
-			        <dt><a href="/training">Training</a></dt>
-			        <dd><a href="/training#seminars">Seminars</a></dd>
-					<dd><a href="/training#workshops">Workshops</a></dd>
-			    </dl>
-			</div>
-			<div class="col-md-3">
-				<dl>
-			        <dt><a href="/company">Company</a></dt>
-					<dd><a href="/partners">Partners</a></dd>
-					<dd><a href="/team">Team</a></dd>
-					<dd><a href="mailto:info@strongtyped.io">Contact</a></dd>
-			    </dl>
-			</div>
-			<div class="col-md-3">
-				<dl>
-					<dt>Social links</dt>
-					<dd><a href="http://github.com/strongtyped">GitHub</a></dd>
-					<dd><a href="http://twitter.com/strongtyped">Twitter</a></dd>
-					<dd><a href="http://www.bescala.org">BeScala</a></dd>
-				</dl>
-			</div>
-		</div>
-	</div>
-</div>      
+		</footer>
 
-
-
-
-<script type="text/javascript">
-      var disqus_shortname = 'strongtyped';
-      
-        
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/';
-        var disqus_url = 'http://www.strongtyped.io/blog/2014/05/23/case-class-related-macros/';
-        var disqus_script = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
- 
-
-  </body>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="/js/main.js"></script>
+	</body>
 </html>
