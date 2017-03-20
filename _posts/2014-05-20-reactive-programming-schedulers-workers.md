@@ -6,7 +6,7 @@ comments: true
 categories:
   - scala
   - reactive
-image: https://source.unsplash.com/OiiThC8Wf68/2000x1000?a=.png
+image: https://source.unsplash.com/Ai7sV3SSMIQ/2000x1000?a=.png
 author_staff_member: luc
 ---
 
