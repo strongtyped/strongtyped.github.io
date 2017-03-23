@@ -62,7 +62,7 @@ pre code {
   font-size: 1.3em;
   padding: 15px;
   display: block;
-  background: #3F3C41; }
+  background: #002b36; }
 
 .hero, .hero-lg {
   color: #ffffff;
@@ -407,7 +407,7 @@ blockquote:before {
       margin-left: 25px; }
   .blog-post .highlighter-rouge pre {
     display: block;
-    background: #3F3C41;
+    background: #002b36;
     max-width: 100%;
     padding: 0; }
     .blog-post .highlighter-rouge pre code {
@@ -657,7 +657,7 @@ figure {
 .highlight {
   padding: 0px;
   overflow: none;
-  background: #3F3C41; }
+  background: #002b36; }
   .highlight .gutter {
     padding-right: 8px;
     border-right: 1px solid #C1C2C3; }

@@ -1,5 +1,4 @@
-/* Solarized Dark 
-
+/* Solarized Dark
 For use with Jekyll and Pygments
 
 http://ethanschoonover.com/solarized
@@ -10,7 +9,7 @@ base03    #002b36  background
 base01    #586e75  comments / secondary content
 base1     #93a1a1  body text / default code / primary content
 orange    #cb4b16  constants
-red       #dc322f  regex, special keywords
+red       #AC7E01  regex, special keywords
 blue      #268bd2  reserved keywords
 cyan      #2aa198  strings, numbers
 green     #859900  operators, other keywords
@@ -32,7 +31,7 @@ green     #859900  operators, other keywords
 .highlight .cs { color: #859900 } /* Comment.Special */
 .highlight .gd { color: #2aa198 } /* Generic.Deleted */
 .highlight .ge { color: #93a1a1; font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #dc322f } /* Generic.Error */
+.highlight .gr { color: #AC7E01 } /* Generic.Error */
 .highlight .gh { color: #cb4b16 } /* Generic.Heading */
 .highlight .gi { color: #859900 } /* Generic.Inserted */
 .highlight .go { color: #93a1a1 } /* Generic.Output */
@@ -45,7 +44,7 @@ green     #859900  operators, other keywords
 .highlight .kn { color: #859900 } /* Keyword.Namespace */
 .highlight .kp { color: #859900 } /* Keyword.Pseudo */
 .highlight .kr { color: #268bd2 } /* Keyword.Reserved */
-.highlight .kt { color: #dc322f } /* Keyword.Type */
+.highlight .kt { color: #AC7E01 } /* Keyword.Type */
 .highlight .ld { color: #93a1a1 } /* Literal.Date */
 .highlight .m { color: #2aa198 } /* Literal.Number */
 .highlight .s { color: #2aa198 } /* Literal.String */
@@ -77,7 +76,7 @@ green     #859900  operators, other keywords
 .highlight .sh { color: #93a1a1 } /* Literal.String.Heredoc */
 .highlight .si { color: #2aa198 } /* Literal.String.Interpol */
 .highlight .sx { color: #2aa198 } /* Literal.String.Other */
-.highlight .sr { color: #dc322f } /* Literal.String.Regex */
+.highlight .sr { color: #AC7E01 } /* Literal.String.Regex */
 .highlight .s1 { color: #2aa198 } /* Literal.String.Single */
 .highlight .ss { color: #2aa198 } /* Literal.String.Symbol */
 .highlight .bp { color: #268bd2 } /* Name.Builtin.Pseudo */
@@ -85,4 +84,3 @@ green     #859900  operators, other keywords
 .highlight .vg { color: #268bd2 } /* Name.Variable.Global */
 .highlight .vi { color: #268bd2 } /* Name.Variable.Instance */
 .highlight .il { color: #2aa198 } /* Literal.Number.Integer.Long */
-0
