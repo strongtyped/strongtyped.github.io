@@ -657,7 +657,8 @@ figure {
 .highlight {
   padding: 0px;
   overflow: none;
-  background: #002b36; }
+  background: #002b36;
+  margin: 30px 10px 30px 10px; }
   .highlight .gutter {
     padding-right: 8px;
     border-right: 1px solid #C1C2C3; }
