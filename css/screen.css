@@ -52,11 +52,16 @@ h2 a {
     text-decoration: none; }
 
 p, address, ul {
-  font-size: 1.38em;
+  font-size: 1.25em;
   margin-bottom: 20px;
   font-weight: 300;
-  line-height: 1.6em;
+  line-height: 1.45em;
   font-family: 'Lato', sans-serif; }
+  p code, address code, ul code {
+    padding: 3px;
+    color: #c7254e;
+    background-color: #f9f2f4;
+    border-radius: 4px; }
 
 pre code {
   font-size: 1.3em;
@@ -388,7 +393,8 @@ blockquote:before {
     .blog-post .post-details a {
       text-decoration: none; }
     .blog-post .post-details .post-meta {
-      line-height: 1.3em; }
+      line-height: 1.4em;
+      margin-bottom: 20px; }
       .blog-post .post-details .post-meta .post-date {
         float: right; }
     .blog-post .post-details:after {
@@ -399,6 +405,9 @@ blockquote:before {
     padding: 0 0 40px 0; }
     .blog-post .post-content .button {
       margin: 30px 0 0 0; }
+    .blog-post .post-content h1, .blog-post .post-content h2, .blog-post .post-content h3, .blog-post .post-content h4, .blog-post .post-content h5, .blog-post .post-content h6, .blog-post .post-content h7 {
+      margin-top: 55px;
+      margin-bottom: 15px; }
   .blog-post .post-details, .blog-post p, .blog-post h1, .blog-post h2, .blog-post h3, .blog-post h4, .blog-post h5, .blog-post h6, .blog-post h7, .blog-post ul {
     max-width: 900px;
     margin: 0 auto;
