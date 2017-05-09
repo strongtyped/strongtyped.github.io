@@ -4,8 +4,8 @@ title: "Notification versus Observable"
 date: 2014-05-14 08:25:00 +0200
 comments: true
 categories:
-  - scala
-  - reactive
+  - Scala
+  - Reactive
 image: https://source.unsplash.com/bL8MDg0p_nI/2000x1000?a=.png
 author_staff_member: luc
 ---

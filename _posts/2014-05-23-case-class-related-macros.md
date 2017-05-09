@@ -3,9 +3,9 @@ title: "case class related macros"
 date: 2014-05-23 09:00:00 +0200
 description: Exploring the mechanics of macros
 categories:
-  - scala
+  - Scala
   - FP
-  - macros
+  - Macros
 image: https://source.unsplash.com/U9x5mG0pBiQ/2000x1000?a=.png
 author_staff_member: luc
 comments: true

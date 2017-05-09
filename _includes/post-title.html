@@ -9,16 +9,14 @@
 	<div>
 		<div class="post-meta">
 			<div><strong>{{ author.name }}</strong></div>
-			<div>{{ author.position }}</div>
 			<div>{{ include.post.date | date: "%B %d, %Y" }}</div>
 		</div>
 		<div class="post-cat">
-			<!-- {% for category in include.post.categories %}
+			{% for category in include.post.categories %}
 				<span class="blog-filter">
-					<a href="{{ site.baseurl }}/category/{{ category | slugify }}/">{{ category | capitalize }}</a>
+					<a href="{{ site.baseurl }}/category/{{ category | slugify }}/">{{ category }}</a>
 				</span>
-			{% endfor %} -->
-			
+			{% endfor %}
 		</div>
 	</div>
 	
