@@ -4,8 +4,8 @@ title: "Schedulers and Workers"
 date: 2014-05-20 09:52:00 +0200
 comments: true
 categories:
-  - scala
-  - reactive
+  - Scala
+  - Reactive
 image: https://source.unsplash.com/Ai7sV3SSMIQ/2000x1000?a=.png
 author_staff_member: luc
 ---

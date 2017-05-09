@@ -4,8 +4,8 @@ title: "Try versus Future"
 date: 2014-05-11 06:21:00 +0200
 comments: true
 categories:
-  - scala
-  - reactive
+  - Scala
+  - Reactive
 image: https://source.unsplash.com/Q47eNv_UvfM/2000x1000?a=.png
 author_staff_member: luc
 ---
