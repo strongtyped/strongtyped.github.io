@@ -104,7 +104,7 @@ There are a few interesting consequences when we express it on those terms.
 
 Firstly, we can completely remove the `Option[Aggregate]`. As a matter of fact an empty **History** is the equivalent of `None:Option[Aggregate]`.
 
-Secondly, the final funciton shows that we can replace `(Aggregate, Events)` by  **History**.
+Secondly, the final function shows that we can replace `(Aggregate, Events)` by  **History**.
 
 At that point we can conclude that the most fundamental function on the command side of Event Sourced application is:
 
@@ -122,7 +122,7 @@ Here the world "aggregate" is used with a slightly different meaning. So far we 
 
 That may sound surprising, but the sole purpose of the **Command Side** is to offer the means to identify what are the possible next events for a given **Aggregate** instance. It's not about querying the state nor about a fancy CRUD model. It's only about agumenting the **History**. That said, the only reason why we should bring an **Aggregate** into memory is to decide  which **Events** may be emitted next, nothing else.
  
-In that respect, a funciton like `History => Command => F[History]` is essentially everything that is needed for the **Command Side**, but for practical reasons we will prefer the more explicit ones: `State => Command => F[Events]` (**Command Handler**) and `State => Event => State` (**Event Handler**). 
+In that respect, a function like `History => Command => F[History]` is essentially everything that is needed for the **Command Side**, but for practical reasons we will prefer the more explicit ones: `State => Command => F[Events]` (**Command Handler**) and `State => Event => State` (**Event Handler**). 
 
 ## Conclusion
 
