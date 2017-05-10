@@ -17,8 +17,8 @@
 		<!-- Begin Jekyll SEO tag v2.1.0 -->
 <title>Building a CQRS / ES Framework (part 1) - Strong[Typed]</title>
 <meta property="og:title" content="Building a CQRS / ES Framework (part 1)" />
-<meta name="description" content="This is the first of a serie of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS." />
-<meta property="og:description" content="This is the first of a serie of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS." />
+<meta name="description" content="This is the first of a series of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS." />
+<meta property="og:description" content="This is the first of a series of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS." />
 <link rel="canonical" href="http://www.strongtyped.io/blog/2017/05/07/building-cqrs-es-framework-part1/" />
 <meta property="og:url" content="http://www.strongtyped.io/blog/2017/05/07/building-cqrs-es-framework-part1/" />
 <meta property="og:site_name" content="Strong[Typed]" />
@@ -31,7 +31,7 @@
 "headline": "Building a CQRS / ES Framework (part 1)",
 "image": "https://source.unsplash.com/daYpIvggFxA/2000x300?a=.png",
 "datePublished": "2017-05-07T23:00:00+02:00",
-"description": "This is the first of a serie of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS.",
+"description": "This is the first of a series of posts where I will be covering CQRS, Event Sourcing and some Functional Programming. In this post we will concentrate on the functional foundation of CQRS and Event Sourcing in which I will explain the basic functions that supports the command side of CQRS.",
 "publisher": {"@type": "Organization",
 "logo": {"@type": "ImageObject",
 "url": "http://www.strongtyped.io/siteicon.png"}},
@@ -144,7 +144,7 @@
 
 		<div class="post-content">
 
-			<p>This is the first of a serie of posts where I will be covering <strong>CQRS</strong>, <strong>Event Sourcing</strong> and some <strong>Functional Programming</strong>. In this post we will concentrate on the functional foundation of <strong>CQRS</strong> and <strong>Event Sourcing</strong> in which I will explain the basic functions that supports the command side of <strong>CQRS</strong>.</p>
+			<p>This is the first of a series of posts where I will be covering <strong>CQRS</strong>, <strong>Event Sourcing</strong> and some <strong>Functional Programming</strong>. In this post we will concentrate on the functional foundation of <strong>CQRS</strong> and <strong>Event Sourcing</strong> in which I will explain the basic functions that supports the command side of <strong>CQRS</strong>.</p>
 
 <p>But before we start I would like to mention another blog post from Mathias Verraes entitled <a href="http://verraes.net/2014/05/functional-foundation-for-cqrs-event-sourcing/">A Functional Foundation for CQRS/ES</a>. I discovered his blog not so long ago and wasn’t surprised to see the similarities to what I was doing in <a href="https://github.com/strongtyped/fun-cqrs">Fun.CQRS</a>. This because <strong>CQRS</strong> and <strong>Event Sourcing</strong> is quite simple and it doesn’t take much to identify what are the basic operations (or functions) needed to support it. However, and that’s the main motivation of this blog, one must make some decisions when building a <strong>CQRS</strong> framework in order to cut the abstractions at the right place. My intention is therefore to explain how I have used and defined those same functions to build <a href="https://github.com/strongtyped/fun-cqrs">Fun.CQRS</a>.</p>
 
@@ -265,7 +265,7 @@
 
 <p>We can also conclude that in an <strong>Event Sourcing</strong> context, an <strong>Aggregate</strong> is an optimization that help us make business decisions based on previous events. At that point the two meanings of an aggregate converge. From a <strong>DDD</strong> perspective, an aggregate defines a consistency boundary enforced by business rules that guarantee the consistency of the model. From an <strong>Event Sourcing</strong> perspective, an aggregate is that accumulator (think <code class="highlighter-rouge">foldLeft</code>) that reduces the history of past events to one single model.</p>
 
-<p>On part 2 of this serie I will continue in the “but-that-is-not-so-practical” mode and explain why definning <strong>Command Handlers</strong> and the <strong>Event Handlers</strong> can be tedious, especially when the state of our <strong>Aggregate</strong> is modelled as <code class="highlighter-rouge">Option[Aggregate]</code>.</p>
+<p>On part 2 of this series I will continue in the “but-that-is-not-so-practical” mode and explain why definning <strong>Command Handlers</strong> and the <strong>Event Handlers</strong> can be tedious, especially when the state of our <strong>Aggregate</strong> is modelled as <code class="highlighter-rouge">Option[Aggregate]</code>.</p>
 
 
 
