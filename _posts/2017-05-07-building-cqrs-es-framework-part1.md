@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Building a CQRS / ES Framework (part 1)"
-date: 2017-05-07
+date: 2017-05-07 23:00:00 +0200
 description: 
 categories: 
   - Scala
@@ -13,7 +13,7 @@ author_staff_member: renato
 comments: true
 ---
 
-This is the first of a serie of posts where I will be covering **CQRS**, **Event Sourcing** and some **Functional Programming**. In this post we will concentrate on the functional foundation of **CQRS** and **Event Sourcing** in which I will explain the basic functions that supports the command side of **CQRS**. 
+This is the first of a series of posts where I will be covering **CQRS**, **Event Sourcing** and some **Functional Programming**. In this post we will concentrate on the functional foundation of **CQRS** and **Event Sourcing** in which I will explain the basic functions that supports the command side of **CQRS**. 
 
 But before we start I would like to mention another blog post from Mathias Verraes entitled [A Functional Foundation for CQRS/ES](http://verraes.net/2014/05/functional-foundation-for-cqrs-event-sourcing/). I discovered his blog not so long ago and wasn't surprised to see the similarities to what I was doing in [Fun.CQRS](https://github.com/strongtyped/fun-cqrs). This because **CQRS** and **Event Sourcing** is quite simple and it doesn't take much to identify what are the basic operations (or functions) needed to support it. However, and that's the main motivation of this blog, one must make some decisions when building a **CQRS** framework in order to cut the abstractions at the right place. My intention is therefore to explain how I have used and defined those same functions to build [Fun.CQRS](https://github.com/strongtyped/fun-cqrs).
 
@@ -132,5 +132,5 @@ We have seen that, based on these two functions we can define a more abstract on
 
 We can also conclude that in an **Event Sourcing** context, an **Aggregate** is an optimization that help us make business decisions based on previous events. At that point the two meanings of an aggregate converge. From a **DDD** perspective, an aggregate defines a consistency boundary enforced by business rules that guarantee the consistency of the model. From an **Event Sourcing** perspective, an aggregate is that accumulator (think `foldLeft`) that reduces the history of past events to one single model.
 
-On part 2 of this serie I will continue in the "but-that-is-not-so-practical" mode and explain why definning **Command Handlers** and the **Event Handlers** can be tedious, especially when the state of our **Aggregate** is modelled as `Option[Aggregate]`. 
+On part 2 of this series I will continue in the "but-that-is-not-so-practical" mode and explain why definning **Command Handlers** and the **Event Handlers** can be tedious, especially when the state of our **Aggregate** is modelled as `Option[Aggregate]`. 
 
